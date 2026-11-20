@@ -1,4 +1,500 @@
 {
+  "judge_checks": {
+    "block1": [
+      {
+        "detail": "pair",
+        "id": "C01",
+        "ok": true
+      },
+      {
+        "detail": "keys ['manifest', 'policy', 'remaining_steps', 'task']",
+        "id": "C02",
+        "ok": true
+      },
+      {
+        "detail": "counts {'documents': 52, 'fx': 91, 'invoices': 26, 'ledger': 216, 'payments': 26} vs {'ledger': 216, 'invoices': 26, 'payments': 26, 'fx': 91, 'documents': 52}",
+        "id": "C03",
+        "ok": true
+      },
+      {
+        "detail": "5-tuple, bool flags",
+        "id": "C04",
+        "ok": true
+      },
+      {
+        "detail": "5 pages, 216 of 216 rows",
+        "id": "C05",
+        "ok": true
+      },
+      {
+        "detail": "same page twice",
+        "id": "C06",
+        "ok": true
+      },
+      {
+        "detail": "R1",
+        "id": "C07",
+        "ok": true
+      },
+      {
+        "detail": "D1 with line items",
+        "id": "C08",
+        "ok": true
+      },
+      {
+        "detail": "0.1+0.2 -> '0.3'",
+        "id": "C09",
+        "ok": true
+      },
+      {
+        "detail": "rejected",
+        "id": "C10",
+        "ok": true
+      },
+      {
+        "detail": "error {'code': 'unknown_id', 'message': 'No record with this id.'}",
+        "id": "C11",
+        "ok": true
+      },
+      {
+        "detail": "error {'code': 'unknown_id', 'message': 'No record with this id.'}",
+        "id": "C12",
+        "ok": true
+      },
+      {
+        "detail": "error {'code': 'unknown_action', 'message': 'Unknown action.'}",
+        "id": "C13",
+        "ok": true
+      },
+      {
+        "detail": "budget [99, 98, 97]",
+        "id": "C14",
+        "ok": true
+      },
+      {
+        "detail": "reward in log 1.0",
+        "id": "C15",
+        "ok": true
+      },
+      {
+        "detail": "submit as action 100: tp 1, steps 99",
+        "id": "C16",
+        "ok": true
+      },
+      {
+        "detail": "truncated True, findings graded: tp 0 fp 0",
+        "id": "C17",
+        "ok": true
+      },
+      {
+        "detail": "truncated True, end timeout",
+        "id": "C18",
+        "ok": true
+      },
+      {
+        "detail": "policy rewards [0.0, 0.0, 0.0], grader 0.996",
+        "id": "C19",
+        "ok": true
+      },
+      {
+        "detail": "204 exchanges, leaks []",
+        "id": "C20",
+        "ok": true
+      }
+    ],
+    "block2": [
+      {
+        "detail": "clean; ok",
+        "id": "D01",
+        "ok": true
+      },
+      {
+        "detail": "clean; ok",
+        "id": "D02",
+        "ok": true
+      },
+      {
+        "detail": "clean; ok",
+        "id": "D03",
+        "ok": true
+      },
+      {
+        "detail": "clean; ok",
+        "id": "D04",
+        "ok": true
+      },
+      {
+        "detail": "clean; ok",
+        "id": "D05",
+        "ok": true
+      },
+      {
+        "detail": "['duplicate_invoice'] (same_invoice_id); ok",
+        "id": "D06",
+        "ok": true
+      },
+      {
+        "detail": "['duplicate_invoice'] (new_invoice_id); ok",
+        "id": "D07",
+        "ok": true
+      },
+      {
+        "detail": "['duplicate_invoice'] (new_invoice_id); ok",
+        "id": "D08",
+        "ok": true
+      },
+      {
+        "detail": "['payment_allocation'] (none); ok",
+        "id": "D09",
+        "ok": true
+      },
+      {
+        "detail": "['payment_allocation'] (partial); ok",
+        "id": "D10",
+        "ok": true
+      },
+      {
+        "detail": "['payment_allocation'] (other_invoice); ok",
+        "id": "D11",
+        "ok": true
+      },
+      {
+        "detail": "['fx_conversion'] (wrong_date); ok",
+        "id": "D12",
+        "ok": true
+      },
+      {
+        "detail": "['fx_conversion'] (wrong_pair); ok",
+        "id": "D13",
+        "ok": true
+      },
+      {
+        "detail": "['period_cutoff'] (invoice_posted_late); ok",
+        "id": "D14",
+        "ok": true
+      },
+      {
+        "detail": "['period_cutoff'] (payment_posted_late); ok",
+        "id": "D15",
+        "ok": true
+      },
+      {
+        "detail": "['fx_conversion', 'payment_allocation', 'period_cutoff']; ok",
+        "id": "D16",
+        "ok": true
+      },
+      {
+        "detail": "['fx_conversion', 'payment_allocation', 'period_cutoff']; ok",
+        "id": "D17",
+        "ok": true
+      },
+      {
+        "detail": "['fx_conversion', 'payment_allocation', 'period_cutoff']; ok",
+        "id": "D18",
+        "ok": true
+      },
+      {
+        "detail": "['duplicate_invoice', 'payment_allocation']; ok",
+        "id": "D19",
+        "ok": true
+      },
+      {
+        "detail": "['duplicate_invoice', 'payment_allocation']; ok",
+        "id": "D20",
+        "ok": true
+      }
+    ],
+    "block3": [
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "T01",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 0, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T02",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 0, 'fn': 0, 'precision': 0.0, 'recall': 0.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "T03",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 0, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T04",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 1, 'fn': 0, 'precision': 0.5, 'recall': 1.0, 'f1': 0.6666666666666666, 'return': 0.31333333333333335}",
+        "id": "T05",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T06",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T07",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T08",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T09",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T10",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "T11",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 19, 'fn': 0, 'precision': 0.05, 'recall': 1.0, 'f1': 0.09523809523809523, 'return': -0.8295238095238096}",
+        "id": "T12",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 1, 'precision': 1.0, 'recall': 0.5, 'f1': 0.6666666666666666, 'return': 0.31333333333333335}",
+        "id": "T13",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 1, 'fn': 1, 'precision': 0.5, 'recall': 0.5, 'f1': 0.5, 'return': -0.02}",
+        "id": "T14",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 1.0}",
+        "id": "T15",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.9}",
+        "id": "T16",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.8}",
+        "id": "T17",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0}",
+        "id": "T18",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0}",
+        "id": "T19",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0}",
+        "id": "T20",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "M01",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "M02",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "M03",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "M04",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0}",
+        "id": "M05",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0} | got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "M06",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "M07",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98} | got {'tp': 0, 'fp': 1, 'fn': 1, 'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'return': -1.0}",
+        "id": "M08",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0} | got {'tp': None, 'fp': None, 'fn': None, 'precision': None, 'recall': None, 'f1': None, 'return': -1.0}",
+        "id": "M09",
+        "ok": true
+      },
+      {
+        "detail": "pairs [(0, 'B'), (1, 'A')], score {'tp': 2, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "M10",
+        "ok": true
+      },
+      {
+        "detail": "pairs [(0, 'A'), (1, 'B')], score {'tp': 2, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98} | got {'tp': 2, 'fp': 0, 'fn': 0, 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'return': 0.98}",
+        "id": "M11",
+        "ok": true
+      },
+      {
+        "detail": "got {'tp': 1, 'fp': 1, 'fn': 0, 'precision': 0.5, 'recall': 1.0, 'f1': 0.6666666666666666, 'return': 0.31333333333333335} | same vector as test 5",
+        "id": "M12",
+        "ok": true
+      }
+    ],
+    "block4": [
+      {
+        "detail": "D01 permute: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P01",
+        "ok": true
+      },
+      {
+        "detail": "D02 permute: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P02",
+        "ok": true
+      },
+      {
+        "detail": "D03 permute: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P03",
+        "ok": true
+      },
+      {
+        "detail": "D04 permute: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P04",
+        "ok": true
+      },
+      {
+        "detail": "D05 permute: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P05",
+        "ok": true
+      },
+      {
+        "detail": "D06 rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P06",
+        "ok": true
+      },
+      {
+        "detail": "D07 rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P07",
+        "ok": true
+      },
+      {
+        "detail": "D08 rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P08",
+        "ok": true
+      },
+      {
+        "detail": "D09 rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P09",
+        "ok": true
+      },
+      {
+        "detail": "D10 rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P10",
+        "ok": true
+      },
+      {
+        "detail": "D11 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P11",
+        "ok": true
+      },
+      {
+        "detail": "D12 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P12",
+        "ok": true
+      },
+      {
+        "detail": "D13 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P13",
+        "ok": true
+      },
+      {
+        "detail": "D14 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P14",
+        "ok": true
+      },
+      {
+        "detail": "D15 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P15",
+        "ok": true
+      },
+      {
+        "detail": "D16 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P16",
+        "ok": true
+      },
+      {
+        "detail": "D17 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P17",
+        "ok": true
+      },
+      {
+        "detail": "D18 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P18",
+        "ok": true
+      },
+      {
+        "detail": "D19 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P19",
+        "ok": true
+      },
+      {
+        "detail": "D20 permute+rename: replay True, grade True, answer True, score True, reward 0.994",
+        "id": "P20",
+        "ok": true
+      }
+    ],
+    "summary": {
+      "block1": {
+        "of": 20,
+        "passed": 20,
+        "points": 25.0
+      },
+      "block2": {
+        "of": 20,
+        "passed": 20,
+        "points": 25.0
+      },
+      "block3": {
+        "of": 20,
+        "passed": 20,
+        "points": 25.0
+      },
+      "block4": {
+        "of": 20,
+        "passed": 20,
+        "points": 15.0
+      },
+      "examples_M": {
+        "of": 12,
+        "passed": 12
+      }
+    }
+  },
   "jury": {
     "K1": [
       {
@@ -485,7 +981,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -1.0,
-          "seconds": 0.0025,
+          "seconds": 0.003,
           "steps": 14.25,
           "truncated": 0
         },
@@ -497,7 +993,7 @@
           "precision": null,
           "recall": null,
           "reward": -1.0,
-          "seconds": 0.002,
+          "seconds": 0.0023,
           "steps": 11.0,
           "truncated": 0
         },
@@ -509,7 +1005,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -1.0,
-          "seconds": 0.003,
+          "seconds": 0.0035,
           "steps": 17.3,
           "truncated": 0
         },
@@ -521,7 +1017,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -1.0,
-          "seconds": 0.0021,
+          "seconds": 0.0024,
           "steps": 11.4,
           "truncated": 0
         }
@@ -535,7 +1031,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 1.0,
-          "seconds": 0.0003,
+          "seconds": 0.0005,
           "steps": 1.0,
           "truncated": 0
         },
@@ -547,7 +1043,7 @@
           "precision": null,
           "recall": null,
           "reward": 1.0,
-          "seconds": 0.0002,
+          "seconds": 0.0004,
           "steps": 1.0,
           "truncated": 0
         },
@@ -559,7 +1055,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 1.0,
-          "seconds": 0.0003,
+          "seconds": 0.0006,
           "steps": 1.0,
           "truncated": 0
         },
@@ -571,7 +1067,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 1.0,
-          "seconds": 0.0003,
+          "seconds": 0.0005,
           "steps": 1.0,
           "truncated": 0
         }
@@ -585,7 +1081,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -0.515,
-          "seconds": 0.0011,
+          "seconds": 0.0014,
           "steps": 31.0,
           "truncated": 0
         },
@@ -597,7 +1093,7 @@
           "precision": null,
           "recall": null,
           "reward": 0.94,
-          "seconds": 0.0011,
+          "seconds": 0.0013,
           "steps": 31.0,
           "truncated": 0
         },
@@ -609,7 +1105,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -1.0,
-          "seconds": 0.0011,
+          "seconds": 0.0015,
           "steps": 31.0,
           "truncated": 0
         },
@@ -621,7 +1117,7 @@
           "precision": 0.0,
           "recall": 0.0,
           "reward": -1.0,
-          "seconds": 0.0011,
+          "seconds": 0.0013,
           "steps": 31.0,
           "truncated": 0
         }
@@ -635,7 +1131,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 0.9471,
-          "seconds": 0.006,
+          "seconds": 0.0073,
           "steps": 27.45,
           "truncated": 0
         },
@@ -647,7 +1143,7 @@
           "precision": null,
           "recall": null,
           "reward": 0.96,
-          "seconds": 0.0047,
+          "seconds": 0.005,
           "steps": 21.0,
           "truncated": 0
         },
@@ -659,7 +1155,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 0.9378,
-          "seconds": 0.0073,
+          "seconds": 0.0094,
           "steps": 32.1,
           "truncated": 0
         },
@@ -671,7 +1167,7 @@
           "precision": 1.0,
           "recall": 1.0,
           "reward": 0.9528,
-          "seconds": 0.0048,
+          "seconds": 0.0053,
           "steps": 24.6,
           "truncated": 0
         }
@@ -753,8 +1249,9 @@
     }
   },
   "status": {
+    "judge_checks_passed": true,
     "jury_all_checks_passed": true,
-    "seconds": 70.4,
+    "seconds": 83.6,
     "sweep_ok": true,
     "tests_exit_code": 0
   },
@@ -770,9 +1267,9 @@
       },
       "failures": [],
       "generation_seconds": {
-        "max": 0.0285,
-        "mean": 0.02,
-        "min": 0.0123
+        "max": 0.0309,
+        "mean": 0.022,
+        "min": 0.0119
       },
       "issue_types": {},
       "seeds": [
@@ -808,9 +1305,9 @@
       },
       "failures": [],
       "generation_seconds": {
-        "max": 0.0494,
-        "mean": 0.034,
-        "min": 0.0217
+        "max": 0.0538,
+        "mean": 0.037,
+        "min": 0.023
       },
       "issue_types": {
         "duplicate_invoice": 150,
@@ -850,9 +1347,9 @@
       },
       "failures": [],
       "generation_seconds": {
-        "max": 0.0321,
-        "mean": 0.021,
-        "min": 0.0127
+        "max": 0.0341,
+        "mean": 0.023,
+        "min": 0.014
       },
       "issue_types": {
         "duplicate_invoice": 147,
@@ -892,9 +1389,9 @@
       },
       "failures": [],
       "generation_seconds": {
-        "max": 0.031,
-        "mean": 0.021,
-        "min": 0.0128
+        "max": 0.0384,
+        "mean": 0.024,
+        "min": 0.0135
       },
       "issue_types": {
         "duplicate_invoice": 154,

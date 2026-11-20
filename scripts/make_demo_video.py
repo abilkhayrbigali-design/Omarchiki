@@ -198,7 +198,8 @@ SCENES: list[dict] = [
         "sub": "Контейнер без сети, 2 CPU, 4 ГБ · сохранённый прогон reports/docker_check.txt",
         "steps": [
             {
-                "sh": "grep -vE '^\\.|probe|Score|reward' reports/docker_check.txt",
+                "sh": "grep -vE '^\\.|probe|Score|K5:|^  (flag_all|oracle|random|reconcile) ' \\\n"
+                "  reports/docker_check.txt",
                 "line_delay": 0.3,
                 "highlight": [
                     (r"RESULT: PASS", "good", 1.0),
@@ -206,10 +207,10 @@ SCENES: list[dict] = [
                     (r"^==|^# make", "cmd"),
                     (r"^#", "dim"),
                 ],
-                "expect": [r"RESULT: PASS", r"--network none"],
+                "expect": [r"RESULT: PASS", r"--network none", r"Block 3 matcher and reward"],
             },
         ],
-        "hold": 9,
+        "hold": 10,
     },
     {
         "kind": "card",
