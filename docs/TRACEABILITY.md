@@ -2,7 +2,7 @@
 
 Каждое требование из [REQUIREMENTS.md](REQUIREMENTS.md): где реализовано и какие тесты его проверяют (по имени теста, `test_<код>_…`). Файл собирается командой `python -m auditgym traceability` из списка тестов `pytest --collect-only`.
 
-Тестовых функций: 508; с параметризацией проверок больше тысячи.
+Тестовых функций: 523; с параметризацией проверок больше тысячи.
 
 | Код | Где реализовано | Тесты |
 |---|---|---|
@@ -10,7 +10,7 @@
 | C02 | env/, trajectories/, grading/ | `test_requirements.py` (1) |
 | C03 | только stdlib в рантайме | `test_requirements.py` (1) |
 | C04 | DESIGN_NOTE §8 | `test_requirements.py` (1) |
-| G01 | inject/ (4 инжектора, config.errors) | `test_data_truth.py` (4), `test_verify_scenarios.py` (1), `test_verify_tiny.py` (1) |
+| G01 | inject/ (4 инжектора, config.errors) | `test_data_truth.py` (4), `test_generator_variants.py` (15), `test_verify_scenarios.py` (1), `test_verify_tiny.py` (1) |
 | G02 | inject/ (2 сценария, config.interactions) | `test_data_truth.py` (2), `test_verify_scenarios.py` (2) |
 | G03 | world/ (X1–X10), config.clean | `test_data_truth.py` (3), `test_verify_scenarios.py` (2) |
 | G04 | world → books → inject, provenance.changes | `test_data_provenance.py` (2) |

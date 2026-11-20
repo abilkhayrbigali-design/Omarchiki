@@ -63,6 +63,23 @@ docker run --rm --network none --cpus 2 --memory 4g --entrypoint python auditgym
 
 Точные определения и наборы доказательств по типам — в [docs/DOMAIN.md](docs/DOMAIN.md), разделы 6–7, и в `policy.evidence` каждого эпизода. Допуск суммы опубликован в `policy.tolerances`: 0 для всех типов, кроме `fx_conversion` (1 минимальная единица на округление). В файле эталона, где допуска нет, он равен 0.
 
+**Как заказать сценарий** (`config` для `generate_episode` или `team_config` для `reset`; полная схема — [docs/DOMAIN.md](docs/DOMAIN.md), примеры — [configs/](configs/)). Каждый тип ошибки, сценарий взаимодействия и вид ловушки включается отдельно, число — целое или `[min, max]`; не указанное берётся по умолчанию:
+
+```json
+{"errors": {"duplicate_invoice": 0, "payment_allocation": 1, "fx_conversion": 0, "period_cutoff": 0},
+ "interactions": {"fx_partial_at_boundary": 0, "duplicate_misallocated": 0},
+ "variants": {"payment_allocation": ["partial"]}}
+```
+
+| Что нужно | Настройка |
+|---|---|
+| чистая компания | `"clean": true`; ловушки — `"distractors": {"split_payment": 3, "credit_note_refund": 2, "same_amount_orders": 2, "subscription": 3, "boundary_offset": 3, "fx_spike": 1, ...}` |
+| вариант ошибки | `"variants"`: `duplicate_invoice` — `same_invoice_id`, `new_invoice_id`; `payment_allocation` — `none` (пропуск), `partial` (частичное), `other_invoice` (на чужой счёт); `fx_conversion` — `wrong_date`, `wrong_pair`; `period_cutoff` — `invoice_posted_late`, `payment_posted_late` |
+| сценарий взаимодействия | `"interactions": {"fx_partial_at_boundary": 1}` (частичный иностранный платёж у границы периода, три ошибки) или `{"duplicate_misallocated": 1}` (дубль, на который ушёл платёж, две ошибки) |
+| закрытые seed | `"secret_salt": "<секрет>"`: без соли открытый генератор позволяет восстановить эпизод перебором seed |
+
+Полученный вариант записан в `private/provenance.json` (`injections[].variant`). Матрица D01–D20, которой мы проверяем себя, — `d_matrix()` в [src/auditgym/harness/judge_check.py](src/auditgym/harness/judge_check.py).
+
 **Режимы и время.** В `closed` политика получает `reward = 0.0` до конца, включая завершение; в `train` — терминальную награду. Лимит — 60 секунд от начала `reset`: шаг после лимита не выполняется, эпизод завершается с `truncated=true` и оценивается как пустой ответ.
 
 **Журнал оценщика.** Оценка каждого завершённого эпизода и каждого вызова `score_episode` добавляется в `env.grade_log` / `judge_adapter.SCORE_LOG` и, если задана переменная окружения `AUDITGYM_GRADER_LOG`, в этот JSONL-файл. В наблюдения и `info` она не попадает.

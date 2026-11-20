@@ -422,20 +422,26 @@ def d_matrix() -> dict[str, tuple[int, dict[str, Any]]]:
             },
         ),
     }
+    # Each error episode orders one variant through the documented `variants` config section, so
+    # the matrix covers what the jury asks for: a missing and a partial allocation, a wrong date
+    # and a wrong pair, an invoice and a payment posted in the wrong period.
     plan = [
-        ("D06", "duplicate_invoice"),
-        ("D07", "duplicate_invoice"),
-        ("D08", "duplicate_invoice"),
-        ("D09", "payment_allocation"),
-        ("D10", "payment_allocation"),
-        ("D11", "payment_allocation"),
-        ("D12", "fx_conversion"),
-        ("D13", "fx_conversion"),
-        ("D14", "period_cutoff"),
-        ("D15", "period_cutoff"),
+        ("D06", "duplicate_invoice", "same_invoice_id"),
+        ("D07", "duplicate_invoice", "new_invoice_id"),
+        ("D08", "duplicate_invoice", None),
+        ("D09", "payment_allocation", "none"),
+        ("D10", "payment_allocation", "partial"),
+        ("D11", "payment_allocation", "other_invoice"),
+        ("D12", "fx_conversion", "wrong_date"),
+        ("D13", "fx_conversion", "wrong_pair"),
+        ("D14", "period_cutoff", "invoice_posted_late"),
+        ("D15", "period_cutoff", "payment_posted_late"),
     ]
-    for k, (name, issue_type) in enumerate(plan):
-        m[name] = (7006 + k, _none_cfg(f"judge.d.{issue_type}", errors={issue_type: [1, 1]}))
+    for k, (name, issue_type, variant) in enumerate(plan):
+        cfg = _none_cfg(f"judge.d.{issue_type}", errors={issue_type: [1, 1]})
+        if variant is not None:
+            cfg["variants"] = {issue_type: [variant]}
+        m[name] = (7006 + k, cfg)
     for k, name in enumerate(("D16", "D17", "D18")):
         m[name] = (
             7016 + k,
@@ -507,7 +513,19 @@ def block2(work: Path) -> list[dict[str, Any]]:
         ok = res["ok"]
         if name <= "D05":
             ok = ok and not types
-        detail = f"{types or 'clean'}; " + ("ok" if res["ok"] else "; ".join(res["problems"][:2]))
+        ordered = cfg.get("variants", {})
+        produced = sorted(
+            (inj["injector"], inj["variant"])
+            for inj in ep.private.provenance.get("injections", [])
+            if inj.get("scenario") is None
+        )
+        for issue_type, allowed in ordered.items():
+            ok = ok and all(v in allowed for t, v in produced if t == issue_type)
+            ok = ok and any(t == issue_type for t, _ in produced)
+        variants = ", ".join(v for _, v in produced)
+        detail = f"{types or 'clean'}{f' ({variants})' if variants else ''}; " + (
+            "ok" if res["ok"] else "; ".join(res["problems"][:2])
+        )
         out.append({"id": name, "ok": ok, "detail": detail})
     return out
 

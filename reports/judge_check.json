@@ -128,52 +128,52 @@
       "ok": true
     },
     {
-      "detail": "['duplicate_invoice']; ok",
+      "detail": "['duplicate_invoice'] (same_invoice_id); ok",
       "id": "D06",
       "ok": true
     },
     {
-      "detail": "['duplicate_invoice']; ok",
+      "detail": "['duplicate_invoice'] (new_invoice_id); ok",
       "id": "D07",
       "ok": true
     },
     {
-      "detail": "['duplicate_invoice']; ok",
+      "detail": "['duplicate_invoice'] (new_invoice_id); ok",
       "id": "D08",
       "ok": true
     },
     {
-      "detail": "['payment_allocation']; ok",
+      "detail": "['payment_allocation'] (none); ok",
       "id": "D09",
       "ok": true
     },
     {
-      "detail": "['payment_allocation']; ok",
+      "detail": "['payment_allocation'] (partial); ok",
       "id": "D10",
       "ok": true
     },
     {
-      "detail": "['payment_allocation']; ok",
+      "detail": "['payment_allocation'] (other_invoice); ok",
       "id": "D11",
       "ok": true
     },
     {
-      "detail": "['fx_conversion']; ok",
+      "detail": "['fx_conversion'] (wrong_date); ok",
       "id": "D12",
       "ok": true
     },
     {
-      "detail": "['fx_conversion']; ok",
+      "detail": "['fx_conversion'] (wrong_pair); ok",
       "id": "D13",
       "ok": true
     },
     {
-      "detail": "['period_cutoff']; ok",
+      "detail": "['period_cutoff'] (invoice_posted_late); ok",
       "id": "D14",
       "ok": true
     },
     {
-      "detail": "['period_cutoff']; ok",
+      "detail": "['period_cutoff'] (payment_posted_late); ok",
       "id": "D15",
       "ok": true
     },
