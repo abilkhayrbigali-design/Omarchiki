@@ -84,15 +84,27 @@ def test_T6_chronological_order():
 
 
 def test_T6_injected_rows_are_not_positioned_apart():
+    """Within the audited period, injected rows are spread like the others.
+
+    Errors are only injected in scope (policy.scope), so positions are measured relative to the
+    rows of the period (plus the few days a cut-off posting may land after its end).
+    """
+    from datetime import timedelta
+
     cfg = shipped_config("train")
     positions = []
     for seed in range(60):
         episode, _ = gen(seed, cfg)
-        order = {r.row_id: n for n, r in enumerate(episode.public.ledger)}
-        size = len(order)
+        pub = episode.public
+        start = parse_ts(pub.manifest["period_start"])
+        end = parse_ts(pub.manifest["period_end"]) + timedelta(days=4)
+        stamps = [parse_ts(r.timestamp) for r in pub.ledger]
+        lo = next(n for n, t in enumerate(stamps) if t >= start)
+        hi = max(n for n, t in enumerate(stamps) if t < end)
+        order = {r.row_id: n for n, r in enumerate(pub.ledger)}
         for ch in episode.private.provenance["changes"]:
             if ch["table"] == "ledger" and ch["after"] is not None:
-                positions.append(order[ch["id"]] / size)
+                positions.append((order[ch["id"]] - lo) / max(hi - lo, 1))
     mean = sum(positions) / len(positions)
     assert 0.3 < mean < 0.7
     assert min(positions) < 0.1 and max(positions) > 0.9
