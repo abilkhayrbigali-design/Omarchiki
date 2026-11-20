@@ -80,7 +80,7 @@ from auditgym.client import RemoteEnv
 | `episodes/` | 10 train- и 10 dev-эпизодов; эталон каждого — в его `private/` |
 | `trajectories/trajectories.jsonl` | записанные траектории базовых политик на train-эпизодах |
 | `reports/` | сохранённые прогоны, из которых взяты все числа записки |
-| `docs/` | [записка о дизайне](docs/DESIGN_NOTE.md), [требования](docs/REQUIREMENTS.md), [доменная модель](docs/DOMAIN.md), [архитектура](docs/ARCHITECTURE.md) |
+| `docs/` | [записка о дизайне](docs/DESIGN_NOTE.md), [требования](docs/REQUIREMENTS.md), [доменная модель](docs/DOMAIN.md), [архитектура](docs/ARCHITECTURE.md), [трассировка требований к тестам](docs/TRACEABILITY.md) |
 
 ## Использованные инструменты
 
