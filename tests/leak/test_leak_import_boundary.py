@@ -58,6 +58,9 @@ BANNED_MODULES = (
     "ast",
 )
 BANNED_CALLS = ("eval", "exec", "compile", "__import__", "breakpoint", "input")
+# The one place that may read a clock: the server's episode host, for the wall-clock limit, and
+# only through time.monotonic. The environment and the generator never read the clock.
+CLOCK_MODULE = SRC / "server" / "host.py"
 
 
 def _imports(path: Path) -> list[str]:
@@ -101,7 +104,10 @@ def test_E06_no_eval_exec_or_banned_modules(path):
             assert node.func.id not in BANNED_CALLS, f"{path.name}: {node.func.id}()"
         if isinstance(node, ast.Attribute):
             assert node.attr not in ("literal_eval", "system", "popen"), f"{path.name}: {node.attr}"
-    bad = [n for n in _imports(path) if _matches(n, BANNED_MODULES)]
+    banned = BANNED_MODULES
+    if path == CLOCK_MODULE:
+        banned = tuple(m for m in BANNED_MODULES if m != "time")
+    bad = [n for n in _imports(path) if _matches(n, banned)]
     assert not bad, bad
     allowed_subprocess = path == SRC / "client.py"
     if not allowed_subprocess:
@@ -119,6 +125,24 @@ def test_E08_observation_code_has_no_file_access(path):
         if isinstance(node, ast.Attribute):
             assert node.attr not in ("read_text", "read_bytes", "write_text", "write_bytes")
     assert not [n for n in _imports(path) if _matches(n, ("os", "pathlib", "io", "sys"))]
+
+
+def test_E10_clock_is_read_only_by_the_server_host_via_monotonic():
+    """`import time` only in server/host.py, and the only use there is time.monotonic."""
+    for path in ALL_WP3:
+        if path != CLOCK_MODULE:
+            assert not [n for n in _imports(path) if _matches(n, ("time", "datetime"))], path
+    tree = ast.parse(CLOCK_MODULE.read_text(encoding="utf-8"))
+    imports = _imports(CLOCK_MODULE)
+    assert "time" in imports and not [n for n in imports if n.startswith("time.")]
+    uses = {
+        node.attr
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Attribute)
+        and isinstance(node.value, ast.Name)
+        and node.value.id == "time"
+    }
+    assert uses == {"monotonic"}
 
 
 def test_K1_session_imports_grader_and_generator_only_lazily():

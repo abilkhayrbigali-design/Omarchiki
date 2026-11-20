@@ -12,6 +12,7 @@ from auditgym.contracts.config import ConfigError
 from auditgym.env import AuditEnv
 from auditgym.fixtures.tiny import build_tiny_episode
 from auditgym.server.app import serve
+from auditgym.server.host import EpisodeHost
 from auditgym.server.protocol import MAX_LINE_BYTES, PROTOCOL_ERROR_MESSAGES, handle_line
 
 
@@ -148,12 +149,14 @@ def test_protocol_config_error_and_internal_error_are_fixed():
     def crash(seed, config=None):
         raise RuntimeError("Traceback /home/x/src/auditgym/episode/generate.py")
 
-    resp, close = handle_line(_env(generate=bad_config), _line({"op": "reset", "seed": 1}))
+    resp, close = handle_line(
+        EpisodeHost(_env(generate=bad_config)), _line({"op": "reset", "seed": 1})
+    )
     assert resp == {
         "ok": False,
         "error": {"code": "invalid_config", "message": "Invalid episode config."},
     }
-    resp, close = handle_line(_env(generate=crash), _line({"op": "reset", "seed": 1}))
+    resp, close = handle_line(EpisodeHost(_env(generate=crash)), _line({"op": "reset", "seed": 1}))
     assert resp == {"ok": False, "error": {"code": "internal_error", "message": "Internal error."}}
     assert set(PROTOCOL_ERROR_MESSAGES.values()) >= {"Internal error."}
 

@@ -46,7 +46,7 @@ def _everything_seen(mode: str, tmp_path: Path) -> list:
             if i % 4 == 1
             else act("get_record", table="ledger", id="../private/truth.json")
             if i % 4 == 2
-            else {"action": "submit"}
+            else {"action": "get_record"}
         )
         seen.append(env.step(action))
     seen.append(env.step(act("submit", findings=oracle_submission(episode))))
@@ -54,6 +54,14 @@ def _everything_seen(mode: str, tmp_path: Path) -> list:
     seen.append(env.reset(SECRET_SEED, SECRET_CONFIG))
     seen.append(env.truncate())
     seen.append(env.truncate())
+    # Malformed submit action: ends the episode, graded as invalid.
+    seen.append(env.reset(SECRET_SEED, SECRET_CONFIG))
+    seen.append(env.step({"action": "submit", "args": {"findings": [], "why": "/srv/private"}}))
+    # Abandoned path: reset in the middle of an episode, then a Gymnasium-style reset.
+    seen.append(env.reset(SECRET_SEED, SECRET_CONFIG))
+    seen.append(env.step(list_page("ledger", None, 3)))
+    seen.append(env.reset(seed=SECRET_SEED, options={"config": SECRET_CONFIG}))
+    seen.append(env.abandon())
     assert log.exists()  # the grade went to the grader log, not to the agent
     return seen
 

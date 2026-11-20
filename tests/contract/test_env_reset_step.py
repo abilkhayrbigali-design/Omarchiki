@@ -51,7 +51,7 @@ def test_E01_reset_passes_seed_and_config_to_generator(grader):
     assert calls == [(17, {"config_id": "x"}), (18, None)]
 
 
-@pytest.mark.parametrize("seed", [True, 1.5, "7", None])
+@pytest.mark.parametrize("seed", [True, 1.5, "7", [1]])
 def test_E01_reset_rejects_non_integer_seed(make_env, seed):
     with pytest.raises(TypeError):
         make_env().reset(seed)

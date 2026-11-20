@@ -56,8 +56,6 @@ CASES: list[tuple[str, object, str]] = [
     ("calculator_missing", act("calculator"), "invalid_arguments"),
     ("calculator_code", act("calculator", expression="open('/etc/passwd')"), "calculator_error"),
     ("calculator_div0", act("calculator", expression="1/0"), "calculator_error"),
-    ("submit_missing_findings", act("submit"), "invalid_arguments"),
-    ("submit_extra_arg", act("submit", findings={}, note="x"), "invalid_arguments"),
     ("non_json_value", act("calculator", expression={1, 2}), "invalid_arguments"),
     ("non_str_key", {"action": "list_records", "args": {1: "ledger"}}, "invalid_arguments"),
     ("nan", act("list_records", table="ledger", limit=float("nan")), "invalid_arguments"),
@@ -77,6 +75,106 @@ def test_E07_invalid_action_gets_fixed_error_and_costs_a_step(make_env, grader, 
     assert grader.calls == []
     # The episode goes on.
     assert env.step(list_page("ledger", None, 1))[0]["error"] is None
+
+
+def _deep(depth: int) -> object:
+    value: object = []
+    for _ in range(depth):
+        value = [value]
+    return value
+
+
+EPISODE_ID = "ep_TINY000001"
+FLAT = {"episode_id": EPISODE_ID, "findings": []}
+
+# (case id, malformed submit action, what the grader must receive)
+MALFORMED_SUBMITS: list[tuple[str, dict, object]] = [
+    ("no_args", {"action": "submit"}, None),
+    ("args_empty", {"action": "submit", "args": {}}, {}),
+    ("args_null", {"action": "submit", "args": None}, None),
+    ("args_list", {"action": "submit", "args": [FLAT]}, [FLAT]),
+    ("args_str", {"action": "submit", "args": "findings"}, "findings"),
+    (
+        "extra_arg",
+        act("submit", findings=FLAT, note="x"),
+        {"findings": FLAT, "note": "x"},
+    ),
+    (
+        "extra_top_level_key",
+        {"action": "submit", "args": {"findings": FLAT}, "debug": True},
+        {"findings": FLAT},
+    ),
+    ("too_deep", act("submit", findings=_deep(80)), {"findings": _deep(80)}),
+    # The findings object sent without its wrapper: still a malformed action, never graded valid.
+    ("flattened", {"action": "submit", "args": FLAT}, None),
+    ("flattened_extra", {"action": "submit", "args": dict(FLAT, x=1)}, dict(FLAT, x=1)),
+]
+
+
+@pytest.mark.parametrize(
+    "action,payload",
+    [(a, p) for _, a, p in MALFORMED_SUBMITS],
+    ids=[i for i, _, _ in MALFORMED_SUBMITS],
+)
+@pytest.mark.parametrize("mode", ["open", "closed"])
+def test_S03_E07_malformed_submit_action_ends_episode_as_invalid(make_env, mode, action, payload):
+    """Any {"action": "submit", ...} ends the episode; a malformed one is graded invalid (-1)."""
+    from auditgym.grading import grade_submission
+
+    records: list[dict] = []
+    calls: list[object] = []
+
+    def grader(p, truth, **kw):
+        calls.append(p)
+        return grade_submission(p, truth, **kw)
+
+    env = make_env(mode, grader_fn=grader, grader_log=records.append)
+    env.reset(0)
+    env.step(list_page("ledger", None, 1))
+    obs, reward, terminated, truncated, info = env.step(action)
+    OBS_SCHEMA.validate(obs)
+    assert terminated is True and truncated is False
+    assert obs == {
+        "result": None,
+        "error": {
+            "code": "invalid_arguments",
+            "message": ERROR_MESSAGES[ErrorCode.INVALID_ARGUMENTS],
+        },
+        "steps_remaining": MAX_STEPS - 2,
+    }
+    if mode == "open":
+        assert reward == -1.0 and info == {"reward_withheld": False}
+    else:
+        assert reward == 0.0 and info == {"reward_withheld": True}
+    assert calls == [payload]
+    (record,) = records
+    assert record["end"] == "submit" and record["action_error"] == "invalid_arguments"
+    assert record["valid"] is False and record["reward"] == -1.0 and record["error"]
+    assert record["inspection_steps"] == 1 and record["step_count"] == 2
+    # Ended: nothing more happens.
+    assert env.step(list_page("ledger"))[0]["error"]["code"] == "episode_finished"
+    assert len(records) == 1
+
+
+def test_S03_malformed_submit_on_last_step_terminates(make_env, grader):
+    env = make_env()
+    env.reset(0)
+    for _ in range(MAX_STEPS - 1):
+        env.step(act("teleport"))
+    obs, reward, terminated, truncated, info = env.step({"action": "submit"})
+    assert terminated is True and truncated is False
+    assert obs["steps_remaining"] == 0
+    (call,) = grader.calls
+    assert call["payload"] is None and call["inspection_steps"] == MAX_STEPS - 1
+
+
+def test_S03_non_submit_actions_named_like_submit_do_not_end_episode(make_env, grader):
+    env = make_env()
+    env.reset(0)
+    for action in (act("SUBMIT", findings=FLAT), act("submit_now"), ["submit"], "submit"):
+        obs, reward, terminated, truncated, info = env.step(action)
+        assert obs["error"] is not None and not terminated and not truncated
+    assert grader.calls == []
 
 
 def test_E07_every_env_error_code_is_reachable(make_env):

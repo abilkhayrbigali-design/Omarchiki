@@ -78,11 +78,16 @@ def test_E06_calculator_values(expression, value):
         "Infinity",
         "0x10",
         "1_000",
-        "5.",
-        ".5",
         "1..2",
         "1.2.3",
-        "+5",
+        ".",
+        "-.",
+        "+",
+        "5.e3",
+        ".5e1",
+        "+.",
+        ". 5",
+        "5 .",
         "(1",
         "1)",
         "()",
@@ -115,6 +120,59 @@ def test_E06_calculator_values(expression, value):
 def test_E06_calculator_rejects(expression):
     with pytest.raises(CalculatorError):
         evaluate(expression)
+
+
+@pytest.mark.parametrize(
+    "expression,value",
+    [
+        ("+5", "5"),
+        ("+5 + +2", "7"),
+        ("-+5", "-5"),
+        ("+-5", "-5"),
+        ("++5", "5"),
+        ("3*+2", "6"),
+        ("+(2+3)", "5"),
+        (".5", "0.5"),
+        ("5.", "5"),
+        ("-.5", "-0.5"),
+        ("+.25*4", "1"),
+        ("5.*2", "10"),
+        (".5+.5", "1"),
+        ("10/.5", "20"),
+        ("0.", "0"),
+        (".0", "0"),
+        ("1" * CALCULATOR_MAX_DIGITS + ".", "1" * CALCULATOR_MAX_DIGITS),
+        ("." + "1" * CALCULATOR_MAX_DIGITS, "0." + "1" * CALCULATOR_MAX_DIGITS),
+    ],
+)
+def test_E06_calculator_accepts_unary_plus_and_bare_decimal_point(expression, value):
+    assert evaluate(expression) == value
+    assert PLAIN.match(value)
+
+
+@pytest.mark.parametrize(
+    "expression",
+    [
+        "1" * (CALCULATOR_MAX_DIGITS + 1) + ".",
+        "." + "1" * (CALCULATOR_MAX_DIGITS + 1),
+        "+1e5",
+        "+x",
+        "+2**3",
+        "+1_000",
+        "+١",
+        ".٥",
+        "5.٥",
+        "+" * (CALCULATOR_MAX_CHARS) + "1",
+    ],
+)
+def test_E06_calculator_new_forms_keep_old_limits(expression):
+    with pytest.raises(CalculatorError):
+        evaluate(expression)
+
+
+def test_E06_unary_plus_is_a_loop_not_recursion():
+    assert evaluate("+-" * 100 + "1") == "1"
+    assert evaluate("-" + "+" * 200 + "1") == "-1"
 
 
 def test_E06_limits_are_inclusive():

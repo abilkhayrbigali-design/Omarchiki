@@ -42,15 +42,34 @@ obs, reward, terminated, truncated, info = env.step(
 
 Действия: `list_records(table, cursor, limit)`, `get_record(table, id)`, `get_document(doc_id)`, `calculator(expression)`, `submit(findings)`. Таблицы: `ledger`, `invoices`, `payments`, `fx`. Форматы — в [schemas/](schemas/).
 
-Отдельный процесс-оценщик для закрытого прогона (эталон живёт только в нём, политика общается с ним JSON-строками):
+### Закрытый прогон
+
+Эталон живёт только в отдельном процессе-оценщике. Агент получает только канал JSON-строк на stdin/stdout и не выбирает эпизоды.
+
+- **Сервер запускает организатор**, не агент, и в настоящей проверке — от другого пользователя ОС, чтобы агент не мог читать эпизоды с `private/`, расписание и журнал.
+- **Эпизоды задаёт организатор**: `--schedule FILE` (JSON-список `{"seed": N, "config": "путь" | {...}}`) и/или `--episode-dir DIR` (каталог эпизода или каталог с эпизодами, повторяемая опция). Каждый `{"op": "reset"}` даёт следующий эпизод; `reset` с `seed` или `config` отклоняется (`invalid_request`), после последнего эпизода — `schedule_exhausted`.
+- **Журнал оценщика — у организатора**: `--grader-log` обязателен и должен быть абсолютным путём вне досягаемости агента. Награда, метрики и сопоставления пишутся только туда; агенту в закрытом режиме возвращается `reward=0.0`.
+- **Без повторов**: эпизод, брошенный через `reset`, `close` или обрыв канала, оценивается как пустой ответ и пишется в журнал (`end: "abandoned"`). Лимит времени `--time-limit` (по умолчанию 60 с) считает сервер; шаг после лимита не выполняется, эпизод завершается с `truncated=true` и пустым ответом (`end: "timeout"`).
 
 ```bash
-uv run python -m auditgym serve
+# организатор, от пользователя grader:
+python -m auditgym.server --mode closed \
+    --episode-dir /srv/grader/hidden_episodes \
+    --grader-log /srv/grader/logs/grader_log.jsonl
 ```
 
+Обвязка организатора соединяет stdout сервера со stdin агента и stdout агента со stdin сервера. Агент подключается к выданному каналу:
+
 ```python
+import sys
 from auditgym.client import RemoteEnv
+
+env = RemoteEnv.from_streams(sys.stdin.buffer, sys.stdout.buffer)  # stdout агента — это канал
+obs, info = env.reset()
+obs, reward, terminated, truncated, info = env.step({"action": "list_records", "args": {"table": "ledger"}})
 ```
+
+Для обучения и тестов `RemoteEnv(mode="open")` запускает сервер сам и выбирает `seed`/`config`; это не закрытая проверка, потому что процессом-оценщиком тогда владеет агент.
 
 ## Команды
 
