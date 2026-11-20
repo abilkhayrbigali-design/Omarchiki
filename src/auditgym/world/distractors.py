@@ -260,6 +260,9 @@ def unapplied_payment(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X8
+X8_MAX_DISTANCE = 3 * HOUR  # X8 documents lie within this distance of a boundary midnight
+
+
 def _date_flipping_offsets(world: World, t: datetime) -> list[str]:
     local_d = world.tl.local_date(t)
     out = []
@@ -277,12 +280,15 @@ def boundary_offset(world: World, s: Stream, n: int) -> None:
     for _ in range(n):
         b = s.choice(tl.boundaries())
         side = s.choice(["before", "after"])
-        probe = b - HOUR if side == "before" else b + HOUR
+        # Probe the farthest instant from midnight we may draw: an offset that flips the date
+        # there flips it for every nearer instant too. One side always works for offsets in
+        # [-12:00, +14:00].
+        probe = b - X8_MAX_DISTANCE if side == "before" else b + X8_MAX_DISTANCE
         if not _date_flipping_offsets(world, probe):
             side = "after" if side == "before" else "before"
 
         def draw(b: datetime = b, side: str = side) -> datetime:
-            secs = s.randint(60, 3 * 3600 - 1)
+            secs = s.randint(60, int(X8_MAX_DISTANCE.total_seconds()) - 1)
             return b - timedelta(seconds=secs) if side == "before" else b + timedelta(seconds=secs)
 
         t = world.claim(draw)

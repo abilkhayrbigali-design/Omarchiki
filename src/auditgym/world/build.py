@@ -17,7 +17,7 @@ from auditgym.util.rng import Stream
 from auditgym.world import candidates
 from auditgym.world.amounts import draw_minor
 from auditgym.world.distractors import BUILDERS, INVOICES_PER_INSTANCE
-from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_installments
+from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_installments, pay_time
 from auditgym.world.fx import build_fx
 from auditgym.world.model import Customer, WExpense, World, WorldError
 from auditgym.world.names import company_name, customer_name
@@ -92,14 +92,52 @@ def plan_spikes(world: World, s: Stream, n: int) -> dict[tuple[str, Any], Decima
     return spikes
 
 
+REGULAR_PATTERNS = ("full", "installments", "open", "overpaid", "paid_twice")
+REGULAR_WEIGHTS = (60, 10, 30, 4, 3)
+
+
 def _regular_history(world: World, s: Stream, n: int) -> None:
+    """Ordinary sales. Besides full, split and open invoices, a few clean cases where money
+    legitimately lands on UNAPPLIED although the payment names an invoice: an overpayment
+    (the remainder is unapplied) and an invoice paid twice (the second payment finds no open
+    balance)."""
     for _ in range(n):
         inv = new_invoice(world, s, tag="regular")
-        pattern = s.weighted_choice(["full", "installments", "open"], [60, 10, 30])
+        pattern = s.weighted_choice(list(REGULAR_PATTERNS), list(REGULAR_WEIGHTS))
         if pattern == "full":
             pay_full(world, s, inv, tag="regular")
         elif pattern == "installments":
             pay_installments(world, s, inv, 2, tag="regular")
+        elif pattern == "overpaid":
+            ts = pay_time(world, s, inv.issued)
+            if ts is not None:
+                extra = draw_minor(s, inv.currency, 5, 200)
+                add_payment(
+                    world,
+                    s,
+                    payer=inv.customer,
+                    ts=ts,
+                    currency=inv.currency,
+                    amount=inv.total + extra,
+                    refs=[inv.number],
+                    plan=[(inv.number, inv.total)],
+                    tag="regular",
+                )
+        elif pattern == "paid_twice":
+            first = pay_full(world, s, inv, tag="regular", max_days=12)
+            ts = pay_time(world, s, first.ts, max_days=12) if first is not None else None
+            if ts is not None:
+                add_payment(
+                    world,
+                    s,
+                    payer=inv.customer,
+                    ts=ts,
+                    currency=inv.currency,
+                    amount=inv.total,
+                    refs=[inv.number],
+                    plan=[],
+                    tag="regular",
+                )
 
 
 def _expenses(world: World, s: Stream, n: int) -> None:

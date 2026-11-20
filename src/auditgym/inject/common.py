@@ -68,14 +68,17 @@ def rebook_conversion(state: InjectState, pay: WPayment, new_base: int) -> int:
 def add_copy(
     state: InjectState, original: WInvoice, issued: datetime, new_number: bool
 ) -> WInvoice:
-    """A copy of an invoice document (same order_ref and lines), entered and posted at `issued`."""
+    """A copy of an invoice document (same order_ref and lines), entered and posted at `issued`.
+
+    The copy keeps the original's payment term, so its due date looks like any other invoice's.
+    """
     world = state.world
     copy_inv = WInvoice(
         key=world.mint("inv"),
         number=world.mint("invno") if new_number else original.number,
         customer=original.customer,
         issued=issued,
-        due=original.due,
+        due=issued + (original.due - original.issued),
         currency=original.currency,
         lines=copy.deepcopy(original.lines),
         display_tz=world.tl.tz,

@@ -345,8 +345,9 @@ def id_problems(public: PublicEpisode) -> list[str]:
         for ref in pay.invoice_refs or ():
             if ref not in numbers:
                 problems.append(f"payment references unknown invoice_id {ref}")
+    known_payments = set(pay_ids)
     for row in public.ledger:
-        if row.payment_id is not None and row.payment_id not in set(pay_ids):
+        if row.payment_id is not None and row.payment_id not in known_payments:
             problems.append("ledger row references unknown payment_id")
             break
     stamps: list[str] = [r.timestamp for r in public.ledger]
