@@ -172,6 +172,28 @@ SCENES: list[dict] = [
         "hold": 6,
     },
     {
+        "caption": "Проверки жюри через judge_adapter.py",
+        "sub": "Опубликованные определения: контракт, 20 закрытых эпизодов, matcher и награда, пары",
+        "steps": [
+            {
+                "sh": "uv run python -m auditgym judge-check",
+                "line_delay": 0.7,
+                "highlight": [
+                    (r"\b(\d+)/\1\b", "good"),
+                    (r"FAIL", "bad"),
+                ],
+                "expect": [
+                    r"Block 1 contract C01-C20\s+\d+/20",
+                    r"Block 2 closed episodes D01-D20\s+\d+/20",
+                    r"Block 3 matcher and reward T01-T20\s+\d+/20",
+                    r"Block 4 pairs P01-P20\s+\d+/20",
+                ],
+            },
+        ],
+        "font": 34,
+        "hold": 8,
+    },
+    {
         "caption": "Проверка одной командой",
         "sub": "Контейнер без сети, 2 CPU, 4 ГБ · сохранённый прогон reports/docker_check.txt",
         "steps": [
