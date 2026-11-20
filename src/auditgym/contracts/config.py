@@ -7,6 +7,9 @@ Error types are configured independently (G01). `clean: true` forces a clean com
 Interacting scenarios are configured separately (G02); each one adds a fixed number of issues
 (INTERACTION_ISSUE_COUNTS).
 
+The `presentation` section (`id_salt`, `order`) changes only public IDs and row order, never the
+content of the episode: the generator's random streams are keyed without it.
+
 `max_issues` (<= 12, D01) caps the total. The generator samples interaction counts first, then
 per-type error counts, and if the total exceeds `max_issues` it removes randomly chosen
 per-type errors (never interactions) until it fits. Validation requires that the minimum

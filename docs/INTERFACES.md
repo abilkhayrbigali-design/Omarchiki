@@ -10,14 +10,18 @@
 from auditgym.episode.generate import generate_episode, generate_with_clean
 
 episode: Episode = generate_episode(seed: int, config: dict | None = None)
-episode, clean = generate_with_clean(seed: int, config: dict | None = None)
+episode, clean = generate_with_clean(seed: int, config: dict | None = None, *, verify_fn=None)
 #   clean: PublicEpisode — те же книги до внесения ошибок, с теми же публичными ID
 ```
+
+- Ключ случайных потоков строится от `seed`, конфига без секции `presentation`, версии генератора и номера попытки. Поэтому `presentation.id_salt` и `presentation.order` меняют только ID и порядок строк, а не содержание эпизода.
+- `provenance["changes"]` — упорядоченный список изменений на уровне записей с публичными ID: `{"issue_ids", "table", "id", "before", "after"}`, где `before = null` для добавленной записи и `after = null` для удалённой. Откат изменений в обратном порядке на опубликованных данных воспроизводит чистые книги.
+- `provenance["scenarios"]` — список взаимодействующих сценариев с их `issue_ids`.
 
 - `config` — сырой или нормализованный словарь; внутри всегда `normalize_config`.
 - Детерминизм: одинаковые `seed`, `config`, `GENERATOR_VERSION` дают побайтово одинаковый эпизод (`contracts.io.fingerprint`).
 - Самопроверка: `generate_episode(..., verify_fn=None)`. Если передан `verify_fn(public) -> tuple[Issue, ...]`, генератор сравнивает его ответ с эталоном по `(type, affected_ids, expected_amount_minor, currency)` и при расхождении повторяет попытку со следующим `attempt`. Число попыток пишется в `provenance["attempts"]`. Интегратор подключит решатель WP5.
-- Инварианты: `auditgym.books.invariants.check(public: PublicEpisode) -> list[Violation]`, где `Violation` содержит код инварианта (`I1`…`I7`) и ID записей. На `clean` — пустой список.
+- Инварианты: `auditgym.books.invariants.check(public: PublicEpisode) -> list[Violation]`, где `Violation` содержит `code` (`I1`…`I7`), `ids`, `amount_minor`, `currency`, `detail`. На `clean` — пустой список.
 
 ## WP3 — среда (`env/`, `server/`, `client.py`)
 
