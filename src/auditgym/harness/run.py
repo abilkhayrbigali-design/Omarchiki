@@ -161,12 +161,15 @@ def aggregate(runs: Iterable[EpisodeRun]) -> dict[str, Any]:
 
     out: dict[str, Any] = {}
     for (policy, category), rows in sorted(buckets.items()):
+        # On clean books S07 sets P = R = 0 even for a perfect (empty) answer, so the means of
+        # P and R are taken over episodes that have errors only; F1 and reward over all.
+        with_errors = [r for r in rows if r["category"] != "clean"]
         out.setdefault(policy, {})[category] = {
             "episodes": len(rows),
             "reward": mean(rows, "reward"),
             "experimental_reward": mean(rows, "experimental_reward"),
-            "precision": mean(rows, "precision"),
-            "recall": mean(rows, "recall"),
+            "precision": mean(with_errors, "precision"),
+            "recall": mean(with_errors, "recall"),
             "f1": mean(rows, "f1"),
             "steps": mean(rows, "steps"),
             "seconds": mean(rows, "seconds"),
