@@ -44,7 +44,8 @@ obs, reward, terminated, truncated, info = env.step(action: dict)
   | `calculator` | `{"value": "<десятичная строка>"}` |
   | `submit` | `{"submitted": true, "findings_count": n}` — ничего о правильности |
 - `inspection_steps` — все шаги до `submit`, включая ошибочные. При исчерпании 100 шагов: `truncated=true`, оценка пустого ответа.
-- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`; `GradeResult.to_log()` пишется в `grader_log`.
+- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`. В обоих режимах, если задан `grader_log`, туда пишется `GradeResult.to_log()`.
+- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа. Его вызывает harness при превышении 60 секунд; сама среда часы не читает. В протоколе сервера — `{"op": "truncate"}`.
 - Сервер: `python -m auditgym.server` читает JSON-строки `{"op": "reset", "seed", "config"}` и `{"op": "step", "action"}`, отвечает JSON-строками. `auditgym.client.RemoteEnv` — те же `reset/step` поверх него.
 
 ## WP4 — оценщик (`grading/`)
