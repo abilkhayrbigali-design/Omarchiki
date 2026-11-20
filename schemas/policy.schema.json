@@ -155,21 +155,40 @@
         "period_cutoff"
       ],
       "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "rule",
+        "sets"
+      ],
+      "properties": {
+        "sets": {
+          "type": "object",
+          "required": [
+            "duplicate_invoice",
+            "payment_allocation",
+            "fx_conversion",
+            "period_cutoff"
+          ]
+        }
+      }
     }
   },
   "required": [
-    "schema_version",
-    "base_currency",
-    "timezone",
-    "period",
-    "accounts",
     "account_roles",
-    "fx",
+    "accounts",
     "allocation",
+    "base_currency",
     "duplicates",
+    "evidence",
+    "fx",
+    "issue_types",
+    "period",
     "rounding",
-    "tolerances",
-    "issue_types"
+    "schema_version",
+    "timezone",
+    "tolerances"
   ],
   "additionalProperties": false,
   "description": "policy.json: the rules needed to recompute expected books from documents (docs/DOMAIN.md section 4)."

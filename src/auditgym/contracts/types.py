@@ -9,9 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+_NULL_SPELLINGS = ("", "null", "NULL", "None")
+
 
 def _opt_str(value: Any) -> str | None:
-    if value is None or value == "":
+    """Optional id: None, or an empty/'null' CSV cell, is a missing link (D09)."""
+    if value is None or value in _NULL_SPELLINGS:
         return None
     if not isinstance(value, str):
         raise TypeError(f"expected string or null, got {type(value).__name__}")
@@ -23,8 +26,10 @@ def _int(value: Any) -> int:
         raise TypeError("bool is not an integer amount")
     if isinstance(value, int):
         return value
-    if isinstance(value, str) and value.lstrip("-").isdigit():
-        return int(value)
+    if isinstance(value, float) and value.is_integer() and abs(value) <= 2**53:
+        return int(value)  # JSON writers may emit 123.0 for an integer
+    if isinstance(value, str) and value.strip().lstrip("-").isdigit():
+        return int(value.strip())
     raise TypeError(f"expected integer, got {value!r}")
 
 

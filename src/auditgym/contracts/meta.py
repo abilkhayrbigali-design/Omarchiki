@@ -35,6 +35,20 @@ ISSUE_TYPE_DESCRIPTIONS: dict[str, str] = {
     ),
 }
 
+EVIDENCE_RULES: dict[str, str] = {
+    "duplicate_invoice": "doc_id of every copy in the duplicate group.",
+    "payment_allocation": (
+        "doc_id of the payment, doc_id of the invoice, row_id of every ledger row of the payment's "
+        "entry in the payment currency (CASH or FX_CLEARING, AR, UNAPPLIED), and doc_id of every "
+        "earlier payment that references the same invoice."
+    ),
+    "fx_conversion": (
+        "doc_id of the payment, row_id of the payment's CASH row (or of its FX_CLEARING row in the "
+        "base currency), and the id of the correct fx row: 'YYYY-MM-DD/<payment currency>/<base>'."
+    ),
+    "period_cutoff": "doc_id of the document and the row_id of any one row of its ledger entry.",
+}
+
 ACCOUNT_ROLE_DESCRIPTIONS: dict[str, str] = {
     "CASH": "bank account, base currency",
     "AR": "accounts receivable, invoice currency",
@@ -70,6 +84,10 @@ def make_policy(
             "boundaries": "start_inclusive_end_exclusive",
             "document_date": "local date of the document timestamp in the company timezone",
             "posting_date": "local date of the ledger entry timestamp in the company timezone",
+            "classes": (
+                "each timestamp is before, in or after the reporting period; a cut-off error is a "
+                "document and its ledger entry in different classes"
+            ),
         },
         "accounts": dict(sorted(accounts.items())),
         "account_roles": dict(sorted(ACCOUNT_ROLE_DESCRIPTIONS.items())),
@@ -97,14 +115,39 @@ def make_policy(
                 "the whole amount goes to UNAPPLIED. Negative payments (refunds) apply the same "
                 "rule to negative open balances (credit notes)."
             ),
+            "open_balance": (
+                "total_minor of the invoice minus amounts applied to it by earlier payments, both "
+                "taken from documents. If several documents share an invoice_id (a duplicate), the "
+                "invoice is counted once, from the document with the earliest issued_at."
+            ),
+            "currency": "a payment references only invoices in its own currency",
+            "applied_in_books": (
+                "credits to AR (debits for refunds) with the payment_id and the invoice_id; an "
+                "amount booked to another invoice is where the shortfall went, not a second issue"
+            ),
         },
         "duplicates": {
             "rule": "one_invoice_per_order_ref",
             "description": "Each order_ref is invoiced once; each invoice_id belongs to one document.",
+            "grouping": (
+                "documents linked by a shared invoice_id or a shared order_ref form one group, "
+                "transitively (A~B, B~C -> one group of 3 copies)"
+            ),
         },
-        "rounding": {"money": "integer_minor_units", "fx": rounding},
+        "rounding": {
+            "money": "integer_minor_units",
+            "fx": rounding,
+            "note": "half_up rounds halves away from zero, also for negative amounts",
+        },
         "tolerances": {"default_minor": 0, "fx_conversion_minor": fx_tolerance_minor},
         "issue_types": dict(sorted(ISSUE_TYPE_DESCRIPTIONS.items())),
+        "evidence": {
+            "rule": (
+                "a finding counts only if evidence_ids contain at least one complete evidence set "
+                "for its issue; extra ids are allowed up to 10"
+            ),
+            "sets": dict(sorted(EVIDENCE_RULES.items())),
+        },
     }
 
 

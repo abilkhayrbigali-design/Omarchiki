@@ -59,3 +59,20 @@ def test_hash_is_stable_and_sensitive():
 def test_shipped_configs_valid(path):
     cfg = load_config(path)
     assert cfg["config_id"] == path.name.removesuffix(".json")
+
+
+def test_secret_salt_changes_content_and_is_reproducible():
+    from auditgym.contracts.io import fingerprint
+    from auditgym.episode.generate import generate_episode
+
+    plain = normalize_config({"config_id": "s"})
+    salted = normalize_config({"config_id": "s", "secret_salt": "organizer-private"})
+    a, b = generate_episode(5, plain), generate_episode(5, salted)
+    assert a.public.episode_id != b.public.episode_id
+    assert [r.debit_minor for r in a.public.ledger] != [r.debit_minor for r in b.public.ledger]
+    assert fingerprint(generate_episode(5, salted)) == fingerprint(b)
+
+
+def test_secret_salt_validated():
+    with pytest.raises(ConfigError):
+        normalize_config({"secret_salt": 5})

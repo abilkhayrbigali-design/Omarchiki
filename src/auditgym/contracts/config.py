@@ -10,6 +10,12 @@ Interacting scenarios are configured separately (G02); each one adds a fixed num
 The `presentation` section (`id_salt`, `order`) changes only public IDs and row order, never the
 content of the episode: the generator's random streams are keyed without it.
 
+`secret_salt` is part of the stream key. The generator is open source, so with an empty salt
+anyone who knows the config can regenerate an episode for every candidate seed and recover the
+truth by brute force. For a closed evaluation the organizer sets a private `secret_salt` in the
+config given to the grader process; the agent never sees the config, so the episode cannot be
+regenerated. Same seed + same config (including the salt) still reproduces the episode exactly.
+
 `max_issues` (<= 12, D01) caps the total. The generator samples interaction counts first, then
 per-type error counts, and if the total exceeds `max_issues` it removes randomly chosen
 per-type errors (never interactions) until it fits. Validation requires that the minimum
@@ -54,6 +60,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "timezone_pool": ["+05:00", "+03:00", "+06:00", "+01:00", "-04:00"],
     "period": {"year_pool": [2025, 2026], "margin_days": 21},
     "clean": False,
+    "secret_salt": "",
     "max_issues": MAX_ERRORS_PER_EPISODE,
     "errors": {t: [0, 2] for t in ISSUE_TYPES},
     "interactions": {s: [0, 1] for s in INTERACTION_SCENARIOS},
@@ -168,6 +175,8 @@ def normalize_config(raw: dict[str, Any] | None = None) -> dict[str, Any]:
 
     if not isinstance(cfg["clean"], bool):
         raise ConfigError("config.clean: expected true or false")
+    if not isinstance(cfg["secret_salt"], str) or len(cfg["secret_salt"]) > 256:
+        raise ConfigError("config.secret_salt: expected a string of at most 256 characters")
 
     _check_keys(cfg["errors"], ISSUE_TYPES, "config.errors")
     for key in ISSUE_TYPES:

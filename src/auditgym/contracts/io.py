@@ -47,15 +47,43 @@ def private_files(private: PrivateEpisode) -> dict[str, bytes]:
     return {name: text.encode("utf-8") for name, text in files.items()}
 
 
+def _text(data: bytes) -> str:
+    """UTF-8 text without a byte-order mark."""
+    return data.decode("utf-8-sig")
+
+
+def _csv_rows(text: str, columns: tuple[str, ...], name: str) -> list[dict[str, str]]:
+    """Rows keyed by column name. Column order may differ; blank lines are ignored."""
+    lines = "\n".join(line for line in text.splitlines() if line.strip())
+    header, rows = canon.read_csv(lines)
+    header = [h.strip() for h in header]
+    if sorted(header) != sorted(columns):
+        raise ValueError(f"{name}: expected columns {list(columns)}, got {header}")
+    return [{h.strip(): v for h, v in row.items()} for row in rows]
+
+
+def check_unique_ids(public: PublicEpisode) -> None:
+    """Record ids must be globally unique (get_record/get_document and evidence rely on it)."""
+    seen: dict[str, str] = {}
+    for kind, ids in (
+        ("ledger row", (r.row_id for r in public.ledger)),
+        ("invoice document", (d.doc_id for d in public.invoices)),
+        ("payment document", (d.doc_id for d in public.payments)),
+        ("fx row", (f.rate_id for f in public.fx)),
+    ):
+        for value in ids:
+            if value in seen:
+                raise ValueError(
+                    f"id {value!r} is used by a {seen[value]} and a {kind}; ids must be unique"
+                )
+            seen[value] = kind
+
+
 def parse_public(files: dict[str, bytes]) -> PublicEpisode:
-    text = {name: data.decode("utf-8") for name, data in files.items()}
-    header, ledger_rows = canon.read_csv(text["ledger.csv"])
-    if tuple(header) != LEDGER_COLUMNS:
-        raise ValueError("ledger.csv: unexpected header")
-    fx_header, fx_rows = canon.read_csv(text["fx.csv"])
-    if tuple(fx_header) != FX_COLUMNS:
-        raise ValueError("fx.csv: unexpected header")
-    return PublicEpisode(
+    text = {name: _text(data) for name, data in files.items()}
+    ledger_rows = _csv_rows(text["ledger.csv"], LEDGER_COLUMNS, "ledger.csv")
+    fx_rows = _csv_rows(text["fx.csv"], FX_COLUMNS, "fx.csv")
+    public = PublicEpisode(
         manifest=canon.loads(text["manifest.json"]),
         policy=canon.loads(text["policy.json"]),
         ledger=tuple(LedgerRow.from_dict(r) for r in ledger_rows),
@@ -63,12 +91,15 @@ def parse_public(files: dict[str, bytes]) -> PublicEpisode:
         payments=tuple(Payment.from_dict(d) for d in canon.read_jsonl(text["payments.jsonl"])),
         fx=tuple(FxRate.from_dict(r) for r in fx_rows),
     )
+    check_unique_ids(public)
+    return public
 
 
 def parse_private(files: dict[str, bytes]) -> PrivateEpisode:
+    provenance = files.get("provenance.json")
     return PrivateEpisode(
-        truth=Truth.from_dict(canon.loads(files["truth.json"].decode("utf-8"))),
-        provenance=canon.loads(files["provenance.json"].decode("utf-8")),
+        truth=Truth.from_dict(canon.loads(_text(files["truth.json"]))),
+        provenance=canon.loads(_text(provenance)) if provenance is not None else {},
     )
 
 
@@ -100,9 +131,12 @@ def read_public(directory: str | Path) -> PublicEpisode:
 
 def read_private(directory: str | Path) -> PrivateEpisode:
     priv = Path(directory) / "private"
-    return parse_private(
-        {name: (priv / name).read_bytes() for name in ("truth.json", "provenance.json")}
-    )
+    files = {
+        name: (priv / name).read_bytes()
+        for name in ("truth.json", "provenance.json")
+        if (priv / name).exists()
+    }
+    return parse_private(files)
 
 
 def read_episode(directory: str | Path) -> Episode:
