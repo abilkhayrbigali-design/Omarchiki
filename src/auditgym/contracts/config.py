@@ -20,6 +20,19 @@ regenerated. Same seed + same config (including the salt) still reproduces the e
 per-type error counts, and if the total exceeds `max_issues` it removes randomly chosen
 per-type errors (never interactions) until it fits. Validation requires that the minimum
 counts alone fit under `max_issues`.
+
+`variants` (G01) restricts, per error type, the variants the standalone injector of that type may
+produce, e.g. {"variants": {"payment_allocation": ["partial"]}}. Names: ISSUE_VARIANTS. A type
+left out keeps all its variants. It applies to the per-type errors of `errors` only; the
+interacting scenarios keep their fixed shapes. A restricted variant is never replaced by another
+one: the injector picks a record that can carry an allowed variant, or the attempt fails and the
+generator retries. `fx_conversion: ["wrong_pair"]` alone needs a second foreign currency, so the
+world then draws `currencies.foreign_count` from [max(min, 2), max].
+
+The normalized config carries `variants` only when it differs from the default (every variant
+allowed), and then for every type with names in canonical order. A config without `variants`,
+or with exactly the default, normalizes to the same dict as before the section existed, so its
+episodes, stream key and provenance stay byte-identical.
 """
 
 from __future__ import annotations
@@ -81,6 +94,16 @@ DEFAULT_CONFIG: dict[str, Any] = {
 
 _PRESENTATION_ORDERS = ("chronological", "shuffled")
 
+# Variants of each standalone error type, in canonical order (docs/DOMAIN.md, section 6). The
+# injectors draw among the allowed ones in this order, so the default draws stay unchanged.
+ISSUE_VARIANTS: dict[str, tuple[str, ...]] = {
+    "duplicate_invoice": ("same_invoice_id", "new_invoice_id"),
+    "payment_allocation": ("none", "partial", "other_invoice"),
+    "fx_conversion": ("wrong_date", "wrong_pair"),
+    "period_cutoff": ("invoice_posted_late", "payment_posted_late"),
+}
+DEFAULT_VARIANTS: dict[str, list[str]] = {t: list(ISSUE_VARIANTS[t]) for t in ISSUE_TYPES}
+
 
 def _range(value: Any, where: str) -> list[int]:
     if isinstance(value, bool):
@@ -130,9 +153,56 @@ def _currency_list(value: Any, where: str) -> list[str]:
     return list(value)
 
 
+def _variants(value: Any) -> dict[str, list[str]] | None:
+    """Validated `variants` for every type in canonical order; None when it is the default."""
+    _check_keys(value, ISSUE_TYPES, "config.variants")
+    out: dict[str, list[str]] = {}
+    for t in ISSUE_TYPES:
+        names = ISSUE_VARIANTS[t]
+        if t not in value:
+            out[t] = list(names)
+            continue
+        where = f"config.variants.{t}"
+        chosen = value[t]
+        if not isinstance(chosen, list) or not chosen:
+            raise ConfigError(f"{where}: expected a non-empty list of variants of {list(names)}")
+        for name in chosen:
+            if not isinstance(name, str) or name not in names:
+                raise ConfigError(
+                    f"{where}: unknown variant {name!r}, expected one of {list(names)}"
+                )
+        if len(set(chosen)) != len(chosen):
+            raise ConfigError(f"{where}: duplicate variant names")
+        out[t] = [name for name in names if name in chosen]
+    return None if out == DEFAULT_VARIANTS else out
+
+
+def allowed_variants(cfg: dict[str, Any], issue_type: str) -> tuple[str, ...]:
+    """Variants the standalone injector of `issue_type` may produce, in canonical order."""
+    chosen = cfg.get("variants")
+    if chosen is None:
+        return ISSUE_VARIANTS[issue_type]
+    return tuple(chosen[issue_type])
+
+
+def needs_two_foreign(cfg: dict[str, Any]) -> bool:
+    """`fx_conversion: ["wrong_pair"]` alone takes the wrong rate from a second foreign currency."""
+    return (
+        allowed_variants(cfg, "fx_conversion") == ("wrong_pair",)
+        and cfg["errors"]["fx_conversion"][1] > 0
+    )
+
+
 def normalize_config(raw: dict[str, Any] | None = None) -> dict[str, Any]:
     """Merge `raw` over DEFAULT_CONFIG, validate, and return the normalized config."""
-    cfg = _merge(DEFAULT_CONFIG, raw or {}, "config")
+    raw = raw or {}
+    variants = None
+    if isinstance(raw, dict) and "variants" in raw:
+        variants = _variants(raw["variants"])
+        raw = {k: v for k, v in raw.items() if k != "variants"}
+    cfg = _merge(DEFAULT_CONFIG, raw, "config")
+    if variants is not None:
+        cfg["variants"] = variants
 
     if not isinstance(cfg["config_id"], str) or not cfg["config_id"]:
         raise ConfigError("config.config_id: expected a non-empty string")
@@ -217,6 +287,11 @@ def normalize_config(raw: dict[str, Any] | None = None) -> dict[str, Any]:
     if needs_fx and cur["foreign_count"][0] < 1:
         raise ConfigError(
             "config.currencies.foreign_count: min must be >= 1 when FX errors or FX distractors are enabled"
+        )
+    if needs_two_foreign(cfg) and cur["foreign_count"][1] < 2:
+        raise ConfigError(
+            "config.variants.fx_conversion: wrong_pair alone needs two foreign currencies, "
+            "currencies.foreign_count max must be >= 2"
         )
 
     pres = cfg["presentation"]

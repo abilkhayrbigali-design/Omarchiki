@@ -4,6 +4,12 @@ Each carrier is one regular invoice (plus its payments), drawn like any other re
 conditioned on what its injector needs, then verified against that injector's candidate pool and
 reserved for it. Injectors pick uniformly among unreserved candidates and their own carriers, so a
 carrier is neither guaranteed to receive the error nor distinguishable from other records.
+
+When config `variants` restricts an injector, its carrier is built and verified for the allowed
+variants (World.variants): a cut-off carrier is an invoice or a payment as allowed, an FX carrier
+for wrong_pair alone is verified against the wrong-pair pool, an allocation carrier for
+other_invoice alone comes with a second invoice of the same customer. With every variant allowed
+the draws are unchanged.
 """
 
 from __future__ import annotations
@@ -74,10 +80,18 @@ def carrier_dup(world: World, s: Stream) -> list[str] | None:
     return [inv.key]
 
 
+def _cutoff_invoice(world: World, s: Stream) -> bool:
+    """Invoice or payment carrier: a fair coin, or the only document kind the variants allow."""
+    kinds = world.allowed_variants("period_cutoff")
+    if len(kinds) == 1:
+        return kinds == ("invoice_posted_late",)
+    return s.chance(1, 2)
+
+
 def carrier_cutoff(world: World, s: Stream) -> list[str] | None:
     tl = world.tl
     b = s.choice(tl.boundaries())
-    if s.chance(1, 2):
+    if _cutoff_invoice(world, s):
         issued = _issue(world, s, b - BOUNDARY_WINDOW, b)
         if issued is None:
             return None
@@ -122,6 +136,20 @@ def carrier_fx(world: World, s: Stream) -> list[str] | None:
 
 
 def carrier_alloc(world: World, s: Stream) -> list[str] | None:
+    """The payment/invoice pair below. When other_invoice is the only allowed allocation variant,
+    also an ordinary open invoice of the same customer (not reserved, an invoice document like
+    any other) for the payment to be misapplied to; auditgym.world.sizing counts it."""
+    keys = _alloc_pair(world, s)
+    if keys is not None and candidates.alloc_needs_other(
+        world.allowed_variants("payment_allocation")
+    ):
+        inv = next(i for i in world.invoices if i.key == keys[1])
+        cust = next(c for c in world.customers if c.key == inv.customer)
+        new_invoice(world, s, tag="regular", customer=cust)
+    return keys
+
+
+def _alloc_pair(world: World, s: Stream) -> list[str] | None:
     """A payment in the period applied to its invoice: the first payment, a later instalment
     that settles the rest, or a later instalment that overpays the rest (remainder unapplied)."""
     tl = world.tl
