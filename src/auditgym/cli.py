@@ -237,6 +237,49 @@ def _cmd_export(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_baselines(args: argparse.Namespace) -> int:
+    """Run the four baselines over many episodes in closed mode; save diagnostics and failures."""
+    from auditgym.episode.generate import generate_episode
+    from auditgym.harness.run import aggregate, run_episode
+
+    cfg = _config(args.config)
+    runs, failures = [], []
+    for seed in range(args.start, args.start + args.seeds):
+        episode = generate_episode(seed, cfg)
+        for name in POLICY_NAMES:
+            run = run_episode(
+                _policy(name, episode),
+                episode,
+                mode="closed",
+                seed=seed,
+                config_id=cfg["config_id"],
+                record=False,
+            )
+            runs.append(run)
+            g = run.grade or {}
+            if name in ("reconcile", "oracle") and (g.get("fn") or g.get("fp") or run.truncated):
+                failures.append(run.summary())
+    report = {
+        "config_id": cfg["config_id"],
+        "seeds": [args.start, args.start + args.seeds - 1],
+        "summary": aggregate(runs),
+        "reconcile_or_oracle_failures": failures[:50],
+        "failure_count": len(failures),
+        "max_steps": {
+            p: max(r.steps for r in runs if r.policy == p) for p in {r.policy for r in runs}
+        },
+    }
+    if args.out:
+        _write_json(Path(args.out), report)
+    _print({k: report[k] for k in ("config_id", "seeds", "failure_count", "max_steps")})
+    for policy, cats in report["summary"].items():
+        a = cats["all"]
+        print(
+            f"  {policy:<16} reward {a['reward']}  F1 {a['f1']}  steps {a['steps']}  truncated {a['truncated']}"
+        )
+    return 0
+
+
 def _cmd_transform(args: argparse.Namespace) -> int:
     from auditgym.contracts.io import read_episode, write_episode
     from auditgym.harness.transform import transform_episode
@@ -375,6 +418,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--start", type=int, default=0)
     p.add_argument("--out", default=None)
     p.set_defaults(func=_cmd_sweep)
+
+    p = sub.add_parser("baselines", help="run the four baselines over many episodes")
+    p.add_argument("--config", default=str(REPO / "configs" / "dev.v1.json"))
+    p.add_argument("--seeds", type=int, default=100)
+    p.add_argument("--start", type=int, default=0)
+    p.add_argument("--out", default=None)
+    p.set_defaults(func=_cmd_baselines)
 
     p = sub.add_parser("export", help="write open train/dev episodes and trajectories.jsonl")
     p.add_argument("--out", default=str(REPO / "episodes"))

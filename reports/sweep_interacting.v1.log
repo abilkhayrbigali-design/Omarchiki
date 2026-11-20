@@ -1,0 +1,42 @@
+{
+  "config_id": "interacting.v1",
+  "counts": {
+    "episodes": 1000,
+    "evidence_sets": 13076,
+    "ok": 1000,
+    "retries": 0
+  },
+  "failures_shown": 0,
+  "generation_seconds": {
+    "max": 0.0359,
+    "mean": 0.02,
+    "min": 0.0118
+  },
+  "issue_types": {
+    "duplicate_invoice": 1495,
+    "fx_conversion": 1477,
+    "payment_allocation": 2491,
+    "period_cutoff": 1459
+  },
+  "seeds": [
+    100000,
+    100999
+  ],
+  "sizes": {
+    "documents": {
+      "max": 124,
+      "mean": 91.366,
+      "min": 56
+    },
+    "issues": {
+      "max": 9,
+      "mean": 6.922,
+      "min": 5
+    },
+    "ledger": {
+      "max": 624,
+      "mean": 424.879,
+      "min": 231
+    }
+  }
+}

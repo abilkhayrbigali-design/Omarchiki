@@ -1,0 +1,43 @@
+{
+  "config_id": "train.v1",
+  "counts": {
+    "clean_episodes": 3,
+    "episodes": 1000,
+    "evidence_sets": 11434,
+    "ok": 1000,
+    "retries": 0
+  },
+  "failures": [],
+  "generation_seconds": {
+    "max": 0.0305,
+    "mean": 0.02,
+    "min": 0.0114
+  },
+  "issue_types": {
+    "duplicate_invoice": 1506,
+    "fx_conversion": 1484,
+    "payment_allocation": 2026,
+    "period_cutoff": 1501
+  },
+  "seeds": [
+    100000,
+    100999
+  ],
+  "sizes": {
+    "documents": {
+      "max": 129,
+      "mean": 90.499,
+      "min": 46
+    },
+    "issues": {
+      "max": 12,
+      "mean": 6.517,
+      "min": 0
+    },
+    "ledger": {
+      "max": 631,
+      "mean": 427.818,
+      "min": 229
+    }
+  }
+}

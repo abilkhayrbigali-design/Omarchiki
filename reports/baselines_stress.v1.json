@@ -1,0 +1,169 @@
+{
+  "config_id": "stress.v1",
+  "failure_count": 0,
+  "max_steps": {
+    "flag_all": 51,
+    "oracle": 1,
+    "random_explorer": 31,
+    "reconcile": 74
+  },
+  "reconcile_or_oracle_failures": [],
+  "seeds": [
+    400000,
+    400059
+  ],
+  "summary": {
+    "flag_all": {
+      "all": {
+        "episodes": 60,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0069,
+        "steps": 44.0667,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 18,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0069,
+        "steps": 44.5,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 42,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0069,
+        "steps": 43.881,
+        "truncated": 0
+      }
+    },
+    "oracle": {
+      "all": {
+        "episodes": 60,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0004,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 18,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0004,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 42,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0005,
+        "steps": 1.0,
+        "truncated": 0
+      }
+    },
+    "random_explorer": {
+      "all": {
+        "episodes": 60,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0012,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 18,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0011,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 42,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0012,
+        "steps": 31.0,
+        "truncated": 0
+      }
+    },
+    "reconcile": {
+      "all": {
+        "episodes": 60,
+        "experimental_reward": 0.881,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.881,
+        "seconds": 0.0165,
+        "steps": 60.5,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 18,
+        "experimental_reward": 0.8812,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.8812,
+        "seconds": 0.0166,
+        "steps": 60.3889,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 42,
+        "experimental_reward": 0.8809,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.8809,
+        "seconds": 0.0164,
+        "steps": 60.5476,
+        "truncated": 0
+      }
+    }
+  }
+}

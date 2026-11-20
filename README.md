@@ -60,7 +60,8 @@ from auditgym.client import RemoteEnv
 | `python -m auditgym demo --seed 1000` | пошаговый показ эпизода со скриптовой политикой |
 | `python -m auditgym run --policy reconcile --seed 1000 --out runs/t.jsonl` | прогнать политику, записать траекторию |
 | `python -m auditgym sweep --config configs/dev.v1.json --seeds 1000` | прогон генератора по объёму с независимой проверкой |
-| `python -m auditgym jury` | имитация проверки жюри с оценкой по критериям |
+| `python -m auditgym baselines --config configs/dev.v1.json --seeds 300` | четыре базовые политики на многих эпизодах, P, R, F1, возврат, шаги, время |
+| `python -m auditgym jury` | имитация проверки жюри с оценкой по критериям и пробами на трюки |
 | `python -m auditgym transform --input DIR --out DIR2 --salt s` | перестановка строк и смена ID готового эпизода |
 | `python -m auditgym export` | открытые train/dev-эпизоды и `trajectories/trajectories.jsonl` |
 
@@ -78,6 +79,7 @@ from auditgym.client import RemoteEnv
 | `configs/` | версионированные конфигурации и открытые seed |
 | `episodes/` | 10 train- и 10 dev-эпизодов; эталон каждого — в его `private/` |
 | `trajectories/trajectories.jsonl` | записанные траектории базовых политик на train-эпизодах |
+| `reports/` | сохранённые прогоны, из которых взяты все числа записки |
 | `docs/` | [записка о дизайне](docs/DESIGN_NOTE.md), [требования](docs/REQUIREMENTS.md), [доменная модель](docs/DOMAIN.md), [архитектура](docs/ARCHITECTURE.md) |
 
 ## Использованные инструменты

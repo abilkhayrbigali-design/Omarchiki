@@ -1,0 +1,38 @@
+{
+  "config_id": "clean.v1",
+  "counts": {
+    "clean_episodes": 1000,
+    "episodes": 1000,
+    "evidence_sets": 0,
+    "ok": 1000,
+    "retries": 0
+  },
+  "failures": [],
+  "generation_seconds": {
+    "max": 0.0266,
+    "mean": 0.018,
+    "min": 0.0099
+  },
+  "issue_types": {},
+  "seeds": [
+    100000,
+    100999
+  ],
+  "sizes": {
+    "documents": {
+      "max": 121,
+      "mean": 85.978,
+      "min": 52
+    },
+    "issues": {
+      "max": 0,
+      "mean": 0.0,
+      "min": 0
+    },
+    "ledger": {
+      "max": 619,
+      "mean": 412.343,
+      "min": 210
+    }
+  }
+}

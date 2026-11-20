@@ -1,0 +1,217 @@
+{
+  "config_id": "dev.v1",
+  "failure_count": 0,
+  "max_steps": {
+    "flag_all": 26,
+    "oracle": 1,
+    "random_explorer": 31,
+    "reconcile": 45
+  },
+  "reconcile_or_oracle_failures": [],
+  "seeds": [
+    300000,
+    300299
+  ],
+  "summary": {
+    "flag_all": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.003,
+        "steps": 19.2,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 3,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0032,
+        "steps": 20.6667,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 84,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.003,
+        "steps": 19.5119,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 213,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.003,
+        "steps": 19.0563,
+        "truncated": 0
+      }
+    },
+    "oracle": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": -0.98,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.99,
+        "recall": 0.99,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 3,
+        "experimental_reward": 1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 1.0,
+        "seconds": 0.0002,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 84,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 213,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      }
+    },
+    "random_explorer": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": -0.9806,
+        "f1": 0.01,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -0.9806,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 3,
+        "experimental_reward": 0.94,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.94,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 84,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0011,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 213,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      }
+    },
+    "reconcile": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": 0.9352,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.99,
+        "recall": 0.99,
+        "reward": 0.9352,
+        "seconds": 0.0072,
+        "steps": 33.4233,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 3,
+        "experimental_reward": 0.9393,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.9393,
+        "seconds": 0.0081,
+        "steps": 31.3333,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 84,
+        "experimental_reward": 0.9365,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.9365,
+        "seconds": 0.0072,
+        "steps": 32.75,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 213,
+        "experimental_reward": 0.9346,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.9346,
+        "seconds": 0.0072,
+        "steps": 33.7183,
+        "truncated": 0
+      }
+    }
+  }
+}

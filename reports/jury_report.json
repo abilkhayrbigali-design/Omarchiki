@@ -1,0 +1,735 @@
+{
+  "K1": [
+    {
+      "check": "K1.01",
+      "detail": "first observation valid, 100 steps",
+      "ok": true
+    },
+    {
+      "check": "K1.02",
+      "detail": "5-tuple, zero reward",
+      "ok": true
+    },
+    {
+      "check": "K1.03",
+      "detail": "19 pages cover the ledger exactly once",
+      "ok": true
+    },
+    {
+      "check": "K1.04",
+      "detail": "same cursor -> same page",
+      "ok": true
+    },
+    {
+      "check": "K1.05",
+      "detail": "limit 51 rejected, step spent",
+      "ok": true
+    },
+    {
+      "check": "K1.06",
+      "detail": "unknown table",
+      "ok": true
+    },
+    {
+      "check": "K1.07",
+      "detail": "unknown id, step spent",
+      "ok": true
+    },
+    {
+      "check": "K1.08",
+      "detail": "unknown action",
+      "ok": true
+    },
+    {
+      "check": "K1.09",
+      "detail": "malformed actions -> ['invalid_arguments', 'invalid_arguments', 'invalid_arguments', 'invalid_arguments']",
+      "ok": true
+    },
+    {
+      "check": "K1.10",
+      "detail": "summary vs full document",
+      "ok": true
+    },
+    {
+      "check": "K1.11",
+      "detail": "calculator -> {'value': '2.8'}",
+      "ok": true
+    },
+    {
+      "check": "K1.12",
+      "detail": "code rejected: ['calculator_error', 'calculator_error', 'calculator_error', 'calculator_error', 'calculator_error', 'calculator_error']",
+      "ok": true
+    },
+    {
+      "check": "K1.13",
+      "detail": "submit terminates",
+      "ok": true
+    },
+    {
+      "check": "K1.14",
+      "detail": "truncated after 100",
+      "ok": true
+    },
+    {
+      "check": "K1.15",
+      "detail": "step after end rejected",
+      "ok": true
+    },
+    {
+      "check": "K1.16",
+      "detail": "second submit ignored",
+      "ok": true
+    },
+    {
+      "check": "K1.17",
+      "detail": "closed mode withholds the reward, grader keeps it",
+      "ok": true
+    },
+    {
+      "check": "K1.18",
+      "detail": "open mode reward 1.0",
+      "ok": true
+    },
+    {
+      "check": "K1.19",
+      "detail": "invalid structure -> -1",
+      "ok": true
+    },
+    {
+      "check": "K1.20",
+      "detail": "blind swap equal, markers found: []",
+      "ok": true
+    }
+  ],
+  "K2": [
+    {
+      "attempts": 1,
+      "check": "K2.clean.84739255",
+      "detail": "",
+      "issues": 0,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.clean.86740186",
+      "detail": "",
+      "issues": 0,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.clean.31606460",
+      "detail": "",
+      "issues": 0,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.clean.57183951",
+      "detail": "",
+      "issues": 0,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.clean.47305271",
+      "detail": "",
+      "issues": 0,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.interacting.70233985",
+      "detail": "",
+      "issues": 7,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.interacting.55686727",
+      "detail": "",
+      "issues": 7,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.interacting.11835955",
+      "detail": "",
+      "issues": 5,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.interacting.73913944",
+      "detail": "",
+      "issues": 7,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.interacting.51326599",
+      "detail": "",
+      "issues": 6,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.61971056",
+      "detail": "",
+      "issues": 4,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.36574999",
+      "detail": "",
+      "issues": 4,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.67964309",
+      "detail": "",
+      "issues": 4,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.87726329",
+      "detail": "",
+      "issues": 5,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.75117760",
+      "detail": "",
+      "issues": 4,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.41993255",
+      "detail": "",
+      "issues": 7,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.61174972",
+      "detail": "",
+      "issues": 3,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.77133321",
+      "detail": "",
+      "issues": 6,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.81758943",
+      "detail": "",
+      "issues": 5,
+      "ok": true
+    },
+    {
+      "attempts": 1,
+      "check": "K2.errors.13769190",
+      "detail": "",
+      "issues": 5,
+      "ok": true
+    }
+  ],
+  "K3": [
+    {
+      "check": "K3.01",
+      "detail": "oracle reward 1.0",
+      "ok": true
+    },
+    {
+      "check": "K3.02",
+      "detail": "full answer beats silence",
+      "ok": true
+    },
+    {
+      "check": "K3.03",
+      "detail": "silence beats false accusations",
+      "ok": true
+    },
+    {
+      "check": "K3.04",
+      "detail": "silence on clean books 1.0",
+      "ok": true
+    },
+    {
+      "check": "K3.05",
+      "detail": "duplicates bring no gain",
+      "ok": true
+    },
+    {
+      "check": "K3.06",
+      "detail": "flag-all reward -1.0",
+      "ok": true
+    },
+    {
+      "check": "K3.07",
+      "detail": "10 vs 50 steps: 0.98 vs 0.9",
+      "ok": true
+    },
+    {
+      "check": "K3.08",
+      "detail": "guessed ids earn nothing",
+      "ok": true
+    },
+    {
+      "check": "K3.09",
+      "detail": "no evidence -> no TP",
+      "ok": true
+    },
+    {
+      "check": "K3.10",
+      "detail": "partial evidence -> no TP",
+      "ok": true
+    },
+    {
+      "check": "K3.11",
+      "detail": "wrong currency -> no TP",
+      "ok": true
+    },
+    {
+      "check": "K3.12",
+      "detail": "tolerance edge",
+      "ok": true
+    },
+    {
+      "check": "K3.13",
+      "detail": "wrong type -> FP + FN",
+      "ok": true
+    },
+    {
+      "check": "K3.14",
+      "detail": "resubmission cannot improve",
+      "ok": true
+    },
+    {
+      "check": "K3.15",
+      "detail": "invalid input rewards [-1.0, -1.0, -1.0, -1.0]",
+      "ok": true
+    },
+    {
+      "check": "K3.16",
+      "detail": "timeout graded as empty: -1.0",
+      "ok": true
+    },
+    {
+      "check": "K3.17",
+      "detail": "reward bounded -1.0",
+      "ok": true
+    },
+    {
+      "check": "K3.18",
+      "detail": "order independent",
+      "ok": true
+    },
+    {
+      "check": "K3.19",
+      "detail": "persuasive text has no effect",
+      "ok": true
+    },
+    {
+      "check": "K3.20",
+      "detail": "more than 30 findings -> invalid",
+      "ok": true
+    }
+  ],
+  "K4": [
+    {
+      "check": "K4.01",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.02",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.03",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.04",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.05",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.06",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.07",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.08",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.09",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.10",
+      "detail": "same seed and actions -> same trajectory and reward",
+      "ok": true
+    },
+    {
+      "check": "K4.11",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.12",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.13",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.14",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.15",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.16",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.17",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.18",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.19",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    },
+    {
+      "check": "K4.20",
+      "detail": "oracle 1.0 vs 1.0; solver answer preserved: True",
+      "ok": true
+    }
+  ],
+  "K5": [
+    {
+      "item": "one-command run",
+      "points": 2,
+      "where": "README + Dockerfile"
+    },
+    {
+      "item": "versioned configs",
+      "points": 2,
+      "where": "configs/*.v1.json"
+    },
+    {
+      "item": "trajectory logs",
+      "points": 2,
+      "where": "trajectories/trajectories.jsonl"
+    },
+    {
+      "item": "measured failure analysis",
+      "points": 0,
+      "where": "DESIGN_NOTE"
+    },
+    {
+      "item": "honest limitations",
+      "points": 0,
+      "where": "DESIGN_NOTE"
+    }
+  ],
+  "baselines": {
+    "flag_all": {
+      "all": {
+        "episodes": 20,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0026,
+        "steps": 16.3,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 5,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0019,
+        "steps": 11.8,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 10,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0031,
+        "steps": 19.6,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 5,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0023,
+        "steps": 14.2,
+        "truncated": 0
+      }
+    },
+    "oracle": {
+      "all": {
+        "episodes": 20,
+        "experimental_reward": -0.5,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.75,
+        "recall": 0.75,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 5,
+        "experimental_reward": 1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 1.0,
+        "seconds": 0.0002,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 10,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 5,
+        "experimental_reward": -1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 1.0,
+        "seconds": 0.0003,
+        "steps": 1.0,
+        "truncated": 0
+      }
+    },
+    "random_explorer": {
+      "all": {
+        "episodes": 20,
+        "experimental_reward": -0.515,
+        "f1": 0.25,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -0.515,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 5,
+        "experimental_reward": 0.94,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.94,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 10,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 5,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      }
+    },
+    "reconcile": {
+      "all": {
+        "episodes": 20,
+        "experimental_reward": 0.9458,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.75,
+        "recall": 0.75,
+        "reward": 0.9458,
+        "seconds": 0.0065,
+        "steps": 28.1,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 5,
+        "experimental_reward": 0.9636,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.9636,
+        "seconds": 0.0041,
+        "steps": 19.2,
+        "truncated": 0
+      },
+      "errors": {
+        "episodes": 10,
+        "experimental_reward": 0.9382,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.9382,
+        "seconds": 0.0081,
+        "steps": 31.9,
+        "truncated": 0
+      },
+      "interacting": {
+        "episodes": 5,
+        "experimental_reward": 0.9432,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.9432,
+        "seconds": 0.0057,
+        "steps": 29.4,
+        "truncated": 0
+      }
+    }
+  },
+  "jury_seed": 20261122,
+  "score_estimate": {
+    "K1_contract_isolation": 25.0,
+    "K2_data_truth": 25.0,
+    "K3_reward_robustness": 25.0,
+    "K4_reproducibility": 15.0,
+    "K5_engineering": 6,
+    "total": 96.0
+  },
+  "trick_probes": {
+    "big_fx_moves": {
+      "f1_micro": 0.0,
+      "fn": 274,
+      "fp": 27,
+      "mean_reward": -1.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "tp": 0
+    },
+    "posting_date_fx": {
+      "f1_micro": 0.16,
+      "fn": 224,
+      "fp": 301,
+      "mean_reward": -0.597,
+      "precision": 0.142,
+      "recall": 0.182,
+      "tp": 50
+    },
+    "same_amount_duplicates": {
+      "f1_micro": 0.211,
+      "fn": 220,
+      "fp": 185,
+      "mean_reward": -0.636,
+      "precision": 0.226,
+      "recall": 0.197,
+      "tp": 54
+    },
+    "unapplied_means_error": {
+      "f1_micro": 0.3,
+      "fn": 211,
+      "fp": 83,
+      "mean_reward": -0.392,
+      "precision": 0.432,
+      "recall": 0.23,
+      "tp": 63
+    },
+    "utc_date_cutoff": {
+      "f1_micro": 0.23,
+      "fn": 236,
+      "fp": 19,
+      "mean_reward": -0.616,
+      "precision": 0.667,
+      "recall": 0.139,
+      "tp": 38
+    }
+  }
+}

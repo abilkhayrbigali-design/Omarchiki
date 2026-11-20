@@ -1,0 +1,121 @@
+{
+  "config_id": "clean.v1",
+  "failure_count": 0,
+  "max_steps": {
+    "flag_all": 17,
+    "oracle": 1,
+    "random_explorer": 31,
+    "reconcile": 34
+  },
+  "reconcile_or_oracle_failures": [],
+  "seeds": [
+    300000,
+    300299
+  ],
+  "summary": {
+    "flag_all": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0019,
+        "steps": 12.1733,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 300,
+        "experimental_reward": -1.0,
+        "f1": 0.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": -1.0,
+        "seconds": 0.0019,
+        "steps": 12.1733,
+        "truncated": 0
+      }
+    },
+    "oracle": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": 1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 1.0,
+        "seconds": 0.0002,
+        "steps": 1.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 300,
+        "experimental_reward": 1.0,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 1.0,
+        "seconds": 0.0002,
+        "steps": 1.0,
+        "truncated": 0
+      }
+    },
+    "random_explorer": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": 0.94,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.94,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 300,
+        "experimental_reward": 0.94,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.94,
+        "seconds": 0.001,
+        "steps": 31.0,
+        "truncated": 0
+      }
+    },
+    "reconcile": {
+      "all": {
+        "episodes": 300,
+        "experimental_reward": 0.9573,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.9573,
+        "seconds": 0.0044,
+        "steps": 22.36,
+        "truncated": 0
+      },
+      "clean": {
+        "episodes": 300,
+        "experimental_reward": 0.9573,
+        "f1": 1.0,
+        "invalid": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "reward": 0.9573,
+        "seconds": 0.0044,
+        "steps": 22.36,
+        "truncated": 0
+      }
+    }
+  }
+}
