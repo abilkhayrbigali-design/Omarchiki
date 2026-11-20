@@ -175,12 +175,90 @@ def big_fx_moves(pub: PublicEpisode) -> list[dict[str, Any]]:
     return out
 
 
+def calendar_month_cutoff(pub: PublicEpisode) -> list[dict[str, Any]]:
+    """A document and its posting in different calendar months (company time) is a cut-off."""
+    tz = parse_offset(pub.manifest["timezone"])
+    first_row: dict[str, Any] = {}
+    for r in pub.ledger:
+        key = r.payment_id or r.invoice_id
+        if key and key not in first_row:
+            first_row[key] = r
+
+    def month(ts: str) -> tuple[int, int]:
+        d = local_date(ts, tz)
+        return (d.year, d.month)
+
+    out = []
+    for inv in pub.invoices:
+        r = first_row.get(inv.invoice_id)
+        if r and month(inv.issued_at) != month(r.timestamp):
+            out.append(
+                _finding(
+                    "period_cutoff",
+                    [inv.doc_id],
+                    inv.total_minor,
+                    inv.currency,
+                    [inv.doc_id, r.row_id],
+                )
+            )
+    for p in pub.payments:
+        r = first_row.get(p.payment_id)
+        if r and month(p.timestamp) != month(r.timestamp):
+            out.append(
+                _finding(
+                    "period_cutoff", [p.doc_id], p.amount_minor, p.currency, [p.doc_id, r.row_id]
+                )
+            )
+    return out
+
+
+def first_payment_shortfall(pub: PublicEpisode) -> list[dict[str, Any]]:
+    """AR credit to the first referenced invoice below min(payment, invoice total) is an error.
+
+    Ignores open balances left by earlier payments.
+    """
+    roles = _roles(pub)
+    inv_by_id: dict[str, Any] = {}
+    for inv in sorted(pub.invoices, key=lambda i: i.issued_at):
+        inv_by_id.setdefault(inv.invoice_id, inv)
+    rows_by_payment: dict[str, list[Any]] = defaultdict(list)
+    for r in pub.ledger:
+        if r.payment_id:
+            rows_by_payment[r.payment_id].append(r)
+    out = []
+    for p in pub.payments:
+        if not p.invoice_refs or p.amount_minor <= 0 or p.invoice_refs[0] not in inv_by_id:
+            continue
+        inv = inv_by_id[p.invoice_refs[0]]
+        rows = [r for r in rows_by_payment[p.payment_id] if r.currency == p.currency]
+        applied = sum(
+            r.credit_minor - r.debit_minor
+            for r in rows
+            if roles.get(r.account) == "AR" and r.invoice_id == inv.invoice_id
+        )
+        expected = min(p.amount_minor, inv.total_minor)
+        if applied < expected:
+            evidence = [p.doc_id, inv.doc_id, *[r.row_id for r in rows]]
+            out.append(
+                _finding(
+                    "payment_allocation",
+                    [p.doc_id, inv.doc_id],
+                    expected - applied,
+                    p.currency,
+                    evidence,
+                )
+            )
+    return out
+
+
 PROBES: dict[str, Probe] = {
     "same_amount_duplicates": same_amount_duplicates,
     "unapplied_means_error": unapplied_means_error,
     "utc_date_cutoff": utc_date_cutoff,
     "posting_date_fx": posting_date_fx,
     "big_fx_moves": big_fx_moves,
+    "calendar_month_cutoff": calendar_month_cutoff,
+    "first_payment_shortfall": first_payment_shortfall,
 }
 
 
