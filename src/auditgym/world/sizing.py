@@ -8,6 +8,8 @@ Costs in invoice documents:
 - distractors: per instance X1 1, X2 2-3, X3 1, X4 2 (sale + credit note), X5 2, X6 2, X7 0,
   X8 1, X9 1, X10 1;
 - every planned injection (scenarios included) gets one carrier invoice;
+- with config `variants.payment_allocation: ["other_invoice"]` every allocation carrier also
+  brings one ordinary invoice of the same customer (`demand["siblings"]`);
 - duplicate_invoice adds 1 copy (sometimes 2), duplicate_misallocated adds 1 copy;
 - at least MIN_FREE_REGULAR ordinary invoices besides carriers.
 
@@ -21,7 +23,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from auditgym.contracts.config import ConfigError
+from auditgym.contracts.config import ConfigError, allowed_variants
 from auditgym.contracts.constants import (
     DISTRACTOR_KINDS,
     INTERACTION_ISSUE_COUNTS,
@@ -29,6 +31,7 @@ from auditgym.contracts.constants import (
     ISSUE_TYPES,
 )
 from auditgym.util.rng import Stream
+from auditgym.world.candidates import alloc_needs_other
 
 INVOICES_PER_INSTANCE = {
     "split_payment": 1,
@@ -57,20 +60,29 @@ class CapacityError(ConfigError):
     """size.invoices is too small for the configured errors and distractors."""
 
 
+def issue_costs(cfg: dict[str, Any]) -> dict[str, int]:
+    """ISSUE_COST, plus the second invoice of an allocation carrier for other_invoice alone."""
+    costs = dict(ISSUE_COST)
+    if alloc_needs_other(allowed_variants(cfg, "payment_allocation")):
+        costs["payment_allocation"] += 1
+    return costs
+
+
 def _worst_issue_invoices(cfg: dict[str, Any]) -> int:
     """Largest number of invoice documents any plan allowed by the config can need."""
     cap = cfg["max_issues"]
+    issue_cost = issue_costs(cfg)
     cost = sum(cfg["interactions"][s][1] * SCENARIO_COST[s] for s in INTERACTION_SCENARIOS)
     room = cap - sum(
         cfg["interactions"][s][1] * INTERACTION_ISSUE_COUNTS[s] for s in INTERACTION_SCENARIOS
     )
     counts = {t: cfg["errors"][t][0] for t in ISSUE_TYPES}
     room -= sum(counts.values())
-    for t in sorted(ISSUE_TYPES, key=lambda t: (-ISSUE_COST[t], t)):
+    for t in sorted(ISSUE_TYPES, key=lambda t: (-issue_cost[t], t)):
         extra = max(0, min(cfg["errors"][t][1] - counts[t], room))
         counts[t] += extra
         room -= extra
-    return cost + sum(counts[t] * ISSUE_COST[t] for t in ISSUE_TYPES)
+    return cost + sum(counts[t] * issue_cost[t] for t in ISSUE_TYPES)
 
 
 def required_invoices(cfg: dict[str, Any]) -> int:
@@ -90,7 +102,12 @@ def check_capacity(cfg: dict[str, Any]) -> None:
 
 
 def demand_invoices(demand: dict[str, Any]) -> int:
-    return sum(demand["carriers"].values()) + sum(demand["dup_copies"]) + demand["dm_copies"]
+    return (
+        sum(demand["carriers"].values())
+        + sum(demand["dup_copies"])
+        + demand["dm_copies"]
+        + demand.get("siblings", 0)
+    )
 
 
 def fit(

@@ -8,7 +8,8 @@ FX table -> distractors -> carriers for the planned errors -> ordinary sales up 
 number of invoice documents -> background expenses.
 
 The world never learns which records will carry errors; it only receives how many carriers each
-injector pool needs (`demand`), see auditgym.world.carriers.
+injector pool needs (`demand`) and which variants each injector may produce (config `variants`,
+kept in World.variants), see auditgym.world.carriers.
 """
 
 from __future__ import annotations
@@ -17,9 +18,16 @@ from datetime import timedelta
 from decimal import Decimal
 from typing import Any
 
-from auditgym.contracts.constants import DISTRACTOR_KINDS, FX_RATE_DATE_RULES, ROUNDING_RULES
+from auditgym.contracts.config import allowed_variants, needs_two_foreign
+from auditgym.contracts.constants import (
+    DISTRACTOR_KINDS,
+    FX_RATE_DATE_RULES,
+    ISSUE_TYPES,
+    ROUNDING_RULES,
+)
 from auditgym.util.rng import Stream
 from auditgym.world.amounts import draw_minor, split_part
+from auditgym.world.candidates import alloc_needs_other
 from auditgym.world.carriers import build_carriers, fxb_options
 from auditgym.world.distractors import BUILDERS
 from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_installments, pay_time
@@ -236,7 +244,10 @@ def build_world(root: Stream, cfg: dict[str, Any], demand: dict[str, Any]) -> Wo
     cs = ws.child("company")
     base = cs.choice(cfg["currencies"]["base_pool"])
     pool = [c for c in cfg["currencies"]["foreign_pool"] if c != base]
-    n_foreign = min(cs.in_range(cfg["currencies"]["foreign_count"]), len(pool))
+    lo, hi = cfg["currencies"]["foreign_count"]
+    if needs_two_foreign(cfg):  # fx_conversion restricted to wrong_pair (validated: hi >= 2)
+        lo = max(lo, 2)
+    n_foreign = min(cs.in_range([lo, hi]), len(pool))
     foreign = sorted(cs.sample(pool, n_foreign))
     tz_text = cs.choice(cfg["timezone_pool"])
     year = cs.choice(cfg["period"]["year_pool"])
@@ -250,6 +261,7 @@ def build_world(root: Stream, cfg: dict[str, Any], demand: dict[str, Any]) -> Wo
         accounts=_accounts(cs.child("accounts")),
         fx_rule=cs.choice(FX_RATE_DATE_RULES),
         rounding=cs.choice(ROUNDING_RULES),
+        variants={t: allowed_variants(cfg, t) for t in ISSUE_TYPES},
     )
 
     size = ws.child("size")
@@ -263,6 +275,11 @@ def build_world(root: Stream, cfg: dict[str, Any], demand: dict[str, Any]) -> Wo
         "carriers": dict(demand["carriers"]),
         "dup_copies": list(demand["dup_copies"]),
         "dm_copies": demand["dm_copies"],
+        "siblings": (
+            demand["carriers"].get("alloc", 0)
+            if alloc_needs_other(world.allowed_variants("payment_allocation"))
+            else 0
+        ),
     }
     target = fit(size, cfg, dplan, demand)
 

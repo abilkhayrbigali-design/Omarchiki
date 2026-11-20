@@ -9,7 +9,9 @@ Every random choice comes from a named child of
 
 `stream_config_hash` is the hash of the normalized config without its `presentation` section, so
 `presentation.id_salt` and `presentation.order` change IDs and row order but never the semantic
-content of the episode. `secret_salt` is part of it.
+content of the episode. `secret_salt` is part of it. `variants` is part of it only when it
+restricts something: with every variant allowed the key and the draws are those of a config
+without the section.
 
 Size: the published episode has a number of invoice documents inside `size.invoices`. A config
 whose errors and minimum distractors cannot fit raises CapacityError (a ConfigError) before any
@@ -27,7 +29,7 @@ from collections.abc import Callable, Iterable
 from typing import Any
 
 from auditgym.books.posting import post_all
-from auditgym.contracts.config import config_hash, normalize_config
+from auditgym.contracts.config import DEFAULT_VARIANTS, config_hash, normalize_config
 from auditgym.contracts.types import Episode, Issue, PrivateEpisode, PublicEpisode
 from auditgym.contracts.versions import GENERATOR_VERSION
 from auditgym.episode.bundle import Built, bundle
@@ -61,7 +63,10 @@ class GenerationError(RuntimeError):
 
 
 def stream_config_hash(cfg: dict[str, Any]) -> str:
-    return config_hash({k: v for k, v in cfg.items() if k != "presentation"})
+    sem = {k: v for k, v in cfg.items() if k != "presentation"}
+    if sem.get("variants") == DEFAULT_VARIANTS:  # normalize_config already drops it; be safe
+        del sem["variants"]
+    return config_hash(sem)
 
 
 def build_attempt(seed: int, cfg: dict[str, Any], attempt: int) -> Built:

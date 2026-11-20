@@ -9,6 +9,10 @@ Rules for every pool:
 - scope: the erroneous record lies in the reporting period by its document date, or its posting
   is moved into or out of the period by the error itself (cut-off). Records wholly in the margins
   before or after the period are context only.
+- variants (config `variants`, World.variants): the cut-off and FX pools keep only records that
+  can carry an allowed variant; their defaults are every variant, and scenario pools never pass
+  them. The allocation pool stays as is: the injector filters it for other_invoice alone, since
+  the second invoice it needs may come from ordinary history built after the carriers.
 
 Lists are returned in world order; the injectors pick from them with their own stream.
 """
@@ -18,7 +22,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
-from auditgym.world.fx import convert_on, material, wrong_rate_dates
+from auditgym.contracts.config import ISSUE_VARIANTS
+from auditgym.world.fx import convert_on, material, wrong_pair_currencies, wrong_rate_dates
 from auditgym.world.model import WInvoice, World, WPayment
 from auditgym.world.timeline import DAY, HOUR
 
@@ -35,6 +40,12 @@ class AllocCandidate:
     pay: WPayment
     inv: WInvoice
     shape: str  # "first" payment on the invoice, "later" instalment, or "multi_ref" payment
+
+
+def alloc_needs_other(variants: tuple[str, ...]) -> bool:
+    """other_invoice is the only allowed allocation variant: every allocation error then needs a
+    second plain invoice of the payer (its carrier brings one, see auditgym.world.carriers)."""
+    return variants == ("other_invoice",)
 
 
 def plain_invoice(
@@ -77,36 +88,52 @@ def earlier_payments(world: World, number: str, pay: WPayment) -> list[WPayment]
 
 
 # ---------------------------------------------------------------------------------- pools
-def cutoff_docs(world: World, used: set[str], pool: str = "cutoff") -> list[WInvoice | WPayment]:
-    """Documents just before a period boundary whose posting can be moved across it."""
+def cutoff_docs(
+    world: World,
+    used: set[str],
+    pool: str = "cutoff",
+    variants: tuple[str, ...] = ISSUE_VARIANTS["period_cutoff"],
+) -> list[WInvoice | WPayment]:
+    """Documents just before a period boundary whose posting can be moved across it: invoices
+    for the variant invoice_posted_late, payments for payment_posted_late."""
     tl, counts = world.tl, world.number_counts()
     out: list[WInvoice | WPayment] = []
-    for inv in world.invoices:
-        if (
-            plain_invoice(world, inv, used, counts, pool)
-            and tl.boundary_before(inv.issued) is not None
-            and unlagged(world, inv.issued, inv.post_ts)
-        ):
-            out.append(inv)
-    for pay in world.payments:
-        if (
-            regular_payment(world, pay, used, pool)
-            and tl.boundary_before(pay.ts) is not None
-            and unlagged(world, pay.ts, pay.post_ts)
-        ):
-            out.append(pay)
+    if "invoice_posted_late" in variants:
+        for inv in world.invoices:
+            if (
+                plain_invoice(world, inv, used, counts, pool)
+                and tl.boundary_before(inv.issued) is not None
+                and unlagged(world, inv.issued, inv.post_ts)
+            ):
+                out.append(inv)
+    if "payment_posted_late" in variants:
+        for pay in world.payments:
+            if (
+                regular_payment(world, pay, used, pool)
+                and tl.boundary_before(pay.ts) is not None
+                and unlagged(world, pay.ts, pay.post_ts)
+            ):
+                out.append(pay)
     return out
 
 
-def fx_payments(world: World, used: set[str], pool: str = "fx") -> list[WPayment]:
-    """Foreign payments in the period for which some rate date within a week is materially off."""
+def fx_payments(
+    world: World,
+    used: set[str],
+    pool: str = "fx",
+    variants: tuple[str, ...] = ISSUE_VARIANTS["fx_conversion"],
+) -> list[WPayment]:
+    """Foreign payments in the period for which some rate date within a week is materially off.
+    With wrong_pair as the only variant: for which the rate of another foreign currency on the
+    right date is materially off instead."""
+    carries = wrong_rate_dates if "wrong_date" in variants else wrong_pair_currencies
     return [
         p
         for p in world.payments
         if regular_payment(world, p, used, pool)
         and p.currency != world.base
         and world.tl.in_period(p.ts)
-        and wrong_rate_dates(world, p)
+        and carries(world, p)
     ]
 
 
@@ -206,9 +233,13 @@ def pool_keys(world: World, pool: str, used: set[str] | None = None) -> set[str]
     """Keys of the records that make up candidates of `pool` (for carrier verification)."""
     u = used if used is not None else set()
     if pool == "cutoff":
-        return {d.key for d in cutoff_docs(world, u)}
+        return {
+            d.key for d in cutoff_docs(world, u, variants=world.allowed_variants("period_cutoff"))
+        }
     if pool == "fx":
-        return {p.key for p in fx_payments(world, u)}
+        return {
+            p.key for p in fx_payments(world, u, variants=world.allowed_variants("fx_conversion"))
+        }
     if pool == "dup":
         return {i.key for i in dup_invoices(world, u)}
     if pool == "alloc":

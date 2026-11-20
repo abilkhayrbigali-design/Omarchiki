@@ -3,6 +3,12 @@
 Each injector picks a candidate with its own stream, validates every amount before editing, edits
 the working books, and records the truth (amount from documents only, evidence per the DOMAIN
 table) together with record-level before/after values.
+
+Variants (config `variants`, World.allowed_variants): an injector produces only allowed variants.
+It draws among them in the canonical order of ISSUE_VARIANTS with the same weights, so with every
+variant allowed the draws are exactly those of a config without the section. A fallback for a
+variant the candidate cannot carry only goes to another allowed variant; candidates that can
+carry none are skipped, and with no candidate left the attempt fails (CandidateError).
 """
 
 from __future__ import annotations
@@ -25,11 +31,17 @@ from auditgym.inject.common import (
     rebook_conversion,
 )
 from auditgym.inject.state import CandidateError, InjectState
-from auditgym.util.money import convert_minor
 from auditgym.util.rng import Stream
 from auditgym.world import candidates
-from auditgym.world.amounts import split_part
-from auditgym.world.fx import convert_on, material, rate_date, rate_date_by, wrong_rate_dates
+from auditgym.world.amounts import can_split, split_part
+from auditgym.world.fx import (
+    convert_on,
+    material,
+    pair_conversion,
+    rate_date,
+    rate_date_by,
+    wrong_rate_dates,
+)
 from auditgym.world.model import WInvoice, World, WPayment
 from auditgym.world.timeline import DAY, HOUR
 
@@ -70,7 +82,7 @@ def inject_duplicate(state: InjectState, s: Stream) -> None:
     if not pool:
         raise CandidateError("duplicate_invoice")
     inv = s.choice(pool)
-    variant = s.choice(["same_invoice_id", "new_invoice_id"])
+    variant = s.choice(state.world.allowed_variants("duplicate_invoice"))
     planned = state.world.sizing.get("dup_copies", [])
     copies = planned[state.duplicates_done] if state.duplicates_done < len(planned) else 1
     state.duplicates_done += 1
@@ -93,6 +105,43 @@ def inject_duplicate(state: InjectState, s: Stream) -> None:
 # ---------------------------------------------------------------------------------- payment_allocation
 ALLOC_SHAPES = ("first", "later", "multi_ref")
 ALLOC_SHAPE_WEIGHTS = (2, 4, 2)
+ALLOC_VARIANT_WEIGHTS = {"none": 2, "partial": 3, "other_invoice": 2}
+# A drawn variant the candidate cannot carry falls back along this chain, to allowed ones only.
+ALLOC_FALLBACK = ("other_invoice", "partial", "none")
+
+
+def _other_invoices(state: InjectState, inv: WInvoice, counts: dict[str, int]) -> list[WInvoice]:
+    """Invoices the payment can be applied to by mistake: same customer and currency, plain,
+    not reserved as a carrier."""
+    world = state.world
+    return [
+        b
+        for b in world.invoices
+        if b.key != inv.key
+        and b.customer == inv.customer
+        and b.currency == inv.currency
+        and b.key not in world.reserved
+        and candidates.plain_invoice(world, b, state.used, counts, "alloc")
+    ]
+
+
+def _alloc_can_carry(variant: str, part: int, others: list[WInvoice]) -> bool:
+    if variant == "other_invoice":
+        return bool(others)
+    if variant == "partial":
+        return can_split(part)
+    return True
+
+
+def _alloc_fallback(
+    variant: str, allowed: tuple[str, ...], part: int, others: list[WInvoice]
+) -> str:
+    """The next allowed variant down the chain the candidate can carry, else any allowed one."""
+    chain = ALLOC_FALLBACK[ALLOC_FALLBACK.index(variant) + 1 :] + allowed
+    for v in chain:
+        if v in allowed and _alloc_can_carry(v, part, others):
+            return v
+    raise CandidateError("payment_allocation")
 
 
 def inject_allocation(state: InjectState, s: Stream) -> None:
@@ -100,7 +149,18 @@ def inject_allocation(state: InjectState, s: Stream) -> None:
     open, which may be less than the payment); a payment naming several invoices, the target
     first. Variants: nothing applied, partly applied, applied to another invoice."""
     world = state.world
+    allowed = world.allowed_variants("payment_allocation")
+    counts = world.number_counts()
     pool = candidates.alloc_candidates(world, state.used)
+    if "none" not in allowed:  # "none" fits every candidate; otherwise keep those that can carry
+        pool = [
+            c
+            for c in pool
+            if any(
+                _alloc_can_carry(v, c.pay.plan[0][1], _other_invoices(state, c.inv, counts))
+                for v in allowed
+            )
+        ]
     if not pool:
         raise CandidateError("payment_allocation")
     shapes = [sh for sh in ALLOC_SHAPES if any(c.shape == sh for c in pool)]
@@ -110,22 +170,11 @@ def inject_allocation(state: InjectState, s: Stream) -> None:
     cand = s.choice([c for c in pool if c.shape == shape])
     pay, inv = cand.pay, cand.inv
     part = pay.plan[0][1]
-    variant = s.weighted_choice(["none", "partial", "other_invoice"], [2, 3, 2])
-    counts = world.number_counts()
-    others = [
-        b
-        for b in world.invoices
-        if b.key != inv.key
-        and b.customer == inv.customer
-        and b.currency == inv.currency
-        and b.key not in world.reserved
-        and candidates.plain_invoice(world, b, state.used, counts, "alloc")
-    ]
-    if variant == "other_invoice" and not others:
-        variant = "partial"
+    variant = s.weighted_choice(allowed, [ALLOC_VARIANT_WEIGHTS[v] for v in allowed])
+    others = _other_invoices(state, inv, counts)
+    if not _alloc_can_carry(variant, part, others):
+        variant = _alloc_fallback(variant, allowed, part, others)
     short = split_part(s, part) if variant == "partial" else None
-    if variant == "partial" and short is None:
-        variant = "none"
 
     state.begin("payment_allocation")
     row = ar_row(state, pay, inv.number)
@@ -188,8 +237,7 @@ def _wrong_conversion(
         return wrong, {"rate_date_used": dates[0].isoformat(), "rate_date_correct": day.isoformat()}
     others = s.shuffled([c for c in world.foreign if c != pay.currency])
     for other in others:
-        rate = world.fx[(day.isoformat(), other)]
-        wrong = convert_minor(pay.amount, pay.currency, world.base, rate, world.rounding)
+        wrong = pair_conversion(world, pay, other)
         if material(world, pay, wrong):
             return wrong, {
                 "pair_used": f"{other}/{world.base}",
@@ -201,12 +249,15 @@ def _wrong_conversion(
 
 def inject_fx(state: InjectState, s: Stream) -> None:
     world = state.world
-    pool = candidates.fx_payments(world, state.used)
+    allowed = world.allowed_variants("fx_conversion")
+    pool = candidates.fx_payments(world, state.used, variants=allowed)
     for pay in s.shuffled(pool):
         variants = ["wrong_date"]
         if len(world.foreign) > 1:
             variants = s.shuffled(["wrong_date", "wrong_date", "wrong_pair"])
         for variant in dict.fromkeys(variants):
+            if variant not in allowed:
+                continue
             found = _wrong_conversion(state, s, pay, variant)
             if found is None:
                 continue
@@ -229,7 +280,9 @@ def inject_fx(state: InjectState, s: Stream) -> None:
 # ---------------------------------------------------------------------------------- period_cutoff
 def inject_cutoff(state: InjectState, s: Stream) -> None:
     world = state.world
-    pool = candidates.cutoff_docs(world, state.used)
+    pool = candidates.cutoff_docs(
+        world, state.used, variants=world.allowed_variants("period_cutoff")
+    )
     for doc in s.shuffled(pool):
         doc_time = doc.issued if isinstance(doc, WInvoice) else doc.ts
         boundary = world.tl.boundary_before(doc_time)

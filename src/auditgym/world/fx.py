@@ -86,6 +86,21 @@ def wrong_rate_dates(world: World, pay: WPayment) -> list[date]:
     return out
 
 
+def pair_conversion(world: World, pay: WPayment, other: str) -> int:
+    """`pay` converted with the rate of currency `other` on the right date (a wrong pair)."""
+    rate = world.fx[(rate_date(world, pay.ts).isoformat(), other)]
+    return convert_minor(pay.amount, pay.currency, world.base, rate, world.rounding)
+
+
+def wrong_pair_currencies(world: World, pay: WPayment) -> list[str]:
+    """Other foreign currencies whose rate on the right date gives a material difference."""
+    return [
+        c
+        for c in world.foreign
+        if c != pay.currency and material(world, pay, pair_conversion(world, pay, c))
+    ]
+
+
 def format_level(level: Decimal) -> str:
     """Six significant digits, at least four decimals, never scientific notation."""
     places = max(4, 5 - level.adjusted())

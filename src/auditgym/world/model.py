@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from typing import Any
 
+from auditgym.contracts.config import ISSUE_VARIANTS
 from auditgym.world.timeline import Timeline
 
 KEY_PREFIX = "k:"
@@ -115,6 +116,9 @@ class World:
     # may use unreserved records or records reserved for its own pool, so every planned error is
     # guaranteed a carrier without making carriers distinguishable from other records.
     reserved: dict[str, str] = field(default_factory=dict)
+    # Variants each standalone injector may produce (config `variants`); a missing type allows
+    # all. Carriers and candidate pools of that injector follow it. Internal only.
+    variants: dict[str, tuple[str, ...]] = field(default_factory=dict)
     sizing: dict[str, Any] = field(default_factory=dict)
     counters: dict[str, int] = field(default_factory=dict)
     taken: set[datetime] = field(default_factory=set)  # membership only, never iterated
@@ -122,6 +126,9 @@ class World:
     # ------------------------------------------------------------------ carriers
     def allowed(self, key: str, pool: str) -> bool:
         return self.reserved.get(key, pool) == pool
+
+    def allowed_variants(self, issue_type: str) -> tuple[str, ...]:
+        return self.variants.get(issue_type, ISSUE_VARIANTS[issue_type])
 
     def mark(self) -> tuple[int, int]:
         return len(self.invoices), len(self.payments)

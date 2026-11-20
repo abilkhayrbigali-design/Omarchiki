@@ -68,12 +68,17 @@ def draw_minor(s: Stream, currency: str, lo: int, hi: int) -> int:
     return max(round_sig(raw, sig_digits(s)), MIN_AMOUNT)
 
 
+def can_split(total: int) -> bool:
+    """Whether split_part can split `total` (decided without drawing)."""
+    return total >= 3 * MIN_AMOUNT
+
+
 def split_part(s: Stream, total: int, lo_pct: int = 20, hi_pct: int = 80) -> int | None:
     """A part of `total` between lo_pct and hi_pct percent, with random roundness.
 
     Both the part and the rest are at least MIN_AMOUNT. None if `total` is too small to split.
     """
-    if total < 3 * MIN_AMOUNT:
+    if not can_split(total):
         return None
     pct = s.randint(lo_pct, hi_pct)
     raw = max(total * pct // 100, 1)
