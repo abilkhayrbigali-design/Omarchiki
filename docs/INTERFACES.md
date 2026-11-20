@@ -28,7 +28,8 @@ episode, clean = generate_with_clean(seed: int, config: dict | None = None, *, v
 ```python
 from auditgym.env import AuditEnv
 
-env = AuditEnv(mode="open" | "closed", generate_fn=None, grader=None, grader_log=None)
+env = AuditEnv(mode="open" | "closed", generate_fn=None, grader=None, grader_log=None,
+               *, time_limit_s=None, clock=None)
 obs, info = env.reset(seed: int | None = None, config: dict | None = None, *, options: dict | None = None)
 obs, info = env.reset_with_episode(episode: Episode)          # для тестов, фикстур, эпизодов с диска
 obs, reward, terminated, truncated, info = env.step(action: dict)
@@ -55,8 +56,9 @@ env.active                                                    # идёт ли э
   | `submit` | `{"submitted": true, "findings_count": n}` — ничего о правильности |
 - `inspection_steps` — все шаги до `submit`, включая ошибочные. При исчерпании 100 шагов: `truncated=true`, оценка пустого ответа.
 - `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`. В обоих режимах, если задан `grader_log`, туда пишется `GradeResult.to_log()` плюс заголовок `{episode_id, step_count, end, env_version, mode}`; `end` — `submit`, `step_limit`, `timeout` или `abandoned`.
-- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа, шаг не тратится, `end: "timeout"`. Его вызывают сервер и harness; сама среда и генератор часы не читают.
-- Время. Лимит на эпизод считается монотонными часами от ответа на `reset` и живёт только в транспорте: в сервере (`auditgym.server.host.EpisodeHost`, опция `--time-limit`, часы подставляются в тестах) и в `harness.run.run_episode` (`time_limit_s`, `clock`). Запрос шага, пришедший после лимита, не выполняется: сервер вызывает `env.truncate()` и отвечает его результатом. В harness время `policy.act` входит в лимит: если действие вернулось после лимита, оно отбрасывается и вызывается `env.truncate()`.
+- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа, шаг не тратится, `end: "timeout"`. Его вызывают сервер и harness; генератор часы не читает никогда, среда — только если ей задан `time_limit_s`.
+- Лимит времени в самой среде (запуск в одном процессе, без сервера): `AuditEnv(time_limit_s=60)`. Правила те же, что у сервера: часы идут от возврата `reset`; `step`, пришедший после лимита, не выполняется и шаг не тратит, результат — как у `env.truncate()`; `reset` поверх просроченного эпизода пишет его в журнал с `end: "timeout"`. Лимит проверяется только в момент вызова `step` или `reset`. По умолчанию `time_limit_s=None`: среда часы не читает. `clock` подставляется в тестах; по умолчанию берутся часы сервера `auditgym.server.host.MONOTONIC` — единственное место пакета, где импортируется `time`. Пока лимит не превышен, часы на переходы и награды не влияют.
+- Время в транспорте. Лимит на эпизод считается монотонными часами от ответа на `reset`: в сервере (`auditgym.server.host.EpisodeHost`, опция `--time-limit`, часы подставляются в тестах) и в `harness.run.run_episode` (`time_limit_s`, `clock`). Запрос шага, пришедший после лимита, не выполняется: сервер вызывает `env.truncate()` и отвечает его результатом. В harness время `policy.act` входит в лимит: если действие вернулось после лимита, оно отбрасывается и вызывается `env.truncate()`.
 - Сервер: `python -m auditgym.server [опции]` (или `python -m auditgym serve -- [опции]`), JSON-строки на stdin/stdout.
   - Запросы: `{"op": "reset"}` (следующий эпизод расписания), `{"op": "reset", "seed", "config"}` (только открытый режим без расписания), `{"op": "step", "action"}`, `{"op": "truncate"}` (сдаться: оценка пустого ответа), `{"op": "close"}`.
   - Опции: `--mode open|closed`; `--grader-log PATH`; `--schedule FILE` — JSON-список `{"seed": int, "config": путь | объект | null}`, относительный путь конфига — от каталога файла расписания, конфиги проверяются при старте; `--episode-dir DIR` (повторяемая) — каталог одного эпизода или каталог, подкаталоги которого — эпизоды (по порядку имён, каталоги с точкой пропускаются; нужен `private/`); источники раздаются в порядке опций командной строки; `--time-limit SECONDS` — в закрытом режиме по умолчанию 60, в открытом по умолчанию выключен.

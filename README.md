@@ -42,6 +42,8 @@ obs, reward, terminated, truncated, info = env.step(
 )
 ```
 
+Лимит времени при запуске в одном процессе, без сервера: `AuditEnv(mode="closed", time_limit_s=60)`. Шаг, пришедший после лимита, не выполняется; эпизод завершается с `truncated=true` и пустым ответом. По умолчанию лимит выключен, и среда часы не читает.
+
 Действия: `list_records(table, cursor, limit)`, `get_record(table, id)`, `get_document(doc_id)`, `calculator(expression)`, `submit(findings)`. Таблицы: `ledger`, `invoices`, `payments`, `fx`. Форматы — в [schemas/](schemas/).
 
 ### Закрытый прогон

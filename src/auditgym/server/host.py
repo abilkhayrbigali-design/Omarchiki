@@ -27,6 +27,10 @@ from auditgym.server.schedule import ScheduleEntry
 
 Clock = Callable[[], float]
 
+# The package's single wall-clock source (tests/leak/test_leak_import_boundary.py). EpisodeHost
+# uses it by default; AuditEnv takes it from here when it is given a time limit and no clock.
+MONOTONIC: Clock = time.monotonic
+
 
 class EpisodeHost:
     def __init__(
@@ -47,7 +51,7 @@ class EpisodeHost:
         self._next = 0
         self._generate_fn = generate_fn
         self._limit = time_limit_s
-        self._clock: Clock = clock if clock is not None else time.monotonic
+        self._clock: Clock = clock if clock is not None else MONOTONIC
         self._started: float | None = None
 
     @property

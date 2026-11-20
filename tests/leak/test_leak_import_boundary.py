@@ -59,7 +59,8 @@ BANNED_MODULES = (
 )
 BANNED_CALLS = ("eval", "exec", "compile", "__import__", "breakpoint", "input")
 # The one place that may read a clock: the server's episode host, for the wall-clock limit, and
-# only through time.monotonic. The environment and the generator never read the clock.
+# only through time.monotonic. The generator never reads a clock; the environment reads this
+# one, and only when it was given `time_limit_s` (tests/contract/test_env_time_limit.py).
 CLOCK_MODULE = SRC / "server" / "host.py"
 
 

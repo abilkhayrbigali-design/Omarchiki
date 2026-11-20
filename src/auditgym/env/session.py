@@ -23,8 +23,15 @@ Modes: `open` returns the terminal reward to the caller; `closed` returns 0.0 an
 info["reward_withheld"] = True. If `grader_log` is set (a path or a callable), the full grade
 record is written there in both modes; it never reaches an observation or info.
 
-The environment never reads the clock: time limits are enforced by the caller (server or
-harness) through truncate().
+Time: by default the environment never reads a clock; the caller (server or harness) enforces
+the wall-clock limit through truncate(). For in-process use without a server,
+`AuditEnv(time_limit_s=60)` makes the environment enforce it itself, with the same rules as the
+server: the clock starts when reset returns; a step() that arrives after the limit is not
+executed and costs no step, the episode ends with truncated=True, is graded as an empty
+submission and logged with end="timeout". The limit is checked only when step() or reset() is
+called, never in between. Before the limit the clock changes nothing, so transitions and rewards
+stay a function of seed, config and actions. `clock` is injectable for tests; the default is the
+server host's monotonic clock, the only place of the package that imports `time`.
 """
 
 from __future__ import annotations
@@ -50,6 +57,7 @@ RESET_OPTIONS = frozenset({"config"})
 
 GenerateFn = Callable[..., Episode]
 GraderLog = str | os.PathLike | Callable[[dict[str, Any]], None]
+Clock = Callable[[], float]
 StepResult = tuple[dict[str, Any], float, bool, bool, dict[str, Any]]
 
 
@@ -63,6 +71,13 @@ def _default_grader() -> GraderFn:
     from auditgym.grading import grade_submission
 
     return grade_submission
+
+
+def _default_clock() -> Clock:
+    # Looked up at first use: this module never imports `time` itself.
+    from auditgym.server import host
+
+    return host.MONOTONIC
 
 
 def _is_submit(raw: Any) -> bool:
@@ -102,13 +117,26 @@ class AuditEnv:
         generate_fn: GenerateFn | None = None,
         grader: GraderFn | None = None,
         grader_log: GraderLog | None = None,
+        *,
+        time_limit_s: float | None = None,
+        clock: Clock | None = None,
     ) -> None:
         if mode not in MODES:
             raise ValueError("mode must be 'open' or 'closed'")
+        if time_limit_s is not None:
+            if isinstance(time_limit_s, bool) or not isinstance(time_limit_s, int | float):
+                raise TypeError("time_limit_s must be a number of seconds or None")
+            if not (math.isfinite(time_limit_s) and time_limit_s > 0):
+                raise ValueError("time_limit_s must be a positive number of seconds")
+        if clock is not None and not callable(clock):
+            raise TypeError("clock must be callable or None")
         self._mode = mode
         self._generate_fn = generate_fn
         self._grader = grader
         self._grader_log = grader_log
+        self._time_limit_s = time_limit_s
+        self._clock = clock
+        self._started: float | None = None  # clock reading when the running episode began
         self._unlogged: list[dict[str, Any]] = []  # grade records when no grader_log is set
         self._last_seed: int | None = None
         self._clear()
@@ -134,6 +162,17 @@ class AuditEnv:
 
     def _remaining(self) -> int:
         return MAX_STEPS - self._steps_used
+
+    def _now(self) -> float:
+        if self._clock is None:
+            self._clock = _default_clock()
+        return self._clock()
+
+    def _expired(self) -> bool:
+        """The running episode is past its time limit. Reads no clock when no limit is set."""
+        if self._time_limit_s is None or self._started is None or not self._active:
+            return False
+        return self._now() - self._started > self._time_limit_s
 
     # ------------------------------------------------------------------ reset
     def reset(
@@ -183,11 +222,13 @@ class AuditEnv:
             raise TypeError("episode.private.truth must be a Truth")
         obs = observe.first_observation(store, MAX_STEPS)
         if self._active and self._grader_log is not None:
-            self.abandon()
+            self._end_early("timeout" if self._expired() else "abandoned")
         self._clear()
         self._store = store
         self._truth = truth
         self._active = True
+        # The limit runs from the moment reset returns: generation time is not counted.
+        self._started = self._now() if self._time_limit_s is not None else None
         info = {
             "episode_id": store.episode_id,
             "mode": self._mode,
@@ -200,6 +241,8 @@ class AuditEnv:
     def step(self, action: Any) -> StepResult:
         if not self._active:
             return self._finished()
+        if self._expired():
+            return self.truncate()  # late: the action is not executed and costs no step
         self._steps_used += 1
         try:
             return self._step(action)
@@ -259,8 +302,8 @@ class AuditEnv:
     def truncate(self) -> StepResult:
         """End the running episode as a timeout: truncated=True, graded as an empty submission.
 
-        Called by the server or the harness when the wall-clock limit is reached; the environment
-        itself never reads the clock. Costs no step.
+        Called by the server or the harness when the wall-clock limit is reached, and by step()
+        itself when the environment was given `time_limit_s`. Costs no step.
         """
         return self._end_early("timeout")
 

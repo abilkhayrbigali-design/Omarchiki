@@ -1,10 +1,12 @@
 """Wall-clock limit per episode: truncated=true, empty answer, late action not executed (E10).
 
-The clock lives in the server (EpisodeHost) and in the harness only; both take a fake clock.
+The limit is enforced by the server (EpisodeHost), by the harness and, when asked for with
+`AuditEnv(time_limit_s=...)`, by the environment itself; all three take a fake clock.
 """
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -202,3 +204,157 @@ def test_E10_harness_no_limit():
     clock = FakeClock()
     run = run_episode(SlowPolicy(clock, 1000.0, episode), episode, time_limit_s=None, clock=clock)
     assert run.terminated is True and run.grade["end"] == "submit"
+
+
+# ------------------------------------------------------------------ in-process environment
+def _timed_env(clock, limit=60.0, *, mode="closed", grader=None, log=None) -> AuditEnv:
+    return AuditEnv(
+        mode=mode,
+        generate_fn=lambda seed, config=None: build_tiny_episode(),
+        grader=grader if grader is not None else RecordingGrader(),
+        grader_log=log,
+        time_limit_s=limit,
+        clock=clock,
+    )
+
+
+def test_E10_env_late_submit_is_not_executed():
+    clock = FakeClock()
+    grader = RecordingGrader()
+    records: list[dict] = []
+    env = _timed_env(clock, grader=grader, log=records.append)
+    obs, _ = env.reset(seed=1)
+    eid = obs["manifest"]["episode_id"]
+    start = clock.now
+    clock.now = start + 30.0
+    obs, *_ = env.step(list_page("ledger", None, 2))
+    assert obs["error"] is None
+    clock.now = start + 60.0  # at the limit: still executed
+    obs, _, _, truncated, _ = env.step(list_page("ledger", None, 1))
+    assert obs["steps_remaining"] == MAX_STEPS - 2 and truncated is False
+    clock.now = start + 60.5  # after it: not executed, no step spent
+    late = act("submit", findings=oracle_submission(build_tiny_episode()))
+    obs, reward, terminated, truncated, info = env.step(late)
+    assert truncated is True and terminated is False
+    assert obs == {"result": None, "error": None, "steps_remaining": MAX_STEPS - 2}
+    assert reward == 0.0 and info == {"reward_withheld": True}
+    # The grader saw the empty answer, not the late oracle submission.
+    (call,) = grader.calls
+    assert call["payload"] == {"episode_id": eid, "findings": []}
+    assert call["inspection_steps"] == 2
+    (record,) = records
+    assert record["end"] == "timeout" and record["step_count"] == 2
+    obs, reward, terminated, truncated, _ = env.step(list_page("ledger", None, 1))
+    assert obs["error"]["code"] == "episode_finished" and reward == 0.0
+    assert truncated is True and terminated is False
+    assert len(grader.calls) == 1 and len(records) == 1
+
+
+def test_E10_env_open_mode_returns_the_reward_of_the_empty_answer():
+    episode = build_tiny_episode()
+    assert episode.private.truth.issues  # books with errors: the empty answer scores -1
+    clock = FakeClock()
+    env = AuditEnv(mode="open", time_limit_s=5, clock=clock)  # the real grader
+    env.reset_with_episode(episode)
+    clock.now += 5.001
+    late = act("submit", findings=oracle_submission(episode))
+    obs, reward, terminated, truncated, info = env.step(late)
+    assert truncated is True and terminated is False
+    assert reward == -1.0 and info == {"reward_withheld": False}
+    assert obs == {"result": None, "error": None, "steps_remaining": MAX_STEPS}
+
+
+def test_E10_env_clock_restarts_at_every_reset():
+    clock = FakeClock()
+    env = _timed_env(clock, 5.0)
+    env.reset(seed=1)
+    clock.now += 100.0
+    env.reset(seed=2)
+    clock.now += 5.0
+    assert env.step(act("teleport"))[3] is False
+    clock.now += 0.001
+    assert env.step(act("teleport"))[3] is True
+    env.reset_with_episode(build_tiny_episode())
+    assert env.step(act("teleport"))[3] is False
+
+
+@pytest.mark.parametrize(("wait", "end"), [(75.0, "timeout"), (10.0, "abandoned")])
+def test_E10_env_reset_over_a_running_episode_is_logged(wait, end):
+    clock = FakeClock()
+    records: list[dict] = []
+    env = _timed_env(clock, log=records.append)
+    env.reset(seed=1)
+    env.step(act("teleport"))
+    clock.now += wait
+    env.reset(seed=2)
+    assert [r["end"] for r in records] == [end]
+    assert records[0]["step_count"] == 1
+
+
+def test_E10_env_reads_no_clock_without_a_limit():
+    clock = FakeClock()
+    records: list[dict] = []
+    env = AuditEnv(
+        generate_fn=lambda seed, config=None: build_tiny_episode(),
+        grader=RecordingGrader(),
+        grader_log=records.append,
+        clock=clock,
+    )
+    env.reset(seed=1)
+    env.step(act("teleport"))
+    env.reset(seed=2)
+    env.step(act("submit", findings=oracle_submission(build_tiny_episode())))
+    env.truncate()
+    assert clock.reads == 0 and [r["end"] for r in records] == ["abandoned", "submit"]
+
+
+def test_E10_env_limit_not_reached_changes_nothing():
+    """Before the limit the clock is invisible: same observations, rewards and flags (E03)."""
+
+    def rollout(**kwargs) -> str:
+        env = AuditEnv(mode="open", **kwargs)
+        episode = build_tiny_episode()
+        out = [env.reset_with_episode(episode)]
+        out.append(env.step(list_page("ledger", None, 5)))
+        out.append(env.step(act("teleport")))
+        out.append(env.step(act("submit", findings=oracle_submission(episode))))
+        out.append(env.step(act("teleport")))
+        return json.dumps(out, sort_keys=True)
+
+    clock = FakeClock()
+    assert rollout() == rollout(time_limit_s=60.0, clock=clock)
+    assert clock.reads > 0
+
+
+def test_E10_env_default_clock_is_the_server_hosts(monkeypatch):
+    from auditgym.server import host
+
+    clock = FakeClock()
+    monkeypatch.setattr(host, "MONOTONIC", clock)
+    env = AuditEnv(
+        generate_fn=lambda seed, config=None: build_tiny_episode(),
+        grader=RecordingGrader(),
+        time_limit_s=60,
+    )
+    env.reset(seed=1)
+    assert env.step(act("teleport"))[3] is False
+    clock.now += 61.0
+    assert env.step(act("teleport"))[3] is True
+
+
+def test_E10_env_real_clock_smoke():
+    env = AuditEnv(mode="open", time_limit_s=3600)
+    env.reset_with_episode(build_tiny_episode())
+    obs, reward, terminated, truncated, _ = env.step(list_page("ledger", None, 1))
+    assert obs["error"] is None and (reward, terminated, truncated) == (0.0, False, False)
+
+
+def test_E10_env_rejects_bad_limits():
+    for bad in (0, -1.0, float("nan"), float("inf")):
+        with pytest.raises(ValueError):
+            AuditEnv(time_limit_s=bad)
+    for bad in (True, "60", [60]):
+        with pytest.raises(TypeError):
+            AuditEnv(time_limit_s=bad)
+    with pytest.raises(TypeError):
+        AuditEnv(time_limit_s=60, clock=1000.0)

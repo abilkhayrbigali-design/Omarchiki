@@ -2,7 +2,7 @@
 
 Каждое требование из [REQUIREMENTS.md](REQUIREMENTS.md): где реализовано и какие тесты его проверяют (по имени теста, `test_<код>_…`). Файл собирается командой `python -m auditgym traceability` из списка тестов `pytest --collect-only`.
 
-Тестовых функций: 472; с параметризацией проверок больше тысячи.
+Тестовых функций: 481; с параметризацией проверок больше тысячи.
 
 | Код | Где реализовано | Тесты |
 |---|---|---|
@@ -38,7 +38,7 @@
 | E07 | contracts/errors.py | `test_env_errors.py` (7), `test_env_protocol.py` (3) |
 | E08 | env/observe.py | `test_env_reset_step.py` (2), `test_leak_import_boundary.py` (1) |
 | E09 | env/session.py | `test_env_steps.py` (5) |
-| E10 | env/session.py truncate(), server/host.py (лимит времени) | `test_env_reset_lifecycle.py` (4), `test_env_server_schedule.py` (4), `test_env_steps.py` (5), `test_env_time_limit.py` (9), `test_leak_import_boundary.py` (1) |
+| E10 | env/session.py truncate(), server/host.py (лимит времени) | `test_env_reset_lifecycle.py` (4), `test_env_server_schedule.py` (4), `test_env_steps.py` (5), `test_env_time_limit.py` (18), `test_leak_import_boundary.py` (1) |
 | E11 | env/session.py | `test_env_steps.py` (1) |
 | E12 | mode=closed, grader_log | `test_env_modes.py` (7), `test_env_reset_lifecycle.py` (1), `test_env_server_schedule.py` (2), `test_leak_scan.py` (1) |
 | S01 | grading/parse.py | `test_env_reset_step.py` (2), `test_reward_parse.py` (4), `test_reward_schema_crosscheck.py` (4) |
