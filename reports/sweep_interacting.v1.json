@@ -2,21 +2,21 @@
   "config_id": "interacting.v1",
   "counts": {
     "episodes": 1000,
-    "evidence_sets": 13076,
+    "evidence_sets": 13159,
     "ok": 1000,
     "retries": 0
   },
   "failures": [],
   "generation_seconds": {
-    "max": 0.0359,
-    "mean": 0.02,
-    "min": 0.0118
+    "max": 0.0282,
+    "mean": 0.019,
+    "min": 0.0108
   },
   "issue_types": {
     "duplicate_invoice": 1495,
-    "fx_conversion": 1477,
-    "payment_allocation": 2491,
-    "period_cutoff": 1459
+    "fx_conversion": 1482,
+    "payment_allocation": 2457,
+    "period_cutoff": 1502
   },
   "seeds": [
     100000,
@@ -24,19 +24,19 @@
   ],
   "sizes": {
     "documents": {
-      "max": 124,
-      "mean": 91.366,
-      "min": 56
+      "max": 121,
+      "mean": 83.363,
+      "min": 40
     },
     "issues": {
       "max": 9,
-      "mean": 6.922,
+      "mean": 6.936,
       "min": 5
     },
     "ledger": {
-      "max": 624,
-      "mean": 424.879,
-      "min": 231
+      "max": 616,
+      "mean": 409.95,
+      "min": 209
     }
   }
 }

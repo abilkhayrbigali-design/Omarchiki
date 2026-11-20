@@ -9,9 +9,9 @@
   },
   "failures": [],
   "generation_seconds": {
-    "max": 0.0266,
-    "mean": 0.018,
-    "min": 0.0099
+    "max": 0.026,
+    "mean": 0.017,
+    "min": 0.0093
   },
   "issue_types": {},
   "seeds": [
@@ -20,9 +20,9 @@
   ],
   "sizes": {
     "documents": {
-      "max": 121,
-      "mean": 85.978,
-      "min": 52
+      "max": 122,
+      "mean": 80.068,
+      "min": 41
     },
     "issues": {
       "max": 0,
@@ -30,9 +30,9 @@
       "min": 0
     },
     "ledger": {
-      "max": 619,
-      "mean": 412.343,
-      "min": 210
+      "max": 617,
+      "mean": 399.429,
+      "min": 198
     }
   }
 }

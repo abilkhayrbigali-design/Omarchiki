@@ -1,0 +1,17 @@
+Score estimate: {'K1_contract_isolation': 25.0, 'K2_data_truth': 25.0, 'K3_reward_robustness': 25.0, 'K4_reproducibility': 15.0, 'K5_engineering': 10, 'total': 100.0}
+K1: 20/20 passed
+K2: 20/20 passed
+K3: 20/20 passed
+K4: 20/20 passed
+K5: one-command run=2, versioned configs=2, trajectory logs=2, measured failure analysis=2, honest limitations=2
+  probe same_amount_duplicates   F1 0.209  P 0.22  R 0.198  reward -0.617
+  probe unapplied_means_error    F1 0.183  P 0.179  R 0.187  reward -0.626
+  probe utc_date_cutoff          F1 0.244  P 0.725  R 0.147  reward -0.585
+  probe posting_date_fx          F1 0.114  P 0.086  R 0.171  reward -0.605
+  probe big_fx_moves             F1 0.0  P 0.0  R 0.0  reward -1.0
+  probe calendar_month_cutoff    F1 0.205  P 0.425  R 0.135  reward -0.62
+  probe first_payment_shortfall  F1 0.168  P 0.17  R 0.167  reward -0.656
+  flag_all         reward -1.0  F1 0.0  P 0.0  R 0.0  steps 14.25  s 0.0022
+  oracle           reward 1.0  F1 1.0  P 1.0  R 1.0  steps 1.0  s 0.0003
+  random_explorer  reward -0.515  F1 0.25  P 0.0  R 0.0  steps 31.0  s 0.001
+  reconcile        reward 0.9471  F1 1.0  P 1.0  R 1.0  steps 27.45  s 0.0053

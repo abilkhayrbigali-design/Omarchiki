@@ -1,23 +1,23 @@
 {
   "config_id": "smoke.v1",
   "counts": {
-    "clean_episodes": 19,
+    "clean_episodes": 20,
     "episodes": 1000,
-    "evidence_sets": 8267,
+    "evidence_sets": 8168,
     "ok": 1000,
     "retries": 0
   },
   "failures": [],
   "generation_seconds": {
-    "max": 0.0141,
-    "mean": 0.007,
-    "min": 0.0041
+    "max": 0.0103,
+    "mean": 0.006,
+    "min": 0.004
   },
   "issue_types": {
-    "duplicate_invoice": 1016,
-    "fx_conversion": 991,
-    "payment_allocation": 1517,
-    "period_cutoff": 983
+    "duplicate_invoice": 954,
+    "fx_conversion": 1002,
+    "payment_allocation": 1479,
+    "period_cutoff": 1008
   },
   "seeds": [
     100000,
@@ -25,19 +25,19 @@
   ],
   "sizes": {
     "documents": {
-      "max": 57,
-      "mean": 35.013,
-      "min": 16
+      "max": 36,
+      "mean": 26.828,
+      "min": 15
     },
     "issues": {
       "max": 9,
-      "mean": 4.507,
+      "mean": 4.443,
       "min": 0
     },
     "ledger": {
-      "max": 200,
-      "mean": 128.946,
-      "min": 60
+      "max": 157,
+      "mean": 108.432,
+      "min": 64
     }
   }
 }

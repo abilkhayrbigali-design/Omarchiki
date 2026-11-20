@@ -12,6 +12,16 @@
     300000,
     300299
   ],
+  "sizes": {
+    "documents": [
+      69,
+      178
+    ],
+    "ledger_rows": [
+      390,
+      1040
+    ]
+  },
   "summary": {
     "flag_all": {
       "all": {
@@ -22,8 +32,8 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.003,
-        "steps": 19.2,
+        "seconds": 0.0028,
+        "steps": 18.71,
         "truncated": 0
       },
       "clean": {
@@ -31,35 +41,35 @@
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": -1.0,
-        "seconds": 0.0032,
-        "steps": 20.6667,
+        "seconds": 0.0033,
+        "steps": 22.0,
         "truncated": 0
       },
       "errors": {
-        "episodes": 84,
+        "episodes": 75,
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.003,
-        "steps": 19.5119,
+        "seconds": 0.0028,
+        "steps": 18.4267,
         "truncated": 0
       },
       "interacting": {
-        "episodes": 213,
+        "episodes": 222,
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.003,
-        "steps": 19.0563,
+        "seconds": 0.0028,
+        "steps": 18.7613,
         "truncated": 0
       }
     },
@@ -69,8 +79,8 @@
         "experimental_reward": -0.98,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.99,
-        "recall": 0.99,
+        "precision": 1.0,
+        "recall": 1.0,
         "reward": 1.0,
         "seconds": 0.0003,
         "steps": 1.0,
@@ -81,15 +91,15 @@
         "experimental_reward": 1.0,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": 1.0,
-        "seconds": 0.0002,
+        "seconds": 0.0003,
         "steps": 1.0,
         "truncated": 0
       },
       "errors": {
-        "episodes": 84,
+        "episodes": 75,
         "experimental_reward": -1.0,
         "f1": 1.0,
         "invalid": 0,
@@ -101,7 +111,7 @@
         "truncated": 0
       },
       "interacting": {
-        "episodes": 213,
+        "episodes": 222,
         "experimental_reward": -1.0,
         "f1": 1.0,
         "invalid": 0,
@@ -131,27 +141,27 @@
         "experimental_reward": 0.94,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": 0.94,
         "seconds": 0.001,
         "steps": 31.0,
         "truncated": 0
       },
       "errors": {
-        "episodes": 84,
+        "episodes": 75,
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0011,
+        "seconds": 0.001,
         "steps": 31.0,
         "truncated": 0
       },
       "interacting": {
-        "episodes": 213,
+        "episodes": 222,
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
@@ -166,50 +176,50 @@
     "reconcile": {
       "all": {
         "episodes": 300,
-        "experimental_reward": 0.9352,
+        "experimental_reward": 0.937,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.99,
-        "recall": 0.99,
-        "reward": 0.9352,
-        "seconds": 0.0072,
-        "steps": 33.4233,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.937,
+        "seconds": 0.0068,
+        "steps": 32.5,
         "truncated": 0
       },
       "clean": {
         "episodes": 3,
-        "experimental_reward": 0.9393,
+        "experimental_reward": 0.938,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
-        "reward": 0.9393,
-        "seconds": 0.0081,
-        "steps": 31.3333,
+        "precision": null,
+        "recall": null,
+        "reward": 0.938,
+        "seconds": 0.0075,
+        "steps": 32.0,
         "truncated": 0
       },
       "errors": {
-        "episodes": 84,
-        "experimental_reward": 0.9365,
+        "episodes": 75,
+        "experimental_reward": 0.9399,
         "f1": 1.0,
         "invalid": 0,
         "precision": 1.0,
         "recall": 1.0,
-        "reward": 0.9365,
-        "seconds": 0.0072,
-        "steps": 32.75,
+        "reward": 0.9399,
+        "seconds": 0.0066,
+        "steps": 31.04,
         "truncated": 0
       },
       "interacting": {
-        "episodes": 213,
-        "experimental_reward": 0.9346,
+        "episodes": 222,
+        "experimental_reward": 0.936,
         "f1": 1.0,
         "invalid": 0,
         "precision": 1.0,
         "recall": 1.0,
-        "reward": 0.9346,
-        "seconds": 0.0072,
-        "steps": 33.7183,
+        "reward": 0.936,
+        "seconds": 0.0069,
+        "steps": 33.0,
         "truncated": 0
       }
     }

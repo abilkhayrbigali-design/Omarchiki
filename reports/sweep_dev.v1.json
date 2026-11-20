@@ -3,21 +3,21 @@
   "counts": {
     "clean_episodes": 2,
     "episodes": 1000,
-    "evidence_sets": 11475,
+    "evidence_sets": 11625,
     "ok": 1000,
     "retries": 0
   },
   "failures": [],
   "generation_seconds": {
-    "max": 0.0503,
-    "mean": 0.032,
-    "min": 0.0182
+    "max": 0.0564,
+    "mean": 0.03,
+    "min": 0.0172
   },
   "issue_types": {
-    "duplicate_invoice": 1484,
-    "fx_conversion": 1525,
-    "payment_allocation": 2007,
-    "period_cutoff": 1515
+    "duplicate_invoice": 1536,
+    "fx_conversion": 1509,
+    "payment_allocation": 1968,
+    "period_cutoff": 1537
   },
   "seeds": [
     100000,
@@ -25,19 +25,19 @@
   ],
   "sizes": {
     "documents": {
-      "max": 182,
-      "mean": 124.427,
-      "min": 73
+      "max": 176,
+      "mean": 121.075,
+      "min": 68
     },
     "issues": {
       "max": 12,
-      "mean": 6.531,
+      "mean": 6.55,
       "min": 0
     },
     "ledger": {
-      "max": 1013,
-      "mean": 705.419,
-      "min": 411
+      "max": 1037,
+      "mean": 705.937,
+      "min": 389
     }
   }
 }

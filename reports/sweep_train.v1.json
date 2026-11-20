@@ -1,23 +1,23 @@
 {
   "config_id": "train.v1",
   "counts": {
-    "clean_episodes": 3,
+    "clean_episodes": 5,
     "episodes": 1000,
-    "evidence_sets": 11434,
+    "evidence_sets": 11501,
     "ok": 1000,
     "retries": 0
   },
   "failures": [],
   "generation_seconds": {
-    "max": 0.0305,
-    "mean": 0.02,
-    "min": 0.0114
+    "max": 0.0315,
+    "mean": 0.019,
+    "min": 0.0116
   },
   "issue_types": {
-    "duplicate_invoice": 1506,
-    "fx_conversion": 1484,
-    "payment_allocation": 2026,
-    "period_cutoff": 1501
+    "duplicate_invoice": 1443,
+    "fx_conversion": 1502,
+    "payment_allocation": 2021,
+    "period_cutoff": 1513
   },
   "seeds": [
     100000,
@@ -25,19 +25,19 @@
   ],
   "sizes": {
     "documents": {
-      "max": 129,
-      "mean": 90.499,
-      "min": 46
+      "max": 119,
+      "mean": 83.775,
+      "min": 45
     },
     "issues": {
       "max": 12,
-      "mean": 6.517,
+      "mean": 6.479,
       "min": 0
     },
     "ledger": {
-      "max": 631,
-      "mean": 427.818,
-      "min": 229
+      "max": 643,
+      "mean": 413.701,
+      "min": 215
     }
   }
 }

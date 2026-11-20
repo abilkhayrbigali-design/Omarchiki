@@ -1,0 +1,42 @@
+{
+  "config_id": "stress.v1",
+  "counts": {
+    "episodes": 1000,
+    "evidence_sets": 14883,
+    "ok": 1000,
+    "retries": 0
+  },
+  "failures": [],
+  "generation_seconds": {
+    "max": 0.0915,
+    "mean": 0.072,
+    "min": 0.0563
+  },
+  "issue_types": {
+    "duplicate_invoice": 2023,
+    "fx_conversion": 2033,
+    "payment_allocation": 2519,
+    "period_cutoff": 2013
+  },
+  "seeds": [
+    100000,
+    100999
+  ],
+  "sizes": {
+    "documents": {
+      "max": 327,
+      "mean": 268.312,
+      "min": 207
+    },
+    "issues": {
+      "max": 12,
+      "mean": 8.588,
+      "min": 4
+    },
+    "ledger": {
+      "max": 2117,
+      "mean": 1775.673,
+      "min": 1409
+    }
+  }
+}

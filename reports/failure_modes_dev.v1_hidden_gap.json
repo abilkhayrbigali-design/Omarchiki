@@ -1,0 +1,18 @@
+{
+  "config_id": "dev.v1",
+  "ledger_kept": 0.7,
+  "manifest_counts_adjusted": true,
+  "outcome": {
+    "refused": 60,
+    "reported_non_truth": 0,
+    "subset_of_truth": 0
+  },
+  "refusal_codes": {
+    "unexplained_discrepancy": 1,
+    "unposted_document": 59
+  },
+  "seeds": [
+    500,
+    559
+  ]
+}

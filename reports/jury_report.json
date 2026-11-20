@@ -12,7 +12,7 @@
     },
     {
       "check": "K1.03",
-      "detail": "19 pages cover the ledger exactly once",
+      "detail": "13 pages cover the ledger exactly once",
       "ok": true
     },
     {
@@ -141,7 +141,7 @@
       "attempts": 1,
       "check": "K2.interacting.70233985",
       "detail": "",
-      "issues": 7,
+      "issues": 8,
       "ok": true
     },
     {
@@ -155,70 +155,70 @@
       "attempts": 1,
       "check": "K2.interacting.11835955",
       "detail": "",
-      "issues": 5,
+      "issues": 6,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.interacting.73913944",
       "detail": "",
-      "issues": 7,
+      "issues": 8,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.interacting.51326599",
       "detail": "",
-      "issues": 6,
+      "issues": 8,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.61971056",
       "detail": "",
-      "issues": 4,
+      "issues": 5,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.36574999",
       "detail": "",
-      "issues": 4,
+      "issues": 3,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.67964309",
       "detail": "",
-      "issues": 4,
+      "issues": 5,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.87726329",
       "detail": "",
-      "issues": 5,
+      "issues": 3,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.75117760",
       "detail": "",
-      "issues": 4,
+      "issues": 6,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.41993255",
       "detail": "",
-      "issues": 7,
+      "issues": 3,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.61174972",
       "detail": "",
-      "issues": 3,
+      "issues": 2,
       "ok": true
     },
     {
@@ -232,14 +232,14 @@
       "attempts": 1,
       "check": "K2.errors.81758943",
       "detail": "",
-      "issues": 5,
+      "issues": 4,
       "ok": true
     },
     {
       "attempts": 1,
       "check": "K2.errors.13769190",
       "detail": "",
-      "issues": 5,
+      "issues": 1,
       "ok": true
     }
   ],
@@ -465,12 +465,12 @@
     },
     {
       "item": "measured failure analysis",
-      "points": 0,
+      "points": 2,
       "where": "DESIGN_NOTE"
     },
     {
       "item": "honest limitations",
-      "points": 0,
+      "points": 2,
       "where": "DESIGN_NOTE"
     }
   ],
@@ -484,8 +484,8 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0026,
-        "steps": 16.3,
+        "seconds": 0.0022,
+        "steps": 14.25,
         "truncated": 0
       },
       "clean": {
@@ -493,11 +493,11 @@
         "experimental_reward": -1.0,
         "f1": 0.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": -1.0,
-        "seconds": 0.0019,
-        "steps": 11.8,
+        "seconds": 0.0017,
+        "steps": 11.0,
         "truncated": 0
       },
       "errors": {
@@ -508,8 +508,8 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0031,
-        "steps": 19.6,
+        "seconds": 0.0026,
+        "steps": 17.3,
         "truncated": 0
       },
       "interacting": {
@@ -520,8 +520,8 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0023,
-        "steps": 14.2,
+        "seconds": 0.0018,
+        "steps": 11.4,
         "truncated": 0
       }
     },
@@ -531,8 +531,8 @@
         "experimental_reward": -0.5,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.75,
-        "recall": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
         "reward": 1.0,
         "seconds": 0.0003,
         "steps": 1.0,
@@ -543,8 +543,8 @@
         "experimental_reward": 1.0,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": 1.0,
         "seconds": 0.0002,
         "steps": 1.0,
@@ -593,8 +593,8 @@
         "experimental_reward": 0.94,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
+        "precision": null,
+        "recall": null,
         "reward": 0.94,
         "seconds": 0.001,
         "steps": 31.0,
@@ -620,7 +620,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.001,
+        "seconds": 0.0009,
         "steps": 31.0,
         "truncated": 0
       }
@@ -628,50 +628,50 @@
     "reconcile": {
       "all": {
         "episodes": 20,
-        "experimental_reward": 0.9458,
+        "experimental_reward": 0.9471,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.75,
-        "recall": 0.75,
-        "reward": 0.9458,
-        "seconds": 0.0065,
-        "steps": 28.1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "reward": 0.9471,
+        "seconds": 0.0053,
+        "steps": 27.45,
         "truncated": 0
       },
       "clean": {
         "episodes": 5,
-        "experimental_reward": 0.9636,
+        "experimental_reward": 0.96,
         "f1": 1.0,
         "invalid": 0,
-        "precision": 0.0,
-        "recall": 0.0,
-        "reward": 0.9636,
+        "precision": null,
+        "recall": null,
+        "reward": 0.96,
         "seconds": 0.0041,
-        "steps": 19.2,
+        "steps": 21.0,
         "truncated": 0
       },
       "errors": {
         "episodes": 10,
-        "experimental_reward": 0.9382,
+        "experimental_reward": 0.9378,
         "f1": 1.0,
         "invalid": 0,
         "precision": 1.0,
         "recall": 1.0,
-        "reward": 0.9382,
-        "seconds": 0.0081,
-        "steps": 31.9,
+        "reward": 0.9378,
+        "seconds": 0.0065,
+        "steps": 32.1,
         "truncated": 0
       },
       "interacting": {
         "episodes": 5,
-        "experimental_reward": 0.9432,
+        "experimental_reward": 0.9528,
         "f1": 1.0,
         "invalid": 0,
         "precision": 1.0,
         "recall": 1.0,
-        "reward": 0.9432,
-        "seconds": 0.0057,
-        "steps": 29.4,
+        "reward": 0.9528,
+        "seconds": 0.0042,
+        "steps": 24.6,
         "truncated": 0
       }
     }
@@ -682,54 +682,72 @@
     "K2_data_truth": 25.0,
     "K3_reward_robustness": 25.0,
     "K4_reproducibility": 15.0,
-    "K5_engineering": 6,
-    "total": 96.0
+    "K5_engineering": 10,
+    "total": 100.0
   },
   "trick_probes": {
     "big_fx_moves": {
       "f1_micro": 0.0,
-      "fn": 274,
-      "fp": 27,
+      "fn": 252,
+      "fp": 23,
       "mean_reward": -1.0,
       "precision": 0.0,
       "recall": 0.0,
       "tp": 0
     },
+    "calendar_month_cutoff": {
+      "f1_micro": 0.205,
+      "fn": 218,
+      "fp": 46,
+      "mean_reward": -0.62,
+      "precision": 0.425,
+      "recall": 0.135,
+      "tp": 34
+    },
+    "first_payment_shortfall": {
+      "f1_micro": 0.168,
+      "fn": 210,
+      "fp": 205,
+      "mean_reward": -0.656,
+      "precision": 0.17,
+      "recall": 0.167,
+      "tp": 42
+    },
     "posting_date_fx": {
-      "f1_micro": 0.16,
-      "fn": 224,
-      "fp": 301,
-      "mean_reward": -0.597,
-      "precision": 0.142,
-      "recall": 0.182,
-      "tp": 50
+      "f1_micro": 0.114,
+      "fn": 209,
+      "fp": 457,
+      "mean_reward": -0.605,
+      "precision": 0.086,
+      "recall": 0.171,
+      "tp": 43
     },
     "same_amount_duplicates": {
-      "f1_micro": 0.211,
-      "fn": 220,
-      "fp": 185,
-      "mean_reward": -0.636,
-      "precision": 0.226,
-      "recall": 0.197,
-      "tp": 54
+      "f1_micro": 0.209,
+      "fn": 202,
+      "fp": 177,
+      "mean_reward": -0.617,
+      "precision": 0.22,
+      "recall": 0.198,
+      "tp": 50
     },
     "unapplied_means_error": {
-      "f1_micro": 0.3,
-      "fn": 211,
-      "fp": 83,
-      "mean_reward": -0.392,
-      "precision": 0.432,
-      "recall": 0.23,
-      "tp": 63
+      "f1_micro": 0.183,
+      "fn": 205,
+      "fp": 216,
+      "mean_reward": -0.626,
+      "precision": 0.179,
+      "recall": 0.187,
+      "tp": 47
     },
     "utc_date_cutoff": {
-      "f1_micro": 0.23,
-      "fn": 236,
-      "fp": 19,
-      "mean_reward": -0.616,
-      "precision": 0.667,
-      "recall": 0.139,
-      "tp": 38
+      "f1_micro": 0.244,
+      "fn": 215,
+      "fp": 14,
+      "mean_reward": -0.585,
+      "precision": 0.725,
+      "recall": 0.147,
+      "tp": 37
     }
   }
 }

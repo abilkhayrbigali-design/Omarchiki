@@ -2,7 +2,7 @@
 
 Каждое требование из [REQUIREMENTS.md](REQUIREMENTS.md): где реализовано и какие тесты его проверяют (по имени теста, `test_<код>_…`). Файл собирается командой `python -m auditgym traceability` из списка тестов `pytest --collect-only`.
 
-Тестовых функций: 463; с параметризацией проверок больше тысячи.
+Тестовых функций: 472; с параметризацией проверок больше тысячи.
 
 | Код | Где реализовано | Тесты |
 |---|---|---|
@@ -15,9 +15,9 @@
 | G03 | world/ (X1–X10), config.clean | `test_data_truth.py` (3), `test_verify_scenarios.py` (2) |
 | G04 | world → books → inject, provenance.changes | `test_data_provenance.py` (2) |
 | G05 | truth.evidence_sets, verify/evidence.py, policy.evidence | `test_requirements.py` (1) |
-| G06 | world/, present/, policy | `test_data_determinism.py` (3), `test_verify_scenarios.py` (1) |
-| G07 | ловушки X1–X10, harness/probes.py | `test_trick_probes.py` (2) |
-| D01 | config.size, max_issues ≤ 12 | `test_data_presentation.py` (1), `test_data_provenance.py` (2), `test_data_truth.py` (1) |
+| G06 | world/, present/, policy | `test_data_determinism.py` (3), `test_data_review.py` (1), `test_verify_scenarios.py` (1) |
+| G07 | ловушки X1–X10, harness/probes.py | `test_data_review.py` (3), `test_trick_probes.py` (2) |
+| D01 | config.size, max_issues ≤ 12 | `test_data_presentation.py` (1), `test_data_provenance.py` (2), `test_data_review.py` (3), `test_data_truth.py` (1) |
 | D02 | contracts/meta.py make_manifest | `test_requirements.py` (1) |
 | D03 | util/money.py, util/timeutil.py | `test_requirements.py` (1) |
 | D04 | contracts/types.py LedgerRow | `test_data_presentation.py` (1), `test_requirements.py` (1) |
@@ -57,7 +57,7 @@
 | V03 | configs/clean.v1.json, configs/interacting.v1.json | `test_requirements.py` (1) |
 | V04 | harness/run.py aggregate | `test_requirements.py` (1) |
 | K1 | harness/jury.py k1_checks | `test_jury_checks_fixture.py` (1), `test_leak_import_boundary.py` (5) |
-| K2 | harness/sweep.py | `test_data_sweep.py` (1), `test_data_truth.py` (3), `test_verify_evidence.py` (10), `test_verify_tiny.py` (4) |
+| K2 | harness/sweep.py | `test_data_review.py` (2), `test_data_sweep.py` (1), `test_data_truth.py` (3), `test_verify_evidence.py` (10), `test_verify_tiny.py` (4) |
 | K3 | harness/jury.py k3_checks | `test_jury_checks_fixture.py` (1) |
 | K4 | harness/transform.py, k4_checks | `test_data_determinism.py` (3), `test_data_presentation.py` (2), `test_published_episodes.py` (1), `test_transform.py` (6), `test_verify_invariance.py` (2) |
 | K5 | README, configs, trajectories, DESIGN_NOTE | `test_published_episodes.py` (1) |
