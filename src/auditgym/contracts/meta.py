@@ -141,6 +141,25 @@ def make_policy(
         },
         "tolerances": {"default_minor": 0, "fx_conversion_minor": fx_tolerance_minor},
         "issue_types": dict(sorted(ISSUE_TYPE_DESCRIPTIONS.items())),
+        "scope": (
+            "Audit the reporting period: errors are only reported on documents whose date or whose "
+            "ledger entry is inside the period. Records in the weeks around the period are context "
+            "(earlier payments, rates, postings across the boundary)."
+        ),
+        "formats": {
+            "money": "integers in minor units; exponents per currency in manifest.currencies",
+            "time": "ISO-8601 with an explicit UTC offset",
+            "fx_rate": "decimal string",
+            "missing_link": "null in JSON; an empty field in CSV",
+            "ids": "opaque strings, unique across all tables; fx row id is 'YYYY-MM-DD/SRC/TGT'",
+        },
+        "submission": {
+            "shape": "{episode_id, findings: [{type, affected_ids, claimed_amount_minor, currency, evidence_ids, explanation}]}",
+            "limits": "at most 30 findings, 10 affected ids and 10 evidence ids per finding, explanation up to 1000 characters",
+            "amount": "claimed_amount_minor is a non-negative magnitude in minor units of `currency`",
+            "invalid": "a submission that breaks this structure ends the episode with reward -1",
+            "matching": "one finding per issue; repeated or unmatched findings are false positives",
+        },
         "evidence": {
             "rule": (
                 "a finding counts only if evidence_ids contain at least one complete evidence set "

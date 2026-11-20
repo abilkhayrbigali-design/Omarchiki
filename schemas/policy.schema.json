@@ -173,6 +173,15 @@
           ]
         }
       }
+    },
+    "scope": {
+      "type": "string"
+    },
+    "formats": {
+      "type": "object"
+    },
+    "submission": {
+      "type": "object"
     }
   },
   "required": [
@@ -182,11 +191,14 @@
     "base_currency",
     "duplicates",
     "evidence",
+    "formats",
     "fx",
     "issue_types",
     "period",
     "rounding",
     "schema_version",
+    "scope",
+    "submission",
     "timezone",
     "tolerances"
   ],
