@@ -198,12 +198,13 @@ SCENES: list[dict] = [
         "sub": "Контейнер без сети, 2 CPU, 4 ГБ · сохранённый прогон reports/docker_check.txt",
         "steps": [
             {
-                "sh": "grep -vE '^\\.|probe|Score|K5:|^  (flag_all|oracle|random|reconcile) ' \\\n"
+                "sh": "grep -vE '^\\.|probe|Score|K5:|^  (flag_all|oracle|random_explorer|reconcile) ' \\\n"
                 "  reports/docker_check.txt",
                 "line_delay": 0.3,
                 "highlight": [
                     (r"RESULT: PASS", "good", 1.0),
                     (r"exit code 0|\d+ passed|\bok \d+/\d+|K\d: \d+/\d+ passed", "good"),
+                    (r"\b(\d+)/\1\b", "good"),
                     (r"^==|^# make", "cmd"),
                     (r"^#", "dim"),
                 ],
