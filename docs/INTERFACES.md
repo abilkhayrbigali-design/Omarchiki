@@ -34,6 +34,15 @@ obs, reward, terminated, truncated, info = env.step(action: dict)
 - Действие: `{"action": name, "args": {...}}`, схема `schemas/action.schema.json`.
 - Наблюдение: `{"result", "error", "steps_remaining"}`; первое — `{"task", "manifest", "policy", "steps_remaining"}`. Схема `schemas/observation.schema.json`.
 - `list_records` и `get_record` по `invoices` отдают `Invoice.summary()`, `get_document` — полный документ. ID записи: `ledger` → `row_id`, `invoices` и `payments` → `doc_id`, `fx` → `FxRate.rate_id`.
+- Форма `result` в наблюдении шага (при ошибке `result = null`):
+
+  | Действие | `result` |
+  |---|---|
+  | `list_records` | `{"table", "records": [...], "next_cursor": str \| null}` |
+  | `get_record` | `{"table", "record": {...}}` |
+  | `get_document` | `{"document": {...}}` |
+  | `calculator` | `{"value": "<десятичная строка>"}` |
+  | `submit` | `{"submitted": true, "findings_count": n}` — ничего о правильности |
 - `inspection_steps` — все шаги до `submit`, включая ошибочные. При исчерпании 100 шагов: `truncated=true`, оценка пустого ответа.
 - `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`; `GradeResult.to_log()` пишется в `grader_log`.
 - Сервер: `python -m auditgym.server` читает JSON-строки `{"op": "reset", "seed", "config"}` и `{"op": "step", "action"}`, отвечает JSON-строками. `auditgym.client.RemoteEnv` — те же `reset/step` поверх него.

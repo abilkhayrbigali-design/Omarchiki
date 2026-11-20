@@ -12,10 +12,13 @@ dependencies = []
 auditgym = "auditgym.cli:main"
 
 [dependency-groups]
-dev = [
+check = [
     "pytest>=8.3",
     "hypothesis>=6.100",
     "jsonschema>=4.23",
+]
+dev = [
+    { include-group = "check" },
     "ruff>=0.6",
 ]
 
