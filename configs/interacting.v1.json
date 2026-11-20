@@ -1,0 +1,45 @@
+{
+  "config_id": "interacting.v1",
+  "size": {
+    "customers": [
+      6,
+      12
+    ],
+    "invoices": [
+      24,
+      60
+    ],
+    "background_entries": [
+      40,
+      160
+    ]
+  },
+  "errors": {
+    "duplicate_invoice": [
+      0,
+      1
+    ],
+    "payment_allocation": [
+      0,
+      1
+    ],
+    "fx_conversion": [
+      0,
+      1
+    ],
+    "period_cutoff": [
+      0,
+      1
+    ]
+  },
+  "interactions": {
+    "fx_partial_at_boundary": [
+      1,
+      1
+    ],
+    "duplicate_misallocated": [
+      1,
+      1
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "config_id": "smoke.v1",
+  "size": {
+    "customers": [
+      4,
+      6
+    ],
+    "invoices": [
+      10,
+      16
+    ],
+    "background_entries": [
+      10,
+      30
+    ]
+  },
+  "currencies": {
+    "foreign_count": [
+      1,
+      1
+    ]
+  },
+  "errors": {
+    "duplicate_invoice": [
+      0,
+      1
+    ],
+    "payment_allocation": [
+      0,
+      1
+    ],
+    "fx_conversion": [
+      0,
+      1
+    ],
+    "period_cutoff": [
+      0,
+      1
+    ]
+  },
+  "interactions": {
+    "fx_partial_at_boundary": [
+      0,
+      1
+    ],
+    "duplicate_misallocated": [
+      0,
+      1
+    ]
+  },
+  "distractors": {
+    "split_payment": [
+      0,
+      1
+    ],
+    "multi_invoice_payment": [
+      0,
+      1
+    ],
+    "partial_open": [
+      0,
+      1
+    ],
+    "credit_note_refund": [
+      0,
+      1
+    ],
+    "subscription": [
+      0,
+      1
+    ],
+    "same_amount_orders": [
+      0,
+      1
+    ],
+    "unapplied_payment": [
+      0,
+      1
+    ],
+    "boundary_offset": [
+      0,
+      1
+    ],
+    "fx_spike": [
+      0,
+      1
+    ],
+    "posting_lag": [
+      0,
+      2
+    ]
+  }
+}

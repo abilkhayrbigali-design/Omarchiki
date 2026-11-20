@@ -1,0 +1,56 @@
+{
+  "config_id": "dev.v1",
+  "size": {
+    "customers": [
+      8,
+      16
+    ],
+    "invoices": [
+      40,
+      90
+    ],
+    "background_entries": [
+      100,
+      300
+    ]
+  },
+  "currencies": {
+    "base_pool": [
+      "KZT",
+      "EUR",
+      "USD"
+    ],
+    "foreign_count": [
+      1,
+      3
+    ]
+  },
+  "errors": {
+    "duplicate_invoice": [
+      0,
+      2
+    ],
+    "payment_allocation": [
+      0,
+      2
+    ],
+    "fx_conversion": [
+      0,
+      2
+    ],
+    "period_cutoff": [
+      0,
+      2
+    ]
+  },
+  "interactions": {
+    "fx_partial_at_boundary": [
+      0,
+      1
+    ],
+    "duplicate_misallocated": [
+      0,
+      1
+    ]
+  }
+}

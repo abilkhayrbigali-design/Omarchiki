@@ -1,0 +1,33 @@
+{
+  "note": "Open seeds. Hidden evaluation seeds are chosen by the organizers and are not in this repository.",
+  "train": {
+    "config": "train.v1",
+    "seeds": [
+      1000,
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009
+    ]
+  },
+  "dev": {
+    "config": "dev.v1",
+    "seeds": [
+      2000,
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009
+    ]
+  }
+}

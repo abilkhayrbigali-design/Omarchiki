@@ -1,0 +1,43 @@
+[project]
+name = "auditgym"
+version = "0.1.0"
+description = "Reproducible RL environment for training financial-audit agents (Genesis Hackathon, FinTech track)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = []
+
+[project.scripts]
+auditgym = "auditgym.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "hypothesis>=6.100",
+    "jsonschema>=4.23",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/auditgym"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: long-running tests (sweeps over many seeds)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S102", "S307"]
+ignore = ["E501"]

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fx_rate.schema.json",
+  "title": "fx_rate",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "source_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "target_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "rate": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+)?$"
+    }
+  },
+  "required": [
+    "date",
+    "source_currency",
+    "target_currency",
+    "rate"
+  ],
+  "additionalProperties": false,
+  "description": "fx.csv row: 1 unit of source_currency = rate units of target_currency. Record id: 'YYYY-MM-DD/SRC/TGT'."
+}

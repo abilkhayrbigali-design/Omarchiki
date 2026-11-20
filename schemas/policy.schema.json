@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "policy.schema.json",
+  "title": "policy",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "base_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "timezone": {
+      "type": "string",
+      "pattern": "^[+-]\\d{2}:\\d{2}$"
+    },
+    "period": {
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "boundaries"
+      ]
+    },
+    "accounts": {
+      "type": "object",
+      "properties": {
+        "AR": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "CASH": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "EXPENSE": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "FX_CLEARING": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "REVENUE": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "UNAPPLIED": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "AR",
+        "CASH",
+        "EXPENSE",
+        "FX_CLEARING",
+        "REVENUE",
+        "UNAPPLIED"
+      ],
+      "additionalProperties": false
+    },
+    "account_roles": {
+      "type": "object"
+    },
+    "fx": {
+      "type": "object",
+      "required": [
+        "rate_date",
+        "rounding",
+        "conversion",
+        "rate_meaning"
+      ],
+      "properties": {
+        "rate_date": {
+          "enum": [
+            "payment_local_date",
+            "payment_local_date_minus_1",
+            "payment_utc_date"
+          ]
+        },
+        "rounding": {
+          "enum": [
+            "half_even",
+            "half_up"
+          ]
+        }
+      }
+    },
+    "allocation": {
+      "type": "object",
+      "required": [
+        "rule"
+      ],
+      "properties": {
+        "rule": {
+          "const": "listed_order_up_to_open_balance"
+        }
+      }
+    },
+    "duplicates": {
+      "type": "object",
+      "required": [
+        "rule"
+      ]
+    },
+    "rounding": {
+      "type": "object"
+    },
+    "tolerances": {
+      "type": "object",
+      "properties": {
+        "default_minor": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fx_conversion_minor": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "default_minor",
+        "fx_conversion_minor"
+      ],
+      "additionalProperties": false
+    },
+    "issue_types": {
+      "type": "object",
+      "properties": {
+        "duplicate_invoice": {
+          "type": "string"
+        },
+        "payment_allocation": {
+          "type": "string"
+        },
+        "fx_conversion": {
+          "type": "string"
+        },
+        "period_cutoff": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "duplicate_invoice",
+        "payment_allocation",
+        "fx_conversion",
+        "period_cutoff"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "base_currency",
+    "timezone",
+    "period",
+    "accounts",
+    "account_roles",
+    "fx",
+    "allocation",
+    "duplicates",
+    "rounding",
+    "tolerances",
+    "issue_types"
+  ],
+  "additionalProperties": false,
+  "description": "policy.json: the rules needed to recompute expected books from documents (docs/DOMAIN.md section 4)."
+}

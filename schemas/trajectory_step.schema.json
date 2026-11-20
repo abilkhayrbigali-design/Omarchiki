@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trajectory_step.schema.json",
+  "title": "trajectory_step",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "step": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "action": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "observation": {
+      "type": "object"
+    },
+    "reward": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    },
+    "terminated": {
+      "type": "boolean"
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "episode_id",
+    "step",
+    "action",
+    "observation",
+    "reward",
+    "terminated",
+    "truncated"
+  ],
+  "additionalProperties": true,
+  "description": "One line of trajectories.jsonl. step 0 is the reset observation with action null."
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "observation.schema.json",
+  "title": "observation",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string"
+        },
+        "manifest": {
+          "$ref": "manifest.schema.json"
+        },
+        "policy": {
+          "$ref": "policy.schema.json"
+        },
+        "steps_remaining": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "task",
+        "manifest",
+        "policy",
+        "steps_remaining"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "result": {},
+        "error": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "enum": [
+                    "unknown_action",
+                    "invalid_arguments",
+                    "unknown_table",
+                    "unknown_id",
+                    "invalid_cursor",
+                    "limit_out_of_range",
+                    "calculator_error",
+                    "invalid_submission",
+                    "episode_finished",
+                    "internal_error"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "steps_remaining": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "result",
+        "error",
+        "steps_remaining"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "description": "First observation (from reset) or step observation."
+}

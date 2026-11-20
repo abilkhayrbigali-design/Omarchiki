@@ -1,0 +1,45 @@
+{
+  "config_id": "train.v1",
+  "size": {
+    "customers": [
+      6,
+      12
+    ],
+    "invoices": [
+      24,
+      60
+    ],
+    "background_entries": [
+      40,
+      160
+    ]
+  },
+  "errors": {
+    "duplicate_invoice": [
+      0,
+      2
+    ],
+    "payment_allocation": [
+      0,
+      2
+    ],
+    "fx_conversion": [
+      0,
+      2
+    ],
+    "period_cutoff": [
+      0,
+      2
+    ]
+  },
+  "interactions": {
+    "fx_partial_at_boundary": [
+      0,
+      1
+    ],
+    "duplicate_misallocated": [
+      0,
+      1
+    ]
+  }
+}

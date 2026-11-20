@@ -1,0 +1,18 @@
+{
+  "config_id": "clean.v1",
+  "clean": true,
+  "size": {
+    "customers": [
+      6,
+      12
+    ],
+    "invoices": [
+      24,
+      60
+    ],
+    "background_entries": [
+      40,
+      160
+    ]
+  }
+}
