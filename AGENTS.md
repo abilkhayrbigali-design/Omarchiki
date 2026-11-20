@@ -27,17 +27,20 @@ Python 3.11. В рантайме только стандартная библи�
 
 ## Команды
 
-Появятся в пакете WP0.
-
 | Команда | Что делает |
 |---|---|
 | `uv sync` | окружение разработки на Python 3.11 |
-| `make test` | все тесты |
-| `make check` | единая команда проверки: `python -m auditgym check` |
+| `make test` / `make test-fast` | все тесты / без медленных |
+| `make check` | единая команда проверки: тесты, прогон генератора, имитатор жюри |
 | `make docker-check` | то же в контейнере без сети, 2 CPU, 4 ГБ |
 | `python -m auditgym generate --seed N --config configs/train.v1.json --out runs/ep` | сгенерировать эпизод на диск |
-| `python -m auditgym run --policy reconcile --seed N --config …` | прогнать политику и записать траекторию |
-| `python -m auditgym sweep --seeds 2000` | прогон по объёму со счётчиками сбоев |
+| `python -m auditgym run --policy reconcile --seed N` | прогнать политику и записать траекторию |
+| `python -m auditgym sweep --config configs/dev.v1.json --seeds 1000` | прогон генератора по объёму с независимой проверкой |
+| `python -m auditgym baselines --config configs/dev.v1.json --seeds 300` | четыре политики на многих эпизодах |
+| `python -m auditgym jury` | имитатор закрытой проверки жюри |
+| `python -m auditgym export` | открытые эпизоды и траектории |
+
+Числа в README и записке обновляются только из прогонов, сохранённых в `reports/`.
 
 ## Жёсткие правила
 
