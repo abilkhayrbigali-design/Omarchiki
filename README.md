@@ -24,11 +24,53 @@ uv sync
 make check
 ```
 
-`check` делает три вещи и завершается с кодом 0, только если всё прошло:
+`check` делает четыре вещи и завершается с кодом 0, только если всё прошло:
 
 1. **Тесты** среды, генератора, оценщика, решателя и воспроизводимости.
 2. **Прогон генератора по объёму.** По 100 seed на каждую конфигурацию. Каждый эпизод проверяется независимым решателем и проверкой достаточности доказательств.
-3. **Имитация закрытой проверки жюри** на свежих seed по протоколу из разделов 06 и 10 кейса: 20 эпизодов (5 чистых, 5 со взаимодействующими ошибками), четыре базовые политики, проверки K1–K4, чек-лист K5. Отчёт пишется в `runs/check/check_report.json`.
+3. **Имитация закрытой проверки жюри** на свежих seed по протоколу из разделов 06 и 10 кейса: 20 эпизодов (5 чистых, 5 со взаимодействующими ошибками), четыре базовые политики, проверки K1–K4, чек-лист K5.
+4. **Опубликованные определения проверок через `judge_adapter.py`** (отдельно: `python -m auditgym judge-check`): контрактные тесты C01–C20, закрытые эпизоды D01–D20, тесты matcher и награды 1–20 и примеры M01–M12, парные проверки P01–P20. Эпизоды пишутся на диск, преобразования для пар делаются переписыванием файлов, как у жюри.
+
+Отчёт пишется в `runs/check/check_report.json`.
+
+## Адаптер жюри
+
+Жюри подключается через [judge_adapter.py](judge_adapter.py) в корне репозитория (реализация — [src/auditgym/judge.py](src/auditgym/judge.py)). Рабочая директория в контейнере — `/app`, `src/` уже на пути импорта:
+
+```bash
+docker run --rm --network none --cpus 2 --memory 4g --entrypoint python auditgym \
+    -c "from judge_adapter import generate_episode, make_env, score_episode"
+```
+
+| Точка входа | Что делает |
+|---|---|
+| `generate_episode(seed, config, output_dir)` | пишет эпизод: `manifest.json`, `policy.json`, `ledger.csv`, `invoices.jsonl`, `payments.jsonl`, `fx.csv` и закрытые `private/truth.json`, `private/provenance.json`. `config` — наша конфигурация ([docs/DOMAIN.md](docs/DOMAIN.md), [configs/](configs/)) или `{"team_config": {...}}` |
+| `make_env()` | объект с `reset(seed, config)` и `step(action)` |
+| `reset(seed, config)` | `config = {"mode": "closed", "episode_dir": DIR}` загружает каталог как есть, без генерации и смены ID; повторный `reset` начинает его заново. `{"mode": "train", "team_config": {...}}` генерирует эпизод из `seed`. Первое наблюдение: `{task, manifest, policy, remaining_steps}` |
+| `step(action)` | `action = {"name": ..., "args": {...}}` (принимается и наша форма `{"action": ...}`). Возвращает `(observation, reward, terminated, truncated, info)`, наблюдение — `{result, error, remaining_steps}` |
+| `score_episode(episode_dir, findings, inspection_steps)` | `{tp, fp, fn, precision, recall, f1, return}`; для структурно неверного ответа `return = -1`, остальные `null` |
+
+**Результаты действий.** `list_records(table, cursor, limit)` → `{"records": [...], "next_cursor": str | null}`, таблицы `ledger`, `invoices`, `payments`, `fx`, не больше 50 строк. `get_record(table, id)` → запись: `id` — это `row_id` для `ledger`, `doc_id` для `invoices` и `payments`, `"YYYY-MM-DD/SRC/TGT"` для `fx` (дата и пара валют, не суррогатный ID). `get_document(doc_id)` → счёт со строками или платёж. `calculator(expression)` → десятичная строка, например `"0.3"` для `0.1+0.2`. `submit(findings)` → `{"accepted": true}`; `findings` — объект findings.json `{episode_id, findings: [...]}`, список выводов без обёртки тоже принимается. Ошибка — `{"code", "message"}` с кодом из фиксированного списка ([schemas/](schemas/)), шаг расходуется.
+
+**Четыре типа ошибок** (поле `type`, точные строки):
+
+| `type` | Ошибка кейса | `affected_ids` | `expected_amount_minor` |
+|---|---|---|---|
+| `duplicate_invoice` | дубль счёта: тот же `invoice_id` во втором документе или новый номер при том же заказе и строках | `doc_id` всех копий группы | `(k − 1) × |total_minor|`, валюта счёта |
+| `payment_allocation` | платёж не распределён на счёт, распределён частично или на другой счёт | `doc_id` платежа и `doc_id` счёта | недораспределённая сумма, валюта платежа |
+| `fx_conversion` | конвертация по курсу не той даты или не той валютной пары | `doc_id` платежа | разница в базовой валюте |
+| `period_cutoff` | проводка документа попала в другой период, чем сам документ | `doc_id` документа | сумма документа, его валюта |
+
+Точные определения и наборы доказательств по типам — в [docs/DOMAIN.md](docs/DOMAIN.md), разделы 6–7, и в `policy.evidence` каждого эпизода. Допуск суммы опубликован в `policy.tolerances`: 0 для всех типов, кроме `fx_conversion` (1 минимальная единица на округление). В файле эталона, где допуска нет, он равен 0.
+
+**Режимы и время.** В `closed` политика получает `reward = 0.0` до конца, включая завершение; в `train` — терминальную награду. Лимит — 60 секунд от начала `reset`: шаг после лимита не выполняется, эпизод завершается с `truncated=true` и оценивается как пустой ответ.
+
+**Журнал оценщика.** Оценка каждого завершённого эпизода и каждого вызова `score_episode` добавляется в `env.grade_log` / `judge_adapter.SCORE_LOG` и, если задана переменная окружения `AUDITGYM_GRADER_LOG`, в этот JSONL-файл. В наблюдения и `info` она не попадает.
+
+**Сопоставление** следует опубликованным соглашениям жюри ([docs/REQUIREMENTS.md](docs/REQUIREMENTS.md), раздел 8; код и правила — [src/auditgym/grading/](src/auditgym/grading/__init__.py)):
+- неверный тип JSON-значения, отсутствующее поле или превышение лимита (30 выводов, 10 ID доказательств, 1000 символов объяснения, 10 `affected_ids`) — ответ недействителен, −1;
+- неверное значение в структурно правильном выводе — FP; ID и валюта сравниваются точно, вывод со ссылкой на несуществующий `evidence_id` не сопоставляется;
+- при равных максимальных сопоставлениях выбор идёт по `issue_id` и индексу вывода.
 
 ## Использование
 
@@ -90,6 +132,7 @@ obs, reward, terminated, truncated, info = env.step({"action": "list_records", "
 | `python -m auditgym sweep --config configs/dev.v1.json --seeds 1000` | прогон генератора по объёму с независимой проверкой |
 | `python -m auditgym baselines --config configs/dev.v1.json --seeds 300` | четыре базовые политики на многих эпизодах, P, R, F1, возврат, шаги, время |
 | `python -m auditgym jury` | имитация проверки жюри с оценкой по критериям и пробами на трюки |
+| `python -m auditgym judge-check` | опубликованные определения проверок (блоки 1–4) через `judge_adapter.py` |
 | `python -m auditgym transform --input DIR --out DIR2 --salt s` | перестановка строк и смена ID готового эпизода |
 | `python -m auditgym export` | открытые train/dev-эпизоды и `trajectories/trajectories.jsonl` |
 
@@ -101,6 +144,7 @@ obs, reward, terminated, truncated, info = env.step({"action": "list_records", "
 |---|---|
 | `src/auditgym/world`, `books`, `inject`, `present`, `episode` | генератор: история компании, проводки, ошибки, публичные ID, сборка эпизода |
 | `src/auditgym/env`, `server`, `client.py` | среда `reset/step`, инструменты, калькулятор, процесс-оценщик |
+| `judge_adapter.py`, `src/auditgym/judge.py` | адаптер жюри: `generate_episode`, `make_env`, `score_episode` |
 | `src/auditgym/grading` | разбор ответа, сопоставление с эталоном, метрики, награда |
 | `src/auditgym/verify` | независимый решатель и проверка достаточности доказательств |
 | `src/auditgym/policies`, `harness` | базовые политики, прогоны, отчёты, имитатор жюри |

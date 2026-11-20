@@ -385,6 +385,7 @@ class AuditEnv:
                 episode_id=self._store.episode_id,
                 inspection_steps=inspection_steps,
                 viewed_ids=frozenset(self._viewed),
+                known_ids=self._store.known_ids,
             )
             record.update(result.to_log())
             reward = float(result.reward)

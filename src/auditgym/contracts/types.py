@@ -274,7 +274,8 @@ class Issue:
             affected_ids=tuple(d["affected_ids"]),
             expected_amount_minor=_int(d["expected_amount_minor"]),
             currency=d["currency"],
-            amount_tolerance_minor=_int(d["amount_tolerance_minor"]),
+            # Optional in hand-written fixtures: the jury's default tolerance is 0.
+            amount_tolerance_minor=_int(d.get("amount_tolerance_minor", 0)),
             evidence_sets=tuple(tuple(s) for s in d["evidence_sets"]),
         )
 
@@ -338,6 +339,25 @@ class PublicEpisode:
     @property
     def episode_id(self) -> str:
         return self.manifest["episode_id"]
+
+    def open_ids(self) -> frozenset[str]:
+        """Every identifier the agent can read in the open records.
+
+        Record ids (ledger row_id, invoice and payment doc_id, fx rate id) and the ids those
+        records carry (invoice_id, payment_id, entity_id, invoice_refs). An evidence id outside
+        this set does not exist for the agent, and a finding citing it matches nothing (M04).
+        """
+        ids: set[str] = set()
+        for row in self.ledger:
+            ids.add(row.row_id)
+            ids.update(v for v in (row.entity_id, row.invoice_id, row.payment_id) if v is not None)
+        for inv in self.invoices:
+            ids.update((inv.doc_id, inv.invoice_id, inv.entity_id))
+        for pay in self.payments:
+            ids.update((pay.doc_id, pay.payment_id))
+            ids.update(pay.invoice_refs or ())
+        ids.update(rate.rate_id for rate in self.fx)
+        return frozenset(ids)
 
 
 @dataclass(frozen=True, slots=True)

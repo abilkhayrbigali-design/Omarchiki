@@ -9,6 +9,7 @@ The environment calls a grader function with this signature:
         episode_id: str,                    # the current episode id
         inspection_steps: int,              # steps used before submit (errors included)
         viewed_ids: frozenset[str] | None,  # ids the agent requested; for the experimental reward
+        known_ids: frozenset[str] | None,   # every id of the open data; evidence must be among them
     ) -> GradeResult
 
 The real implementation is auditgym.grading.grade_submission. Tests of the environment may pass
@@ -65,4 +66,5 @@ class GraderFn(Protocol):
         episode_id: str,
         inspection_steps: int,
         viewed_ids: frozenset[str] | None = None,
+        known_ids: frozenset[str] | None = None,
     ) -> GradeResult: ...

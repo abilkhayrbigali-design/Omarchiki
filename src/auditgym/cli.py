@@ -377,8 +377,39 @@ def _cmd_jury(args: argparse.Namespace) -> int:
     return 0
 
 
+def _summarize_judge(report: dict[str, Any]) -> list[str]:
+    names = {
+        "block1": "Block 1 contract C01-C20",
+        "block2": "Block 2 closed episodes D01-D20",
+        "block3": "Block 3 matcher and reward T01-T20",
+        "block4": "Block 4 pairs P01-P20",
+    }
+    lines = []
+    for block, title in names.items():
+        s = report["summary"][block]
+        lines.append(f"  {title:<36} {s['passed']}/{s['of']}  points {s['points']}")
+        lines += [f"    FAIL {r['id']}: {r['detail']}" for r in report[block] if not r["ok"]]
+    m = report["summary"]["examples_M"]
+    lines.append(f"  {'Open matcher examples M01-M12':<36} {m['passed']}/{m['of']}")
+    return lines
+
+
+def _judge_ok(report: dict[str, Any]) -> bool:
+    return all(r["ok"] for b in ("block1", "block2", "block3", "block4") for r in report[b])
+
+
+def _cmd_judge_check(args: argparse.Namespace) -> int:
+    from auditgym.harness.judge_check import run_judge_checks
+
+    report = run_judge_checks(Path(args.work))
+    _write_json(Path(args.out), report)
+    print("\n".join(_summarize_judge(report)))
+    return 0 if _judge_ok(report) else 1
+
+
 def _cmd_check(args: argparse.Namespace) -> int:
-    """The single verification command: tests, generator sweep, jury simulation."""
+    """The single verification command: tests, generator sweep, jury simulation, and the
+    published FinTech check definitions run through judge_adapter.py."""
     from auditgym.harness.jury import run_jury
     from auditgym.harness.sweep import sweep
 
@@ -388,10 +419,10 @@ def _cmd_check(args: argparse.Namespace) -> int:
     cmd = [sys.executable, "-m", "pytest", "-p", "no:cacheprovider"]
     if not args.full:
         cmd += ["-m", "not slow"]
-    print("== 1/3 tests:", " ".join(cmd[2:]))
+    print("== 1/4 tests:", " ".join(cmd[2:]))
     status["tests_exit_code"] = subprocess.call(cmd, cwd=REPO)
 
-    print(f"== 2/3 generator sweep: {args.sweep_seeds} seeds per config")
+    print(f"== 2/4 generator sweep: {args.sweep_seeds} seeds per config")
     sweeps = {}
     for name in ("train.v1", "dev.v1", "clean.v1", "interacting.v1"):
         rep = sweep(
@@ -410,17 +441,32 @@ def _cmd_check(args: argparse.Namespace) -> int:
         for r in sweeps.values()
     )
 
-    print("== 3/3 jury simulation")
+    print("== 3/4 jury simulation")
     jury = run_jury(args.jury_seed, with_baselines=True)
     print("\n".join(_summarize_jury(jury)))
     status["jury_all_checks_passed"] = all(
         r["ok"] for k in ("K1", "K2", "K3", "K4") for r in jury[k]
     )
-    status["seconds"] = round(time.perf_counter() - started, 1)
+
+    from auditgym.harness.judge_check import run_judge_checks
 
     out = Path(args.out)
-    _write_json(out / "check_report.json", {"status": status, "sweeps": sweeps, "jury": jury})
-    ok = status["tests_exit_code"] == 0 and status["sweep_ok"] and status["jury_all_checks_passed"]
+    print("== 4/4 published FinTech check definitions through judge_adapter.py")
+    judge = run_judge_checks(out / "judge_work")
+    print("\n".join(_summarize_judge(judge)))
+    status["judge_checks_passed"] = _judge_ok(judge)
+    status["seconds"] = round(time.perf_counter() - started, 1)
+
+    _write_json(
+        out / "check_report.json",
+        {"status": status, "sweeps": sweeps, "jury": jury, "judge_checks": judge},
+    )
+    ok = (
+        status["tests_exit_code"] == 0
+        and status["sweep_ok"]
+        and status["jury_all_checks_passed"]
+        and status["judge_checks_passed"]
+    )
     print(
         f"== RESULT: {'PASS' if ok else 'FAIL'}  ({status['seconds']} s)  report: {out / 'check_report.json'}"
     )
@@ -511,6 +557,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", default="runs/jury/report.json")
     p.add_argument("--no-baselines", action="store_true")
     p.set_defaults(func=_cmd_jury)
+
+    p = sub.add_parser(
+        "judge-check", help="run the published FinTech check definitions through judge_adapter.py"
+    )
+    p.add_argument("--work", default="runs/judge_check/work")
+    p.add_argument("--out", default="runs/judge_check/report.json")
+    p.set_defaults(func=_cmd_judge_check)
 
     p = sub.add_parser("check", help="the single verification command")
     p.add_argument("--full", action="store_true", help="include slow tests")

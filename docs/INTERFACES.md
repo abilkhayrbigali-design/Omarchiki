@@ -80,17 +80,21 @@ env.active                                                    # идёт ли э
 ```python
 from auditgym.grading import grade_submission, parse_submission, metrics, shared_reward
 
-result: GradeResult = grade_submission(payload, truth, *, episode_id, inspection_steps, viewed_ids=None)
+result: GradeResult = grade_submission(
+    payload, truth, *, episode_id, inspection_steps, viewed_ids=None, known_ids=None
+)
 findings: tuple[Finding, ...] = parse_submission(payload, episode_id)   # SubmissionError при ошибке
 p, r, f1 = metrics(tp, fp, fn, n_truth, n_findings)
 reward: float = shared_reward(f1, inspection_steps)
 ```
 
-- Структура строго по `schemas/submission.schema.json`. Любое отклонение: `valid=False`, `reward=-1.0`.
+- Структура строго по `schemas/submission.schema.json`: типы JSON-значений, обязательные и лишние поля, лимиты. Любое отклонение: `valid=False`, `reward=-1.0`. Неверное значение в правильной структуре (тип ошибки, валюта, сумма, ID) — ложный вывод, не ошибка структуры (соглашения жюри, REQUIREMENTS §8).
+- `known_ids` — все ID открытых данных (`PublicEpisode.open_ids()`); среда передаёт их из `RecordStore.known_ids`. Вывод, который ссылается на `evidence_id` вне этого множества, ни с чем не сопоставляется. `None` отключает проверку (только юнит-тесты).
+- Выбор пар при равных максимальных сопоставлениях — опубликованное правило жюри: `issue_id` по возрастанию, затем наименьший индекс вывода. На TP, FP, FN и награды не влияет.
 - Арифметика награды точная (`Fraction`), в `float` — только на выходе. `metrics()` возвращает `Fraction`.
 - Дополнительно экспортируются `empty_submission`, `reward_exact`, `match_findings`, `compatible`, `SubmissionError`, `SubmissionErrorCode`, `STEP_COST_FRACTION`, `INVALID_REWARD`.
 - `grade_submission` не бросает исключений ни на каком входе: любая кривая структура даёт `valid=False`, награда −1.
-- Целое, записанное как `5.0`, принимается и переводится в `int`, как в JSON Schema; дробное отвергается. Валюта — ровно три заглавные латинские буквы.
+- Целое, записанное как `5.0`, принимается и переводится в `int`, как в JSON Schema; дробное, строка и `bool` отвергаются. Валюта сравнивается с эталоном точно.
 - Зависит только от `contracts/` и `util/`.
 
 ## WP5 — независимый решатель (`verify/`)
@@ -118,3 +122,20 @@ class Policy(Protocol):
 ```
 
 Oracle получает эталон от harness при создании, не через среду.
+
+## Адаптер жюри (`judge.py`, `judge_adapter.py`)
+
+```python
+from judge_adapter import generate_episode, make_env, score_episode
+
+generate_episode(seed, config, output_dir)   # config: наш или {"team_config": ...}
+env = make_env()                             # JudgeEnv, новый AuditEnv на каждый reset
+obs, info = env.reset(seed, {"mode": "closed", "episode_dir": dir})   # или {"mode": "train", "team_config": ...}
+obs, reward, terminated, truncated, info = env.step({"name": ..., "args": {...}})
+score_episode(episode_dir, findings, inspection_steps) -> {tp, fp, fn, precision, recall, f1, return}
+```
+
+- Только перевод имён и оболочек; среда, генератор и оценщик — те же. Формы результатов и правила — в README, раздел «Адаптер жюри».
+- Лимит 60 с адаптер считает от начала `reset` по `server.host.MONOTONIC` и при превышении вызывает `AuditEnv.truncate()`.
+- Оценки пишутся в `JudgeEnv.grade_log`, `SCORE_LOG` и, если задан `AUDITGYM_GRADER_LOG`, в этот файл.
+- `harness/judge_check.py` прогоняет через адаптер четыре блока опубликованных проверок (`python -m auditgym judge-check`).

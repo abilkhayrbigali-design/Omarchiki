@@ -32,7 +32,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0064,
+        "seconds": 0.0079,
         "steps": 43.0,
         "truncated": 0
       },
@@ -44,7 +44,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0062,
+        "seconds": 0.0077,
         "steps": 42.55,
         "truncated": 0
       },
@@ -56,7 +56,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0064,
+        "seconds": 0.008,
         "steps": 43.225,
         "truncated": 0
       }
@@ -70,7 +70,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 1.0,
-        "seconds": 0.0004,
+        "seconds": 0.0011,
         "steps": 1.0,
         "truncated": 0
       },
@@ -82,7 +82,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 1.0,
-        "seconds": 0.0004,
+        "seconds": 0.0011,
         "steps": 1.0,
         "truncated": 0
       },
@@ -94,7 +94,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 1.0,
-        "seconds": 0.0005,
+        "seconds": 0.0012,
         "steps": 1.0,
         "truncated": 0
       }
@@ -108,7 +108,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0012,
+        "seconds": 0.0019,
         "steps": 31.0,
         "truncated": 0
       },
@@ -120,7 +120,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0011,
+        "seconds": 0.0019,
         "steps": 31.0,
         "truncated": 0
       },
@@ -132,7 +132,7 @@
         "precision": 0.0,
         "recall": 0.0,
         "reward": -1.0,
-        "seconds": 0.0013,
+        "seconds": 0.0019,
         "steps": 31.0,
         "truncated": 0
       }
@@ -146,7 +146,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 0.8835,
-        "seconds": 0.0153,
+        "seconds": 0.018,
         "steps": 59.2667,
         "truncated": 0
       },
@@ -158,7 +158,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 0.8858,
-        "seconds": 0.015,
+        "seconds": 0.0177,
         "steps": 58.1,
         "truncated": 0
       },
@@ -170,7 +170,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "reward": 0.8823,
-        "seconds": 0.0155,
+        "seconds": 0.0181,
         "steps": 59.85,
         "truncated": 0
       }

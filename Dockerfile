@@ -16,7 +16,7 @@ WORKDIR /app
 COPY requirements-check.txt ./
 RUN pip install --require-hashes -r requirements-check.txt
 
-COPY pyproject.toml LICENSE README.md Makefile Dockerfile ./
+COPY pyproject.toml LICENSE README.md Makefile Dockerfile judge_adapter.py ./
 COPY src ./src
 COPY tests ./tests
 COPY schemas ./schemas

@@ -108,11 +108,12 @@ def test_S04_tolerance_is_read_from_the_truth():
 
 
 def test_S04_amount_is_a_magnitude_not_a_signed_value():
-    # A negative claim is a structural error; the expected amount is positive by DOMAIN section 6.
+    # A negative claim is structurally valid (a JSON integer) but never equals the positive
+    # expected amount (DOMAIN section 6): a false positive, not a crash of the submission.
     f = oracle_finding(CUT)
     f["claimed_amount_minor"] = -CUT.expected_amount_minor
     result = grade([f])
-    assert result.valid is False and result.reward == -1.0
+    assert result.valid is True and (result.tp, result.fp, result.fn) == (0, 1, len(TRUTH.issues))
 
 
 # ------------------------------------------------------------------------------ S04 evidence
@@ -226,31 +227,20 @@ def json_key(f: dict) -> tuple:
     )
 
 
-def test_S06_ambiguous_choice_prefers_closest_amount_then_fewest_evidence():
+def test_S06_ambiguous_choice_takes_the_smallest_finding_index():
+    # Published rule: issues by issue_id, each gets the smallest finding index that keeps the
+    # matching maximum. Amount gaps and evidence sizes do not decide anything.
     s1, s2 = FX.evidence_sets
     off_by_one = finding("fx_conversion", ["D-P2"], 30_001, "KZT", s1)
     exact_padded = finding("fx_conversion", ["D-P2"], 30_000, "KZT", list(s1) + ["R-001"])
     exact_tight = finding("fx_conversion", ["D-P2"], 30_000, "KZT", s2)
-    candidates = [off_by_one, exact_padded, exact_tight]
-    for perm in itertools.permutations(candidates):
-        findings = list(perm)
-        result = grade(findings, Truth(EID, (FX,)))
+    for perm in itertools.permutations([off_by_one, exact_padded, exact_tight]):
+        result = grade(list(perm), Truth(EID, (FX,)))
         assert (result.tp, result.fp, result.fn) == (1, 2, 0)
-        ((index, issue_id),) = result.matches
-        assert issue_id == FX.issue_id
-        assert findings[index] is exact_tight
+        assert result.matches == ((0, FX.issue_id),)
 
 
-def test_S06_ambiguous_choice_prefers_smaller_claim_on_equal_gap():
-    below = finding("fx_conversion", ["D-P2"], 29_999, "KZT", FX.evidence_sets[0])
-    above = finding("fx_conversion", ["D-P2"], 30_001, "KZT", FX.evidence_sets[0])
-    for findings in ([below, above], [above, below]):
-        result = grade(findings, Truth(EID, (FX,)))
-        ((index, _),) = result.matches
-        assert findings[index]["claimed_amount_minor"] == 29_999
-
-
-def test_S06_matches_are_canonical_under_any_order_of_findings():
+def test_S06_counts_do_not_depend_on_the_order_of_findings():
     base = oracle_findings()
     extra = [
         copy.deepcopy(base[0]),
@@ -259,13 +249,19 @@ def test_S06_matches_are_canonical_under_any_order_of_findings():
         finding("period_cutoff", ["D-I1"], 10_000_000, "KZT", ["D-I1", "R-001"]),
     ]
     findings = base + extra
-    reference = _matched_contents(findings)
+    reference = grade(findings)
     for seed in range(40):
         perm = list(findings)
         # deterministic shuffle without the random module
         perm = [perm[(k * (2 * seed + 1) + seed) % len(perm)] for k in range(len(perm))]
         assert sorted(map(json_key, perm)) == sorted(map(json_key, findings))
-        assert _matched_contents(perm) == reference
+        result = grade(perm)
+        assert (result.tp, result.fp, result.fn, result.reward) == (
+            reference.tp,
+            reference.fp,
+            reference.fn,
+            reference.reward,
+        )
 
 
 def test_S06_identical_repeats_report_the_earliest_position():
@@ -293,7 +289,9 @@ def test_S06_rules_are_published_in_the_package_docstring():
         "evidence set",
         "maximum",
         "augmenting-path",
-        "fewer distinct evidence ids",
+        "issue_id",
+        "smallest finding index",
+        "open data",
         "explanation",
     ):
         assert phrase in doc

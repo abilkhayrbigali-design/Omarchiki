@@ -120,11 +120,14 @@ def test_S11_wrong_valid_currency_is_a_false_positive(currency):
 
 
 @pytest.mark.parametrize("currency", ["kzt", "Kzt", "KZT ", " KZT", "KZT\n", "KZ", "₸", "398"])
-def test_S11_malformed_currency_is_invalid(currency):
+def test_S11_misspelled_currency_is_a_false_positive(currency):
+    # Exact comparison, no case folding or trimming (jury convention M06): the finding is a
+    # false positive, the rest of the answer still counts.
     f = oracle_finding(CUT)
     f["currency"] = currency
     result = grade([f] + oracle_findings())
-    assert result.valid is False and result.reward == -1.0
+    n = len(TRUTH.issues)
+    assert result.valid is True and (result.tp, result.fp, result.fn) == (n, 1, 0)
 
 
 def test_S11_same_amount_in_other_currency_is_not_converted():

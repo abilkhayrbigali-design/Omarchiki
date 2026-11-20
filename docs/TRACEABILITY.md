@@ -2,7 +2,7 @@
 
 Каждое требование из [REQUIREMENTS.md](REQUIREMENTS.md): где реализовано и какие тесты его проверяют (по имени теста, `test_<код>_…`). Файл собирается командой `python -m auditgym traceability` из списка тестов `pytest --collect-only`.
 
-Тестовых функций: 481; с параметризацией проверок больше тысячи.
+Тестовых функций: 508; с параметризацией проверок больше тысячи.
 
 | Код | Где реализовано | Тесты |
 |---|---|---|
@@ -44,9 +44,9 @@
 | S01 | grading/parse.py | `test_env_reset_step.py` (2), `test_reward_parse.py` (4), `test_reward_schema_crosscheck.py` (4) |
 | S02 | grading/parse.py | `test_reward_parse.py` (7) |
 | S03 | grade_submission valid=False | `test_env_errors.py` (3), `test_env_modes.py` (1), `test_env_steps.py` (2), `test_reward_never_raises.py` (5), `test_reward_parse.py` (8) |
-| S04 | grading/match.py | `test_reward_hypothesis.py` (2), `test_reward_matching.py` (16) |
+| S04 | grading/match.py | `test_reward_hypothesis.py` (2), `test_reward_matching.py` (16), `test_reward_never_raises.py` (1), `test_reward_parse.py` (1) |
 | S05 | grading/match.py | `test_env_steps.py` (1), `test_reward_hypothesis.py` (2), `test_reward_matching.py` (4) |
-| S06 | docstring grading/ | `test_reward_boundaries.py` (3), `test_reward_matching.py` (6) |
+| S06 | docstring grading/ | `test_reward_boundaries.py` (3), `test_reward_matching.py` (5) |
 | S07 | grading/reward.py | `test_reward_metrics.py` (4) |
 | S08 | grading/reward.py | `test_reward_boundaries.py` (1), `test_reward_hypothesis.py` (2), `test_reward_metrics.py` (7), `test_reward_s11_attacks.py` (3) |
 | S09 | explanation не читается | `test_reward_hypothesis.py` (1), `test_reward_matching.py` (2) |
@@ -56,8 +56,18 @@
 | V02 | схема конфигурации, harness/transform.py | `test_requirements.py` (1) |
 | V03 | configs/clean.v1.json, configs/interacting.v1.json | `test_requirements.py` (1) |
 | V04 | harness/run.py aggregate | `test_requirements.py` (1) |
-| K1 | harness/jury.py k1_checks | `test_jury_checks_fixture.py` (1), `test_leak_import_boundary.py` (5) |
-| K2 | harness/sweep.py | `test_data_review.py` (2), `test_data_sweep.py` (1), `test_data_truth.py` (3), `test_verify_evidence.py` (10), `test_verify_tiny.py` (4) |
-| K3 | harness/jury.py k3_checks | `test_jury_checks_fixture.py` (1) |
-| K4 | harness/transform.py, k4_checks | `test_data_determinism.py` (3), `test_data_presentation.py` (2), `test_published_episodes.py` (1), `test_transform.py` (6), `test_verify_invariance.py` (2) |
+| K1 | harness/jury.py k1_checks | `test_judge_protocol.py` (3), `test_jury_checks_fixture.py` (1), `test_leak_import_boundary.py` (5) |
+| K2 | harness/sweep.py | `test_data_review.py` (2), `test_data_sweep.py` (1), `test_data_truth.py` (3), `test_judge_protocol.py` (1), `test_verify_evidence.py` (10), `test_verify_tiny.py` (4) |
+| K3 | harness/jury.py k3_checks | `test_judge_protocol.py` (2), `test_jury_checks_fixture.py` (1) |
+| K4 | harness/transform.py, k4_checks | `test_data_determinism.py` (3), `test_data_presentation.py` (2), `test_judge_protocol.py` (3), `test_published_episodes.py` (1), `test_transform.py` (6), `test_verify_invariance.py` (2) |
 | K5 | README, configs, trajectories, DESIGN_NOTE | `test_published_episodes.py` (1) |
+| J01 | judge_adapter.py, auditgym/judge.py | `test_judge_adapter.py` (3) |
+| J02 | auditgym/judge.py (оболочки и формы результатов) | `test_judge_adapter.py` (2), `test_judge_protocol.py` (1) |
+| J03 | JudgeEnv.reset: episode_dir, team_config, mode | `test_judge_adapter.py` (3) |
+| J04 | auditgym/judge.py score_episode | `test_judge_adapter.py` (2) |
+| J05 | JudgeEnv: 60 с от начала reset | `test_judge_adapter.py` (1), `test_judge_protocol.py` (1) |
+| J06 | grading/parse.py, grading/match.py (known_ids) | `test_judge_protocol.py` (2), `test_reward_jury_conventions.py` (4) |
+| J07 | grading/match.py match_findings | `test_reward_jury_conventions.py` (2) |
+| J08 | contracts/io.py read_episode, harness/judge_check.py block4 | `test_judge_protocol.py` (2) |
+| J09 | contracts/config.py (variants), harness/judge_check.py d_matrix | `test_judge_protocol.py` (1) |
+| J10 | README, раздел «Адаптер жюри» | `test_judge_adapter.py` (1) |

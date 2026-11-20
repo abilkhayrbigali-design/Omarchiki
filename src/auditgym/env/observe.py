@@ -51,7 +51,9 @@ TASK = (
     '"currency", "evidence_ids", "explanation"}]}; '
     f"at most {MAX_FINDINGS} findings, {MAX_EVIDENCE_IDS} evidence ids and "
     f"{MAX_EXPLANATION_CHARS} explanation characters per finding. Amounts are integers in minor "
-    "units. affected_ids and evidence_ids are record ids. A malformed submission scores -1. "
+    "units. affected_ids and evidence_ids are record ids. A malformed submission scores -1; a "
+    "finding with a wrong type, ids, amount or currency, or citing an id that does not exist, is "
+    "a false positive. "
     f"Budget: {MAX_STEPS} steps including submit; an invalid action also costs a step; running "
     "out of steps counts as an empty submission. Exploration gives no reward and no hints."
 )

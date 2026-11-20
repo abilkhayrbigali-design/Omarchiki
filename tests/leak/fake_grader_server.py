@@ -15,7 +15,7 @@ from auditgym.server.app import main
 SECRET_REASON = "SECRET-GRADER-REASON"
 
 
-def grader(payload, truth, *, episode_id, inspection_steps, viewed_ids=None):
+def grader(payload, truth, *, episode_id, inspection_steps, viewed_ids=None, known_ids=None):
     n = len(truth.issues)
     return GradeResult(
         valid=True,

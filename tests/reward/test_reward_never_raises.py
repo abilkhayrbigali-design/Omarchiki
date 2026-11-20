@@ -106,8 +106,6 @@ EDGE_PAYLOADS = {
     "decimal_amount": _f(claimed_amount_minor=decimal.Decimal(7_500_000)),
     "complex_amount": _f(claimed_amount_minor=7_500_000 + 0j),
     "huge_explanation": _f(explanation=HUGE),
-    "huge_id": _f(affected_ids=[HUGE, "D-I4"]),
-    "huge_evidence": _f(evidence_ids=[HUGE]),
     "million_evidence": _f(evidence_ids=["D-I3"] * 1_000_000),
     "deep_affected": _f(affected_ids=_deep_list(100_000)),
     "self_affected": _f(affected_ids=_self_list()),
@@ -116,10 +114,24 @@ EDGE_PAYLOADS = {
     "bytes_type": _f(type=b"duplicate_invoice"),
     "set_affected": _f(affected_ids={"D-I3", "D-I4"}),
     "tuple_affected": _f(affected_ids=("D-I3", "D-I4")),
-    "nul_currency": _f(currency="KZ\x00"),
     "nonstring_finding_key": {"episode_id": EID, "findings": [{**oracle_findings()[0], 7: 7}]},
     "tuple_key": {("episode_id",): EID, "findings": []},
 }
+
+
+# Odd but structurally valid values: graded without raising, the finding matches nothing.
+ODD_VALUES = {
+    "huge_id": _f(affected_ids=[HUGE, "D-I4"]),
+    "huge_evidence": _f(evidence_ids=[HUGE]),
+    "nul_currency": _f(currency="KZ\x00"),
+}
+
+
+@pytest.mark.parametrize("name", sorted(ODD_VALUES))
+def test_S04_odd_values_are_graded_as_false_positives(name):
+    result = grade_submission(ODD_VALUES[name], TRUTH, episode_id=EID, inspection_steps=7)
+    assert result.valid is True and result.tp == 0 and result.fp == 1
+    json.dumps(result.to_log())
 
 
 @pytest.mark.parametrize("name", sorted(EDGE_PAYLOADS))

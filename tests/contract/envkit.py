@@ -51,7 +51,9 @@ class RecordingGrader:
         self.valid = valid
         self.calls: list[dict[str, Any]] = []
 
-    def __call__(self, payload, truth, *, episode_id, inspection_steps, viewed_ids=None):
+    def __call__(
+        self, payload, truth, *, episode_id, inspection_steps, viewed_ids=None, known_ids=None
+    ):
         self.calls.append(
             {
                 "payload": payload,
@@ -253,7 +255,9 @@ class TruthGrader:
     def __init__(self) -> None:
         self.calls = 0
 
-    def __call__(self, payload, truth, *, episode_id, inspection_steps, viewed_ids=None):
+    def __call__(
+        self, payload, truth, *, episode_id, inspection_steps, viewed_ids=None, known_ids=None
+    ):
         self.calls += 1
         n = len(truth.issues)
         return GradeResult(

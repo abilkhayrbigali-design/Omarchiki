@@ -68,6 +68,16 @@ IMPLEMENTED_IN: dict[str, str] = {
     "K3": "harness/jury.py k3_checks",
     "K4": "harness/transform.py, k4_checks",
     "K5": "README, configs, trajectories, DESIGN_NOTE",
+    "J01": "judge_adapter.py, auditgym/judge.py",
+    "J02": "auditgym/judge.py (оболочки и формы результатов)",
+    "J03": "JudgeEnv.reset: episode_dir, team_config, mode",
+    "J04": "auditgym/judge.py score_episode",
+    "J05": "JudgeEnv: 60 с от начала reset",
+    "J06": "grading/parse.py, grading/match.py (known_ids)",
+    "J07": "grading/match.py match_findings",
+    "J08": "contracts/io.py read_episode, harness/judge_check.py block4",
+    "J09": "contracts/config.py (variants), harness/judge_check.py d_matrix",
+    "J10": "README, раздел «Адаптер жюри»",
 }
 ARCHITECTURAL = {"C01": "архитектурное требование, см. DESIGN_NOTE §1"}
 

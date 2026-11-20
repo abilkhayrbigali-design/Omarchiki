@@ -5,29 +5,30 @@ standard library only:
 
     {"episode_id": str, "findings": [finding, ...]}          # no other keys, at most 30 findings
     finding = {
-        "type": one of ISSUE_TYPES,
-        "affected_ids": [id, ...],                           # 1..10 ids
-        "claimed_amount_minor": int >= 0,
-        "currency": three letters A-Z,
-        "evidence_ids": [id, ...],                           # 0..10 ids
+        "type": str,
+        "affected_ids": [str, ...],                          # at most 10 ids
+        "claimed_amount_minor": int,
+        "currency": str,
+        "evidence_ids": [str, ...],                          # at most 10 ids
         "explanation": str,                                  # at most 1000 characters
     }                                                        # exactly these six keys
-    id = non-empty str of at most 64 characters
 
 `episode_id` must also equal the id of the current episode.
 
-Python types are checked exactly (`type(x) is int`, not `isinstance`): `True` is not an integer,
-and subclasses of dict, list and str are rejected. Duplicates inside an id list are structurally
-allowed (the schema has no `uniqueItems`); the limits count list items before de-duplication.
+What is structural and what is only a wrong answer follows the jury's published matcher
+conventions (docs/REQUIREMENTS.md, section 8): a wrong JSON type, a missing or extra field, or a
+list or text over its limit makes the whole submission invalid (reward -1). A structurally valid
+finding with a wrong value - an unknown `type` string, a currency spelled in another case or with
+a space, a negative amount, an id that does not exist - is parsed as is and simply matches no
+issue, so it is a false positive.
 
-Integers follow JSON Schema's "integer": a number with a zero fraction (`5.0`) is accepted and
-converted to the exact int; any other float is rejected. This keeps the grader and the published
-schema in agreement. Money stays `int` after parsing (AGENTS.md rule 1).
+Limits are checked on the raw lists before de-duplication (11 evidence ids that repeat one id are
+over the limit), and the explanation length is counted in Unicode code points after JSON decoding.
 
-One place is deliberately stricter than the Python `jsonschema` package:
-
-- `currency` must be exactly three ASCII capitals. `"USD\\n"` is rejected (ECMA-262 `$`), although
-  Python's `re.search("^[A-Z]{3}$", ...)` lets a trailing newline through.
+Python types are checked exactly (`type(x) is int`, not `isinstance`): `True` is not an integer
+and a string is not an amount; subclasses of dict, list and str are rejected. Integers follow
+JSON Schema's "integer": a number with a zero fraction (`5.0`) is accepted and converted to the
+exact int; any other float is rejected. Money stays `int` after parsing (AGENTS.md rule 1).
 
 Errors carry a code from `SubmissionErrorCode` and a JSON path such as `$.findings[3].currency`.
 They never echo submitted values, so the grader log stays bounded and free of agent text.
@@ -39,7 +40,6 @@ from enum import StrEnum
 from typing import Any
 
 from auditgym.contracts.constants import (
-    ISSUE_TYPES,
     MAX_EVIDENCE_IDS,
     MAX_EXPLANATION_CHARS,
     MAX_FINDINGS,
@@ -49,8 +49,7 @@ from auditgym.contracts.types import Finding
 # Limits of schemas/submission.schema.json that have no constant in contracts/.
 # tests/reward/test_reward_parse.py checks them against the schema file.
 MAX_AFFECTED_IDS = 10
-MIN_AFFECTED_IDS = 1
-MAX_ID_CHARS = 64
+MIN_AFFECTED_IDS = 0
 MAX_EPISODE_ID_CHARS = 64
 
 SUBMISSION_KEYS = ("episode_id", "findings")
@@ -62,7 +61,6 @@ FINDING_KEYS = (
     "evidence_ids",
     "explanation",
 )
-_CAPITALS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 
 class SubmissionErrorCode(StrEnum):
@@ -72,11 +70,7 @@ class SubmissionErrorCode(StrEnum):
     WRONG_TYPE = "wrong_type"
     WRONG_EPISODE_ID = "wrong_episode_id"
     TOO_MANY_FINDINGS = "too_many_findings"
-    UNKNOWN_ISSUE_TYPE = "unknown_issue_type"
     BAD_ID_COUNT = "bad_id_count"
-    BAD_ID = "bad_id"
-    NEGATIVE_AMOUNT = "negative_amount"
-    BAD_CURRENCY = "bad_currency"
     EXPLANATION_TOO_LONG = "explanation_too_long"
     UNPARSEABLE = "unparseable"  # fallback in grade_submission; parse_submission never uses it
 
@@ -106,15 +100,19 @@ def _check_keys(obj: dict[Any, Any], keys: tuple[str, ...], path: str) -> None:
 def _id_list(value: Any, path: str, min_items: int, max_items: int) -> tuple[str, ...]:
     if type(value) is not list:
         raise _fail(SubmissionErrorCode.WRONG_TYPE, path)
-    if not min_items <= len(value) <= max_items:
+    if not min_items <= len(value) <= max_items:  # raw length: before de-duplication
         raise _fail(SubmissionErrorCode.BAD_ID_COUNT, path)
     for k, item in enumerate(value):
         if type(item) is not str:
             raise _fail(SubmissionErrorCode.WRONG_TYPE, f"{path}[{k}]")
-        if not 1 <= len(item) <= MAX_ID_CHARS:
-            raise _fail(SubmissionErrorCode.BAD_ID, f"{path}[{k}]")
     # Normalization: ids are a set. Sorting only gives the tuple a canonical spelling.
     return tuple(sorted(set(value)))
+
+
+def _string(value: Any, path: str) -> str:
+    if type(value) is not str:
+        raise _fail(SubmissionErrorCode.WRONG_TYPE, path)
+    return value
 
 
 def _finding(value: Any, path: str) -> Finding:
@@ -122,10 +120,7 @@ def _finding(value: Any, path: str) -> Finding:
         raise _fail(SubmissionErrorCode.NOT_AN_OBJECT, path)
     _check_keys(value, FINDING_KEYS, path)
 
-    issue_type = value["type"]
-    if type(issue_type) is not str or issue_type not in ISSUE_TYPES:
-        raise _fail(SubmissionErrorCode.UNKNOWN_ISSUE_TYPE, f"{path}.type")
-
+    issue_type = _string(value["type"], f"{path}.type")
     affected = _id_list(
         value["affected_ids"], f"{path}.affected_ids", MIN_AFFECTED_IDS, MAX_AFFECTED_IDS
     )
@@ -135,21 +130,12 @@ def _finding(value: Any, path: str) -> Finding:
         amount = int(amount)  # JSON Schema "integer" admits 5.0; the value is exact below 2**53
     if type(amount) is not int:
         raise _fail(SubmissionErrorCode.WRONG_TYPE, f"{path}.claimed_amount_minor")
-    if amount < 0:
-        raise _fail(SubmissionErrorCode.NEGATIVE_AMOUNT, f"{path}.claimed_amount_minor")
 
-    currency = value["currency"]
-    if type(currency) is not str:
-        raise _fail(SubmissionErrorCode.WRONG_TYPE, f"{path}.currency")
-    if len(currency) != 3 or not all(ch in _CAPITALS for ch in currency):
-        raise _fail(SubmissionErrorCode.BAD_CURRENCY, f"{path}.currency")
-
+    currency = _string(value["currency"], f"{path}.currency")
     evidence = _id_list(value["evidence_ids"], f"{path}.evidence_ids", 0, MAX_EVIDENCE_IDS)
 
-    explanation = value["explanation"]
-    if type(explanation) is not str:
-        raise _fail(SubmissionErrorCode.WRONG_TYPE, f"{path}.explanation")
-    if len(explanation) > MAX_EXPLANATION_CHARS:
+    explanation = _string(value["explanation"], f"{path}.explanation")
+    if len(explanation) > MAX_EXPLANATION_CHARS:  # code points, after JSON decoding
         raise _fail(SubmissionErrorCode.EXPLANATION_TOO_LONG, f"{path}.explanation")
 
     return Finding(

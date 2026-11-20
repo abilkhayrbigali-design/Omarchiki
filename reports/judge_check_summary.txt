@@ -1,0 +1,5 @@
+  Block 1 contract C01-C20             20/20  points 25.0
+  Block 2 closed episodes D01-D20      20/20  points 25.0
+  Block 3 matcher and reward T01-T20   20/20  points 25.0
+  Block 4 pairs P01-P20                20/20  points 15.0
+  Open matcher examples M01-M12        12/12

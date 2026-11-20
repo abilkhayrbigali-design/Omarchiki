@@ -11,7 +11,7 @@ K5: one-command run=2, versioned configs=2, trajectory logs=2, measured failure 
   probe big_fx_moves             F1 0.0  P 0.0  R 0.0  reward -1.0
   probe calendar_month_cutoff    F1 0.205  P 0.425  R 0.135  reward -0.62
   probe first_payment_shortfall  F1 0.168  P 0.17  R 0.167  reward -0.656
-  flag_all         reward -1.0  F1 0.0  P 0.0  R 0.0  steps 14.25  s 0.0022
-  oracle           reward 1.0  F1 1.0  P 1.0  R 1.0  steps 1.0  s 0.0003
-  random_explorer  reward -0.515  F1 0.25  P 0.0  R 0.0  steps 31.0  s 0.001
-  reconcile        reward 0.9471  F1 1.0  P 1.0  R 1.0  steps 27.45  s 0.0053
+  flag_all         reward -1.0  F1 0.0  P 0.0  R 0.0  steps 14.25  s 0.0029
+  oracle           reward 1.0  F1 1.0  P 1.0  R 1.0  steps 1.0  s 0.0005
+  random_explorer  reward -0.515  F1 0.25  P 0.0  R 0.0  steps 31.0  s 0.0014
+  reconcile        reward 0.9471  F1 1.0  P 1.0  R 1.0  steps 27.45  s 0.0066

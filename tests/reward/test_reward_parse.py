@@ -87,11 +87,15 @@ def test_S02_limits_match_the_schema_file():
     assert item["evidence_ids"]["maxItems"] == MAX_EVIDENCE_IDS == 10
     assert item["explanation"]["maxLength"] == MAX_EXPLANATION_CHARS == 1000
     assert item["affected_ids"]["maxItems"] == parse_module.MAX_AFFECTED_IDS
-    assert item["affected_ids"]["minItems"] == parse_module.MIN_AFFECTED_IDS
-    assert item["affected_ids"]["items"]["maxLength"] == parse_module.MAX_ID_CHARS
-    assert item["evidence_ids"]["items"]["maxLength"] == parse_module.MAX_ID_CHARS
+    assert item["affected_ids"].get("minItems", 0) == parse_module.MIN_AFFECTED_IDS
+    assert item["affected_ids"]["items"] == {"type": "string"}
+    assert item["evidence_ids"]["items"] == {"type": "string"}
     assert SCHEMA["properties"]["episode_id"]["maxLength"] == parse_module.MAX_EPISODE_ID_CHARS
-    assert tuple(item["type"]["enum"]) == ISSUE_TYPES
+    # Values are not constrained by the schema: a wrong value is a false positive, not -1.
+    assert item["type"]["type"] == item["currency"]["type"] == "string"
+    assert "minimum" not in item["claimed_amount_minor"] and "enum" not in item["type"]
+    for issue_type in ISSUE_TYPES:
+        assert issue_type in item["type"]["description"]
     assert tuple(SCHEMA["required"]) == parse_module.SUBMISSION_KEYS
     assert tuple(SCHEMA["properties"]["findings"]["items"]["required"]) == parse_module.FINDING_KEYS
 
@@ -130,8 +134,8 @@ def test_S02_evidence_limit_counts_items_before_deduplication():
         parse_submission(payload, EID)
 
 
-@pytest.mark.parametrize(("n", "ok"), [(0, False), (1, True), (10, True), (11, False)])
-def test_S02_affected_ids_between_one_and_ten(n, ok):
+@pytest.mark.parametrize(("n", "ok"), [(0, True), (1, True), (10, True), (11, False)])
+def test_S02_affected_ids_at_most_ten(n, ok):
     payload = submission([finding("period_cutoff", [f"A{k}" for k in range(n)], 1, "KZT", [])])
     if ok:
         parse_submission(payload, EID)
@@ -153,16 +157,11 @@ def test_S02_explanation_at_most_1000_characters(length, ok):
         assert err.value.code is C.EXPLANATION_TOO_LONG
 
 
-@pytest.mark.parametrize(("length", "ok"), [(1, True), (64, True), (65, False)])
-def test_S02_ids_at_most_64_characters(length, ok):
+@pytest.mark.parametrize("length", [0, 1, 64, 65, 500])
+def test_S02_any_id_string_is_structurally_valid(length):
+    # Ids are compared exactly; an id that does not exist only makes the finding unmatched.
     for field in ("affected_ids", "evidence_ids"):
-        payload = _with(("findings", 0, field), ["x" * length])
-        if ok:
-            parse_submission(payload, EID)
-        else:
-            with pytest.raises(SubmissionError) as err:
-                parse_submission(payload, EID)
-            assert err.value.code is C.BAD_ID
+        parse_submission(_with(("findings", 0, field), ["x" * length]), EID)
 
 
 # ------------------------------------------------------------------------------ malformed (S03)
@@ -199,45 +198,64 @@ MALFORMED = {
     "finding_missing_explanation": (_without(("findings", 0, "explanation")), C.MISSING_FIELD),
     "finding_extra_key": (_with(("findings", 0, "confidence"), 1.0), C.UNKNOWN_FIELD),
     "finding_extra_issue_id": (_with(("findings", 0, "issue_id"), "iss_tiny_dup"), C.UNKNOWN_FIELD),
-    "type_unknown": (_with(("findings", 0, "type"), "fraud"), C.UNKNOWN_ISSUE_TYPE),
-    "type_case": (_with(("findings", 0, "type"), "Duplicate_Invoice"), C.UNKNOWN_ISSUE_TYPE),
-    "type_padded": (_with(("findings", 0, "type"), "duplicate_invoice "), C.UNKNOWN_ISSUE_TYPE),
-    "type_none": (_with(("findings", 0, "type"), None), C.UNKNOWN_ISSUE_TYPE),
-    "type_list": (_with(("findings", 0, "type"), list(ISSUE_TYPES)), C.UNKNOWN_ISSUE_TYPE),
+    "type_none": (_with(("findings", 0, "type"), None), C.WRONG_TYPE),
+    "type_list": (_with(("findings", 0, "type"), list(ISSUE_TYPES)), C.WRONG_TYPE),
     "affected_string": (_with(("findings", 0, "affected_ids"), "D-I3"), C.WRONG_TYPE),
     "affected_none": (_with(("findings", 0, "affected_ids"), None), C.WRONG_TYPE),
-    "affected_empty": (_with(("findings", 0, "affected_ids"), []), C.BAD_ID_COUNT),
     "affected_int_item": (_with(("findings", 0, "affected_ids"), [3]), C.WRONG_TYPE),
     "affected_none_item": (_with(("findings", 0, "affected_ids"), [None]), C.WRONG_TYPE),
-    "affected_empty_item": (_with(("findings", 0, "affected_ids"), [""]), C.BAD_ID),
     "affected_nested": (_with(("findings", 0, "affected_ids"), [["D-I3"]]), C.WRONG_TYPE),
     "amount_float": (_with(("findings", 0, "claimed_amount_minor"), 7_500_000.5), C.WRONG_TYPE),
     "amount_fraction": (_with(("findings", 0, "claimed_amount_minor"), 0.5), C.WRONG_TYPE),
     "amount_bool": (_with(("findings", 0, "claimed_amount_minor"), True), C.WRONG_TYPE),
     "amount_string": (_with(("findings", 0, "claimed_amount_minor"), "7500000"), C.WRONG_TYPE),
     "amount_none": (_with(("findings", 0, "claimed_amount_minor"), None), C.WRONG_TYPE),
-    "amount_negative": (
-        _with(("findings", 0, "claimed_amount_minor"), -7_500_000),
-        C.NEGATIVE_AMOUNT,
-    ),
-    "currency_lower": (_with(("findings", 0, "currency"), "kzt"), C.BAD_CURRENCY),
-    "currency_mixed": (_with(("findings", 0, "currency"), "Kzt"), C.BAD_CURRENCY),
-    "currency_short": (_with(("findings", 0, "currency"), "KZ"), C.BAD_CURRENCY),
-    "currency_long": (_with(("findings", 0, "currency"), "KZTT"), C.BAD_CURRENCY),
-    "currency_newline": (_with(("findings", 0, "currency"), "KZT\n"), C.BAD_CURRENCY),
-    "currency_digit": (_with(("findings", 0, "currency"), "KZ1"), C.BAD_CURRENCY),
-    "currency_non_ascii": (_with(("findings", 0, "currency"), "KZÄ"), C.BAD_CURRENCY),
-    "currency_symbol": (_with(("findings", 0, "currency"), "₸"), C.BAD_CURRENCY),
-    "currency_empty": (_with(("findings", 0, "currency"), ""), C.BAD_CURRENCY),
     "currency_none": (_with(("findings", 0, "currency"), None), C.WRONG_TYPE),
     "evidence_string": (_with(("findings", 0, "evidence_ids"), "D-I3"), C.WRONG_TYPE),
     "evidence_none": (_with(("findings", 0, "evidence_ids"), None), C.WRONG_TYPE),
     "evidence_int_item": (_with(("findings", 0, "evidence_ids"), ["D-I3", 4]), C.WRONG_TYPE),
-    "evidence_empty_item": (_with(("findings", 0, "evidence_ids"), ["D-I3", ""]), C.BAD_ID),
     "explanation_none": (_with(("findings", 0, "explanation"), None), C.WRONG_TYPE),
     "explanation_list": (_with(("findings", 0, "explanation"), ["ok"]), C.WRONG_TYPE),
-    "bad_last_finding": (_with(("findings", 3, "currency"), "usd"), C.BAD_CURRENCY),
+    "explanation_too_long": (
+        _with(("findings", 0, "explanation"), "x" * 1001),
+        C.EXPLANATION_TOO_LONG,
+    ),
+    "affected_eleven": (_with(("findings", 0, "affected_ids"), ["D-I3"] * 11), C.BAD_ID_COUNT),
+    "evidence_eleven": (_with(("findings", 0, "evidence_ids"), ["D-I3"] * 11), C.BAD_ID_COUNT),
+    "bad_last_finding": (_with(("findings", 3, "currency"), None), C.WRONG_TYPE),
 }
+
+# Structurally valid findings with a wrong value: the submission stays valid, the finding is a
+# false positive and its issue a false negative (jury conventions M06, "unknown type").
+WRONG_VALUES = {
+    "type_unknown": (("findings", 0, "type"), "fraud"),
+    "type_case": (("findings", 0, "type"), "Duplicate_Invoice"),
+    "type_padded": (("findings", 0, "type"), "duplicate_invoice "),
+    "affected_empty": (("findings", 0, "affected_ids"), []),
+    "affected_empty_item": (("findings", 0, "affected_ids"), [""]),
+    "amount_negative": (("findings", 0, "claimed_amount_minor"), -7_500_000),
+    "currency_lower": (("findings", 0, "currency"), "kzt"),
+    "currency_mixed": (("findings", 0, "currency"), "Kzt"),
+    "currency_short": (("findings", 0, "currency"), "KZ"),
+    "currency_long": (("findings", 0, "currency"), "KZTT"),
+    "currency_newline": (("findings", 0, "currency"), "KZT\n"),
+    "currency_padded": (("findings", 0, "currency"), " KZT"),
+    "currency_symbol": (("findings", 0, "currency"), "₸"),
+    "currency_empty": (("findings", 0, "currency"), ""),
+    "evidence_empty_item": (("findings", 0, "evidence_ids"), [""]),
+    "last_finding_currency": (("findings", 3, "currency"), "usd"),
+}
+
+
+@pytest.mark.parametrize("name", sorted(WRONG_VALUES))
+def test_S04_wrong_value_is_a_false_positive_not_a_structural_error(name):
+    path, value = WRONG_VALUES[name]
+    payload = _with(path, value)
+    parse_submission(copy.deepcopy(payload), EID)
+    result = grade_submission(payload, TRUTH, episode_id=EID, inspection_steps=0)
+    n = len(TRUTH.issues)
+    assert result.valid is True
+    assert (result.tp, result.fp, result.fn) == (n - 1, 1, 1)
 
 
 @pytest.mark.parametrize("name", sorted(MALFORMED))
@@ -274,9 +292,9 @@ def test_S03_invalid_reward_is_minus_one_even_with_zero_steps_and_empty_truth():
 def test_S03_error_never_echoes_submitted_values():
     secret = "AGENT_TEXT_" + "z" * 40
     payloads = [
-        _with(("findings", 0, "type"), secret),
-        _with(("findings", 0, "currency"), secret),
-        _with(("findings", 0, "affected_ids"), [secret * 2]),
+        _with(("findings", 0, "explanation"), secret * 30),
+        _with(("findings", 0, "affected_ids"), [secret] * 11),
+        _with(("findings", 0, secret), 1),
         _with(("episode_id",), secret),
         {**_ok(), secret: 1},
     ]

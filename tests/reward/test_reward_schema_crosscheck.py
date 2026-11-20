@@ -246,6 +246,7 @@ def test_S01_documented_divergences_from_python_jsonschema():
     assert (
         type(parsed[0].claimed_amount_minor) is int and parsed[0].claimed_amount_minor == 3_000_000
     )
-    for payload in (huge_float, newline_currency):
+    assert VALIDATOR.is_valid(newline_currency) and _parser_accepts(newline_currency)
+    for payload in (huge_float,):
         assert VALIDATOR.is_valid(payload)  # generic Python validator lets these through
         assert not _parser_accepts(payload)  # the grader does not

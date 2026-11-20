@@ -56,6 +56,8 @@ class RecordStore:
         self.manifest: dict[str, Any] = copy.deepcopy(dict(public.manifest))
         self.policy: dict[str, Any] = copy.deepcopy(dict(public.policy))
         self.episode_id = str(self.manifest.get("episode_id", ""))
+        # Ids of the open data; the grader accepts only these as evidence (M04). Public only.
+        self.known_ids: frozenset[str] = public.open_ids()
         self._tables: dict[str, tuple[Record, ...]] = {
             "ledger": tuple(public.ledger),
             "invoices": tuple(public.invoices),

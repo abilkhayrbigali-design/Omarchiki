@@ -20,7 +20,7 @@ from hypothesis import strategies as st
 
 from auditgym.contracts.constants import ISSUE_TYPES, MAX_FINDINGS
 from auditgym.contracts.types import Issue, Truth
-from auditgym.grading import grade_submission, normalize, parse_submission
+from auditgym.grading import grade_submission
 
 EID = "ep_PROP0000001"
 ID_POOL = tuple(f"id{k:02d}" for k in range(24))
@@ -144,17 +144,6 @@ def _summary(result) -> tuple:
     )
 
 
-def _matched_contents(truth: Truth, findings: list[dict[str, Any]], result) -> list[tuple]:
-    parsed = parse_submission({"episode_id": truth.episode_id, "findings": findings}, EID)
-    out = []
-    for index, issue_id in result.matches:
-        f = normalize(parsed[index])
-        out.append(
-            (issue_id, f.type, f.affected_ids, f.claimed_amount_minor, f.currency, f.evidence_ids)
-        )
-    return sorted(out)
-
-
 # ------------------------------------------------------------------------------ properties
 @SETTINGS
 @given(cases(), st.data())
@@ -165,8 +154,9 @@ def test_S05_permuting_findings_changes_nothing(case, data):
     shuffled = [findings[k] for k in order]
     other = _grade(truth, shuffled, viewed, steps)
     assert _summary(other) == _summary(base)
-    # Canonical matches: the same finding contents are matched to the same issues.
-    assert _matched_contents(truth, shuffled, other) == _matched_contents(truth, findings, base)
+    # Which pairs are reported may follow the order (the published rule prefers the smallest
+    # finding index); counts and rewards never do. tests/reward/test_reward_jury_conventions.py
+    # checks the reported pairs against a brute-force reading of the rule.
 
 
 def _rename(value: Any, mapping: dict[str, str]) -> Any:
