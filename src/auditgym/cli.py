@@ -384,7 +384,8 @@ def _cmd_check(args: argparse.Namespace) -> int:
 
     started = time.perf_counter()
     status: dict[str, Any] = {}
-    cmd = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"]
+    # pyproject addopts already has -q; a second -q would hide the "N passed" summary line.
+    cmd = [sys.executable, "-m", "pytest", "-p", "no:cacheprovider"]
     if not args.full:
         cmd += ["-m", "not slow"]
     print("== 1/3 tests:", " ".join(cmd[2:]))

@@ -15,6 +15,8 @@ docker build -t auditgym .
 docker run --rm --network none --cpus 2 --memory 4g auditgym
 ```
 
+В этих лимитах на Docker Engine 29.9.2 `check` завершился с кодом 0 за 70 с: 1308 тестов, прогон генератора и имитатор жюри ([reports/docker_check.txt](reports/docker_check.txt)). Медленные тесты (6 штук, прогоны по многим seed) включает `check --full`.
+
 Локально (Python 3.11, [uv](https://docs.astral.sh/uv/)):
 
 ```bash
