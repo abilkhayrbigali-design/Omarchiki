@@ -1,0 +1,124 @@
+{
+  "episode_id": "ep_9T38V5Z9N4KA",
+  "issues": [
+    {
+      "affected_ids": [
+        "DOC-3HAC9VG32J"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-12-30/AED/KZT",
+          "DOC-3HAC9VG32J",
+          "L-EBG2P4011D"
+        ],
+        [
+          "2025-12-30/AED/KZT",
+          "DOC-3HAC9VG32J",
+          "L-FVYTY91JET"
+        ]
+      ],
+      "expected_amount_minor": 763830,
+      "issue_id": "iss_B8SX9NATFJ",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-9WFVPTZ3FW"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2026-01-16/KWD/KZT",
+          "DOC-9WFVPTZ3FW",
+          "L-65D2TDSPW9"
+        ],
+        [
+          "2026-01-16/KWD/KZT",
+          "DOC-9WFVPTZ3FW",
+          "L-K2CBGMB31D"
+        ]
+      ],
+      "expected_amount_minor": 822,
+      "issue_id": "iss_J2FAWG92YK",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-QF0V360MN9"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-12-29/KWD/KZT",
+          "DOC-QF0V360MN9",
+          "L-A07EVJQPHB"
+        ],
+        [
+          "2025-12-29/KWD/KZT",
+          "DOC-QF0V360MN9",
+          "L-W3F3R4WS4Z"
+        ]
+      ],
+      "expected_amount_minor": 373601,
+      "issue_id": "iss_5TFBR40Q0X",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-N07HNFY5X7",
+        "DOC-QF0V360MN9"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DOC-HRE8ZBMRE3",
+          "DOC-N07HNFY5X7",
+          "DOC-QF0V360MN9",
+          "L-2T0DDTTZQN",
+          "L-C0TK3S494N",
+          "L-KQ8SAK3VFK"
+        ]
+      ],
+      "expected_amount_minor": 300000,
+      "issue_id": "iss_VDFDKAQEZ9",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-QF0V360MN9"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DOC-QF0V360MN9",
+          "L-2T0DDTTZQN"
+        ],
+        [
+          "DOC-QF0V360MN9",
+          "L-A07EVJQPHB"
+        ],
+        [
+          "DOC-QF0V360MN9",
+          "L-C0TK3S494N"
+        ],
+        [
+          "DOC-QF0V360MN9",
+          "L-KQ8SAK3VFK"
+        ],
+        [
+          "DOC-QF0V360MN9",
+          "L-W3F3R4WS4Z"
+        ]
+      ],
+      "expected_amount_minor": 1079960,
+      "issue_id": "iss_ZREYY7G508",
+      "type": "period_cutoff"
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "episode_id": "ep_CKGZ686BS2Y9",
+  "issues": [
+    {
+      "affected_ids": [
+        "D2X5P7V9FENX",
+        "DCB4XFDXMT9W"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "D2X5P7V9FENX",
+          "DCB4XFDXMT9W"
+        ]
+      ],
+      "expected_amount_minor": 100920,
+      "issue_id": "iss_RYNSVMEXP9",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DR1R0VYACQNR",
+        "DWKRB3F0RPKF"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DR1R0VYACQNR",
+          "DWKRB3F0RPKF"
+        ]
+      ],
+      "expected_amount_minor": 2074000,
+      "issue_id": "iss_RC2YTEK44G",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "D7W5RKMD6AYZ"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2025-10-02/KWD/USD",
+          "D7W5RKMD6AYZ",
+          "R-80ZK0CK6Q9"
+        ],
+        [
+          "2025-10-02/KWD/USD",
+          "D7W5RKMD6AYZ",
+          "R-PT55XXBBH7"
+        ]
+      ],
+      "expected_amount_minor": 244,
+      "issue_id": "iss_SEJH8VYEJW",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "D91N97TZVB9R"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2025-09-30/KWD/USD",
+          "D91N97TZVB9R",
+          "R-9DJBRG0Q7Q"
+        ],
+        [
+          "2025-09-30/KWD/USD",
+          "D91N97TZVB9R",
+          "R-H58TERWQWD"
+        ]
+      ],
+      "expected_amount_minor": 441,
+      "issue_id": "iss_Z0CG1DZ7Y7",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DQ62PKPGBWT3"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2025-10-30/KWD/USD",
+          "DQ62PKPGBWT3",
+          "R-J4F5378N0Z"
+        ],
+        [
+          "2025-10-30/KWD/USD",
+          "DQ62PKPGBWT3",
+          "R-PWV65E4A5J"
+        ]
+      ],
+      "expected_amount_minor": 436,
+      "issue_id": "iss_NCDQ2HR59A",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "D10XS1Y5YF6H",
+        "D75G1A8HPTTY"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "D10XS1Y5YF6H",
+          "D75G1A8HPTTY",
+          "R-YPHA7BQFPR",
+          "R-YRM94P8H1F"
+        ]
+      ],
+      "expected_amount_minor": 27463,
+      "issue_id": "iss_M46BTB1MY2",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "D52A1NNZQ32B",
+        "DQ62PKPGBWT3"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "D52A1NNZQ32B",
+          "DQ62PKPGBWT3",
+          "R-SDMSF0M7C7",
+          "R-V3KPFTSYMJ",
+          "R-ZPMQFEXRW3"
+        ]
+      ],
+      "expected_amount_minor": 220000,
+      "issue_id": "iss_YP7P4WGHQA",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DBERK1ZDXXQT",
+        "DKAC2BD1TJNY"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "DBERK1ZDXXQT",
+          "DKAC2BD1TJNY",
+          "R-D4YGJQ7S6B",
+          "R-GKH2CSY6D0",
+          "R-R953X3G3YN"
+        ]
+      ],
+      "expected_amount_minor": 1469000,
+      "issue_id": "iss_9GC005VGVB",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DQ62PKPGBWT3"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DQ62PKPGBWT3",
+          "R-J4F5378N0Z"
+        ],
+        [
+          "DQ62PKPGBWT3",
+          "R-PWV65E4A5J"
+        ],
+        [
+          "DQ62PKPGBWT3",
+          "R-SDMSF0M7C7"
+        ],
+        [
+          "DQ62PKPGBWT3",
+          "R-V3KPFTSYMJ"
+        ],
+        [
+          "DQ62PKPGBWT3",
+          "R-ZPMQFEXRW3"
+        ]
+      ],
+      "expected_amount_minor": 709520,
+      "issue_id": "iss_R4RXXQEE28",
+      "type": "period_cutoff"
+    }
+  ]
+}

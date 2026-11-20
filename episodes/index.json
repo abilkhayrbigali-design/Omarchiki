@@ -1,0 +1,205 @@
+{
+  "episodes": [
+    {
+      "config_id": "train.v1",
+      "documents": 100,
+      "episode_id": "ep_JYHT5NAFR8KK",
+      "fingerprint": "121e42941e1c1c12d75b07ed8dc40aead6f8f27457d526bf8d93c61179a46f2f",
+      "issues": 9,
+      "ledger_rows": 437,
+      "seed": 1000,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 123,
+      "episode_id": "ep_TCYKRSEG88HE",
+      "fingerprint": "c0953c5eb5e802cffc8cbeb752b15b9583e8ad29a198cf1ae6902bbcba2f2993",
+      "issues": 8,
+      "ledger_rows": 599,
+      "seed": 1001,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 88,
+      "episode_id": "ep_BBF8CHH0PCYT",
+      "fingerprint": "abdf59ecebe2d4f65973bbb3a93848bc6f49d6f8367d4371983c868357741d67",
+      "issues": 7,
+      "ledger_rows": 352,
+      "seed": 1002,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 91,
+      "episode_id": "ep_DBPVE0N2HC4N",
+      "fingerprint": "92651de2f0a4c76807bd4b2f5648a1fbf8b31aea82cf0b5e2a59e01330dd4224",
+      "issues": 9,
+      "ledger_rows": 459,
+      "seed": 1003,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 115,
+      "episode_id": "ep_QXSXBAQ84MKD",
+      "fingerprint": "0edada0159350791817796a1518322733102bd921b689b91626c0aca7ffbd287",
+      "issues": 6,
+      "ledger_rows": 553,
+      "seed": 1004,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 67,
+      "episode_id": "ep_N3VTN4Q04ZH2",
+      "fingerprint": "b96329347b60f9ee4ecfea702079ff7b734dfd5bb78257f4c648d34943e9afeb",
+      "issues": 4,
+      "ledger_rows": 258,
+      "seed": 1005,
+      "split": "train"
+    },
+    {
+      "config_id": "train.v1",
+      "documents": 99,
+      "episode_id": "ep_RQV1PM04EMM1",
+      "fingerprint": "e27f7d03810f9a39bcce19621e625f9b12249b3cdcd08218a67b25ce0f2fd65b",
+      "issues": 10,
+      "ledger_rows": 401,
+      "seed": 1006,
+      "split": "train"
+    },
+    {
+      "config_id": "clean.v1",
+      "documents": 90,
+      "episode_id": "ep_WQ8JWQ5AG8CC",
+      "fingerprint": "ec49c25c571a7b3844b5af0f93d44e230e54f897248c86967a938d528d47d790",
+      "issues": 0,
+      "ledger_rows": 414,
+      "seed": 1007,
+      "split": "train"
+    },
+    {
+      "config_id": "clean.v1",
+      "documents": 107,
+      "episode_id": "ep_2MKHP4G8P9G5",
+      "fingerprint": "f8b9f45e2eca8b8b8ff590e72575c0db37463c4e48967820f9612183f8fd66e7",
+      "issues": 0,
+      "ledger_rows": 376,
+      "seed": 1008,
+      "split": "train"
+    },
+    {
+      "config_id": "interacting.v1",
+      "documents": 115,
+      "episode_id": "ep_0Z4H2T7P8ZAV",
+      "fingerprint": "3f83fad7303f0edb125c6cc6e3d9470b888d1895aa88bb4c98a51eac6479d83c",
+      "issues": 8,
+      "ledger_rows": 417,
+      "seed": 1009,
+      "split": "train"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 96,
+      "episode_id": "ep_VK6G008F2EM7",
+      "fingerprint": "76f36070a2e2e52d9adb079aa46afd2b8313c263e5f4560d6c204f2e71b3fd42",
+      "issues": 7,
+      "ledger_rows": 765,
+      "seed": 2000,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 95,
+      "episode_id": "ep_KECB85JZY517",
+      "fingerprint": "16d64d0878c8fe423f579f60f8abe475a270914cdd8c430842c93b597985fa03",
+      "issues": 4,
+      "ledger_rows": 630,
+      "seed": 2001,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 77,
+      "episode_id": "ep_CKGZ686BS2Y9",
+      "fingerprint": "28c5d7382221611b5b25e7276e4101b5a02b198e411570f01e577e2e7d6655db",
+      "issues": 9,
+      "ledger_rows": 598,
+      "seed": 2002,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 135,
+      "episode_id": "ep_9ZWS09H7P2FH",
+      "fingerprint": "c576ae757ec7f08add44b69dd6546ced18b6a06d7a814e30931d17000b891a21",
+      "issues": 2,
+      "ledger_rows": 666,
+      "seed": 2003,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 115,
+      "episode_id": "ep_SVVJG1Q6F83E",
+      "fingerprint": "1346a78396ddf8e9d0643dffdea27426717d632194f124baffe784124f3c7eee",
+      "issues": 8,
+      "ledger_rows": 617,
+      "seed": 2004,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 140,
+      "episode_id": "ep_9T38V5Z9N4KA",
+      "fingerprint": "403e313f560940dbc16cba533c5268e5704f892293a90676aee2495df1d9a028",
+      "issues": 5,
+      "ledger_rows": 777,
+      "seed": 2005,
+      "split": "dev"
+    },
+    {
+      "config_id": "dev.v1",
+      "documents": 134,
+      "episode_id": "ep_SVBHEX5FXRMC",
+      "fingerprint": "3731ca28dfbb021b2b0066eaa45df01a5779ba8a03cd78821a9dfde900099814",
+      "issues": 7,
+      "ledger_rows": 644,
+      "seed": 2006,
+      "split": "dev"
+    },
+    {
+      "config_id": "clean.v1",
+      "documents": 108,
+      "episode_id": "ep_0PJK0EBWCBVK",
+      "fingerprint": "f729be745e0525ec96e773a31aeca5f26a871ae78374a11687a590257557d360",
+      "issues": 0,
+      "ledger_rows": 565,
+      "seed": 2007,
+      "split": "dev"
+    },
+    {
+      "config_id": "clean.v1",
+      "documents": 89,
+      "episode_id": "ep_NA9WEXGEJK8A",
+      "fingerprint": "e292f25f4b24a94885e2558a5d31121c3d4f0149fe3e3eec48385fdc449cd658",
+      "issues": 0,
+      "ledger_rows": 378,
+      "seed": 2008,
+      "split": "dev"
+    },
+    {
+      "config_id": "interacting.v1",
+      "documents": 87,
+      "episode_id": "ep_M9RW90NY78J5",
+      "fingerprint": "49448677afbd3de073734b402f6f672c650b61330041056f5049b7984aa89e20",
+      "issues": 5,
+      "ledger_rows": 422,
+      "seed": 2009,
+      "split": "dev"
+    }
+  ],
+  "generator_version": "0.1.0"
+}

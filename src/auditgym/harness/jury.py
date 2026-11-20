@@ -702,9 +702,18 @@ def run_jury(jury_seed: int = 20261122, with_baselines: bool = True) -> dict[str
                 runs.append(run)
         baselines = aggregate(runs)
 
+    from auditgym.harness.probes import run_probes
+
+    probe_stream = root_stream(jury_seed, "jury", "probes")
+    probe_seeds = [10_000_000 + probe_stream.randbelow(80_000_000) for _ in range(60)]
+    probes = run_probes(
+        normalize_config(dict(ERRORS_OVERRIDE, config_id="jury.probes")), probe_seeds
+    )
+
     return {
         "jury_seed": jury_seed,
         "score_estimate": score,
+        "trick_probes": probes,
         "K1": k1,
         "K2": k2,
         "K3": k3,

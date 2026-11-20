@@ -1,0 +1,32 @@
+{
+  "base_currency": "KZT",
+  "company": "Saffronet Systems LLC",
+  "counts": {
+    "documents": 107,
+    "fx": 188,
+    "invoices": 54,
+    "ledger": 376,
+    "payments": 53
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "GBP": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_2MKHP4G8P9G5",
+  "generator_version": "0.1.0",
+  "period_end": "2026-04-01T00:00:00+01:00",
+  "period_start": "2026-03-01T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

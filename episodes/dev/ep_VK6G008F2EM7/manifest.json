@@ -1,0 +1,35 @@
+{
+  "base_currency": "USD",
+  "company": "Tundrava Supply JSC",
+  "counts": {
+    "documents": 96,
+    "fx": 279,
+    "invoices": 51,
+    "ledger": 765,
+    "payments": 45
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "GBP": {
+      "exponent": 2
+    },
+    "KWD": {
+      "exponent": 3
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_VK6G008F2EM7",
+  "generator_version": "0.1.0",
+  "period_end": "2025-07-01T00:00:00-04:00",
+  "period_start": "2025-06-01T00:00:00-04:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "-04:00"
+}

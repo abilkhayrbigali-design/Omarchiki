@@ -1,0 +1,35 @@
+{
+  "base_currency": "KZT",
+  "company": "Altair Textiles Ltd",
+  "counts": {
+    "documents": 115,
+    "fx": 282,
+    "invoices": 67,
+    "ledger": 617,
+    "payments": 48
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "GBP": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_SVVJG1Q6F83E",
+  "generator_version": "0.1.0",
+  "period_end": "2025-09-01T00:00:00+01:00",
+  "period_start": "2025-08-01T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

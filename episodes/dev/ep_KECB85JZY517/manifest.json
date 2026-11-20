@@ -1,0 +1,32 @@
+{
+  "base_currency": "KZT",
+  "company": "Quartzel Robotics JSC",
+  "counts": {
+    "documents": 95,
+    "fx": 186,
+    "invoices": 52,
+    "ledger": 630,
+    "payments": 43
+  },
+  "currencies": {
+    "EUR": {
+      "exponent": 2
+    },
+    "JPY": {
+      "exponent": 0
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_KECB85JZY517",
+  "generator_version": "0.1.0",
+  "period_end": "2026-07-01T00:00:00+01:00",
+  "period_start": "2026-06-01T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

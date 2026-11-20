@@ -1,0 +1,191 @@
+{
+  "episode_id": "ep_DBPVE0N2HC4N",
+  "issues": [
+    {
+      "affected_ids": [
+        "DOC-CS7WRN9NDT",
+        "DOC-GGE40F01VQ"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DOC-CS7WRN9NDT",
+          "DOC-GGE40F01VQ"
+        ]
+      ],
+      "expected_amount_minor": 5870,
+      "issue_id": "iss_C4YB8K1QQN",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-DSF7CWXWD5",
+        "DOC-SYRZE84JF9"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DOC-DSF7CWXWD5",
+          "DOC-SYRZE84JF9"
+        ]
+      ],
+      "expected_amount_minor": 1619000,
+      "issue_id": "iss_0FE2CEXX9T",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-M0GD1CD56T",
+        "DOC-YPPV4CHHXC"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DOC-M0GD1CD56T",
+          "DOC-YPPV4CHHXC"
+        ]
+      ],
+      "expected_amount_minor": 857090,
+      "issue_id": "iss_B610PMW6M9",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-69B4ZJSHS9"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "2026-05-30/CNY/EUR",
+          "DOC-69B4ZJSHS9",
+          "JE1ETN79RPJ8"
+        ],
+        [
+          "2026-05-30/CNY/EUR",
+          "DOC-69B4ZJSHS9",
+          "JEJ9WFF4471R"
+        ]
+      ],
+      "expected_amount_minor": 452,
+      "issue_id": "iss_TD5266XD0B",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-69B4ZJSHS9",
+        "DOC-82K3YXH2VK"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DOC-69B4ZJSHS9",
+          "DOC-82K3YXH2VK",
+          "DOC-CT9BMM4AV9",
+          "JE6Z6VJFKWJZ",
+          "JEGARDNKSEW8",
+          "JERJFCBFGAM8"
+        ]
+      ],
+      "expected_amount_minor": 470020,
+      "issue_id": "iss_YXT30RD24J",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-7V1VFF4MGX",
+        "DOC-CS7WRN9NDT"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DOC-7V1VFF4MGX",
+          "DOC-CS7WRN9NDT",
+          "DOC-R9EYGPMPRV",
+          "JEFPMV644X7V",
+          "JEQG3P7ST7WT"
+        ]
+      ],
+      "expected_amount_minor": 2466,
+      "issue_id": "iss_DZGWNQ7B9Y",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-GY1C41MWKD",
+        "DOC-TPK2EFCCCD"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DOC-99E4V4YJYE",
+          "DOC-GY1C41MWKD",
+          "DOC-TPK2EFCCCD",
+          "JE51DBZQZX25",
+          "JE5RQ9V91ZKF"
+        ]
+      ],
+      "expected_amount_minor": 283800,
+      "issue_id": "iss_4NT094NZCP",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-69B4ZJSHS9"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DOC-69B4ZJSHS9",
+          "JE1ETN79RPJ8"
+        ],
+        [
+          "DOC-69B4ZJSHS9",
+          "JE6Z6VJFKWJZ"
+        ],
+        [
+          "DOC-69B4ZJSHS9",
+          "JEGARDNKSEW8"
+        ],
+        [
+          "DOC-69B4ZJSHS9",
+          "JEJ9WFF4471R"
+        ],
+        [
+          "DOC-69B4ZJSHS9",
+          "JERJFCBFGAM8"
+        ]
+      ],
+      "expected_amount_minor": 662000,
+      "issue_id": "iss_JYNH26NJZ5",
+      "type": "period_cutoff"
+    },
+    {
+      "affected_ids": [
+        "DOC-MVB60KQPP1"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DOC-MVB60KQPP1",
+          "JE740QM76RP4"
+        ],
+        [
+          "DOC-MVB60KQPP1",
+          "JEREYZB068TS"
+        ]
+      ],
+      "expected_amount_minor": 44250,
+      "issue_id": "iss_QB07ZY6DMF",
+      "type": "period_cutoff"
+    }
+  ]
+}

@@ -21,6 +21,9 @@ COPY tests ./tests
 COPY schemas ./schemas
 COPY configs ./configs
 COPY episodes ./episodes
+COPY trajectories ./trajectories
+COPY docs ./docs
+COPY reports ./reports
 
 RUN useradd --create-home --uid 10001 runner && mkdir -p /app/runs && chown runner /app/runs
 USER runner

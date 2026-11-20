@@ -1,0 +1,29 @@
+{
+  "base_currency": "USD",
+  "company": "Saffronet Agro LLC",
+  "counts": {
+    "documents": 108,
+    "fx": 94,
+    "invoices": 57,
+    "ledger": 565,
+    "payments": 51
+  },
+  "currencies": {
+    "EUR": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_0PJK0EBWCBVK",
+  "generator_version": "0.1.0",
+  "period_end": "2025-02-01T00:00:00+05:00",
+  "period_start": "2025-01-01T00:00:00+05:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+05:00"
+}

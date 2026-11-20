@@ -1,0 +1,29 @@
+{
+  "base_currency": "USD",
+  "company": "Irisvale Instruments Ltd",
+  "counts": {
+    "documents": 115,
+    "fx": 94,
+    "invoices": 60,
+    "ledger": 417,
+    "payments": 55
+  },
+  "currencies": {
+    "GBP": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_0Z4H2T7P8ZAV",
+  "generator_version": "0.1.0",
+  "period_end": "2025-09-01T00:00:00+05:00",
+  "period_start": "2025-08-01T00:00:00+05:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+05:00"
+}

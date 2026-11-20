@@ -188,6 +188,8 @@ def _cmd_sweep(args: argparse.Namespace) -> int:
 
 def _cmd_export(args: argparse.Namespace) -> int:
     """Write the open train/dev episodes and the published trajectories."""
+    import shutil
+
     from auditgym.contracts.config import load_config
     from auditgym.contracts.io import fingerprint, write_episode
     from auditgym.episode.generate import generate_episode
@@ -195,33 +197,34 @@ def _cmd_export(args: argparse.Namespace) -> int:
     from auditgym.util.canon import jsonl
 
     out_root = Path(args.out)
+    for split in ("train", "dev"):  # generated artifacts only: rebuilt from seeds every time
+        shutil.rmtree(out_root / split, ignore_errors=True)
     index = []
     trajectories: list[dict[str, Any]] = []
-    for split, spec in _splits().items():
-        if split not in ("train", "dev"):
-            continue
-        cfg = load_config(REPO / "configs" / f"{spec['config']}.json")
-        for seed in spec["seeds"]:
-            episode = generate_episode(seed, cfg)
-            target = out_root / split / episode.public.episode_id
-            write_episode(episode, target, include_private=True)
-            index.append(
-                {
-                    "split": split,
-                    "seed": seed,
-                    "config_id": cfg["config_id"],
-                    "episode_id": episode.public.episode_id,
-                    "fingerprint": fingerprint(episode),
-                    "issues": len(episode.private.truth.issues),
-                    "ledger_rows": len(episode.public.ledger),
-                    "documents": len(episode.public.invoices) + len(episode.public.payments),
-                }
-            )
-            if split == "train":
-                for name in ("random", "reconcile", "flag_all"):
-                    run = run_episode(_policy(name, episode), episode, mode="open", seed=seed)
-                    for line in run.trajectory:
-                        trajectories.append({**line, "policy": name})
+    for split in ("train", "dev"):
+        for spec in _splits()[split]:
+            cfg = load_config(REPO / "configs" / f"{spec['config']}.json")
+            for seed in spec["seeds"]:
+                episode = generate_episode(seed, cfg)
+                target = out_root / split / episode.public.episode_id
+                write_episode(episode, target, include_private=True)
+                index.append(
+                    {
+                        "split": split,
+                        "seed": seed,
+                        "config_id": cfg["config_id"],
+                        "episode_id": episode.public.episode_id,
+                        "fingerprint": fingerprint(episode),
+                        "issues": len(episode.private.truth.issues),
+                        "ledger_rows": len(episode.public.ledger),
+                        "documents": len(episode.public.invoices) + len(episode.public.payments),
+                    }
+                )
+                if split == "train":
+                    for name in ("random", "reconcile", "flag_all"):
+                        run = run_episode(_policy(name, episode), episode, mode="open", seed=seed)
+                        for line in run.trajectory:
+                            trajectories.append({**line, "policy": name})
     _write_json(
         out_root / "index.json", {"generator_version": GENERATOR_VERSION, "episodes": index}
     )
@@ -253,6 +256,10 @@ def _summarize_jury(report: dict[str, Any]) -> list[str]:
         lines.append(f"{key}: {len(rows) - len(bad)}/{len(rows)} passed")
         lines += [f"  FAIL {r['check']}: {r['detail']}" for r in bad[:10]]
     lines.append("K5: " + ", ".join(f"{i['item']}={i['points']}" for i in report["K5"]))
+    for name, row in report.get("trick_probes", {}).items():
+        lines.append(
+            f"  probe {name:<24} F1 {row['f1_micro']}  P {row['precision']}  R {row['recall']}  reward {row['mean_reward']}"
+        )
     for policy, cats in report.get("baselines", {}).items():
         a = cats.get("all", {})
         lines.append(

@@ -1,0 +1,115 @@
+{
+  "episode_id": "ep_M9RW90NY78J5",
+  "issues": [
+    {
+      "affected_ids": [
+        "DOC-AE54RA5PFT",
+        "DOC-MM0AY4DK93"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DOC-AE54RA5PFT",
+          "DOC-MM0AY4DK93"
+        ]
+      ],
+      "expected_amount_minor": 231844,
+      "issue_id": "iss_2CX915MW7G",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-PXQ7M20JKN"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2025-02-26/JPY/USD",
+          "DOC-PXQ7M20JKN",
+          "JECG0X86C5R4"
+        ],
+        [
+          "2025-02-26/JPY/USD",
+          "DOC-PXQ7M20JKN",
+          "JESWX570H4M9"
+        ]
+      ],
+      "expected_amount_minor": 424,
+      "issue_id": "iss_7HFBNK7ZM2",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-6CWPHCPCW8",
+        "DOC-AE54RA5PFT"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DOC-6CWPHCPCW8",
+          "DOC-AE54RA5PFT",
+          "JEMV3MXXC293",
+          "JEW2Y31PM5HC"
+        ]
+      ],
+      "expected_amount_minor": 231844,
+      "issue_id": "iss_R3G0JHYZYA",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-PXQ7M20JKN",
+        "DOC-XREC74TTJB"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DOC-PXQ7M20JKN",
+          "DOC-XREC74TTJB",
+          "JE6FMMPQ13XS",
+          "JEBEQRXY0K83",
+          "JEJJBW68PVB9"
+        ]
+      ],
+      "expected_amount_minor": 384700,
+      "issue_id": "iss_GSSG171Q0Z",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-PXQ7M20JKN"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DOC-PXQ7M20JKN",
+          "JE6FMMPQ13XS"
+        ],
+        [
+          "DOC-PXQ7M20JKN",
+          "JEBEQRXY0K83"
+        ],
+        [
+          "DOC-PXQ7M20JKN",
+          "JECG0X86C5R4"
+        ],
+        [
+          "DOC-PXQ7M20JKN",
+          "JEJJBW68PVB9"
+        ],
+        [
+          "DOC-PXQ7M20JKN",
+          "JESWX570H4M9"
+        ]
+      ],
+      "expected_amount_minor": 549520,
+      "issue_id": "iss_8BQN2NVC01",
+      "type": "period_cutoff"
+    }
+  ]
+}

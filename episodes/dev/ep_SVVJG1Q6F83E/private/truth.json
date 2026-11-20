@@ -1,0 +1,176 @@
+{
+  "episode_id": "ep_SVVJG1Q6F83E",
+  "issues": [
+    {
+      "affected_ids": [
+        "DOC-8Y19AQG9M4",
+        "DOC-XZQ1AWA746"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DOC-8Y19AQG9M4",
+          "DOC-XZQ1AWA746"
+        ]
+      ],
+      "expected_amount_minor": 1628725,
+      "issue_id": "iss_MGYABE4XRH",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-BKA6HSPNXC",
+        "DOC-QKSP9RH3EZ",
+        "DOC-WRH0Y2VBZM"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "DOC-BKA6HSPNXC",
+          "DOC-QKSP9RH3EZ",
+          "DOC-WRH0Y2VBZM"
+        ]
+      ],
+      "expected_amount_minor": 3100000,
+      "issue_id": "iss_2CD922S8SR",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DOC-6T0969HFBY"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-08-30/AED/KZT",
+          "DOC-6T0969HFBY",
+          "L-E90RWDC4H7"
+        ],
+        [
+          "2025-08-30/AED/KZT",
+          "DOC-6T0969HFBY",
+          "L-VS4E8ECSFS"
+        ]
+      ],
+      "expected_amount_minor": 197654,
+      "issue_id": "iss_C9BC0JHGTC",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-H3J5SWQN9R"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-09-21/AED/KZT",
+          "DOC-H3J5SWQN9R",
+          "L-QMYQCS93DB"
+        ],
+        [
+          "2025-09-21/AED/KZT",
+          "DOC-H3J5SWQN9R",
+          "L-QNR9PKRF43"
+        ]
+      ],
+      "expected_amount_minor": 3589760,
+      "issue_id": "iss_0A38K2SRK5",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC-5M5HZP4CS7",
+        "DOC-6T0969HFBY"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "AED",
+      "evidence_sets": [
+        [
+          "DOC-5M5HZP4CS7",
+          "DOC-6T0969HFBY",
+          "L-MBQQDB0TST",
+          "L-TYX85ZADCS",
+          "L-V1A91G3JT7"
+        ]
+      ],
+      "expected_amount_minor": 366000,
+      "issue_id": "iss_66SRN2DFP6",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-64XA8ZBW6V",
+        "DOC-XY7C3Q7X20"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DOC-64XA8ZBW6V",
+          "DOC-XY7C3Q7X20",
+          "L-9EPQ1DKKMJ",
+          "L-HY95P8FYYS",
+          "L-N3YJH5AMMP"
+        ]
+      ],
+      "expected_amount_minor": 10384000,
+      "issue_id": "iss_M600RZM5VX",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-8Y19AQG9M4",
+        "DOC-ZGHN1BJKAD"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DOC-8Y19AQG9M4",
+          "DOC-ZGHN1BJKAD",
+          "L-4HRWTYJR3E",
+          "L-KS155B0PQS"
+        ]
+      ],
+      "expected_amount_minor": 1628725,
+      "issue_id": "iss_XEX8N6CEMH",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DOC-6T0969HFBY"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "AED",
+      "evidence_sets": [
+        [
+          "DOC-6T0969HFBY",
+          "L-E90RWDC4H7"
+        ],
+        [
+          "DOC-6T0969HFBY",
+          "L-MBQQDB0TST"
+        ],
+        [
+          "DOC-6T0969HFBY",
+          "L-TYX85ZADCS"
+        ],
+        [
+          "DOC-6T0969HFBY",
+          "L-V1A91G3JT7"
+        ],
+        [
+          "DOC-6T0969HFBY",
+          "L-VS4E8ECSFS"
+        ]
+      ],
+      "expected_amount_minor": 554118,
+      "issue_id": "iss_4EVK2JT9B2",
+      "type": "period_cutoff"
+    }
+  ]
+}
