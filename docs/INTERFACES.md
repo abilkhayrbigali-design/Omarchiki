@@ -34,9 +34,25 @@ obs, reward, terminated, truncated, info = env.step(action: dict)
 - Действие: `{"action": name, "args": {...}}`, схема `schemas/action.schema.json`.
 - Наблюдение: `{"result", "error", "steps_remaining"}`; первое — `{"task", "manifest", "policy", "steps_remaining"}`. Схема `schemas/observation.schema.json`.
 - `list_records` и `get_record` по `invoices` отдают `Invoice.summary()`, `get_document` — полный документ. ID записи: `ledger` → `row_id`, `invoices` и `payments` → `doc_id`, `fx` → `FxRate.rate_id`.
+- Форма `result` в наблюдении шага (при ошибке `result = null`):
+
+  | Действие | `result` |
+  |---|---|
+  | `list_records` | `{"table", "records": [...], "next_cursor": str \| null}` |
+  | `get_record` | `{"table", "record": {...}}` |
+  | `get_document` | `{"document": {...}}` |
+  | `calculator` | `{"value": "<десятичная строка>"}` |
+  | `submit` | `{"submitted": true, "findings_count": n}` — ничего о правильности |
 - `inspection_steps` — все шаги до `submit`, включая ошибочные. При исчерпании 100 шагов: `truncated=true`, оценка пустого ответа.
-- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`; `GradeResult.to_log()` пишется в `grader_log`.
-- Сервер: `python -m auditgym.server` читает JSON-строки `{"op": "reset", "seed", "config"}` и `{"op": "step", "action"}`, отвечает JSON-строками. `auditgym.client.RemoteEnv` — те же `reset/step` поверх него.
+- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`. В обоих режимах, если задан `grader_log`, туда пишется `GradeResult.to_log()`.
+- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа. Его вызывает harness при превышении 60 секунд; сама среда часы не читает. В протоколе сервера — `{"op": "truncate"}`.
+- Сервер: `python -m auditgym serve` (или `python -m auditgym.server`) читает JSON-строки `{"op": "reset", "seed", "config"}`, `{"op": "step", "action"}`, `{"op": "truncate"}`, `{"op": "close"}` и отвечает JSON-строками. Опции: `--mode open|closed`, `--grader-log PATH` (в закрытом режиме по умолчанию `runs/grader_log.jsonl`), `--episode-dir DIR` (раздавать эпизод с диска). Ошибки протокола — отдельные коды `invalid_request`, `invalid_config`, `internal_error`; кривая строка запроса шаг не тратит. `auditgym.client.RemoteEnv` — те же `reset/step/truncate` поверх него, ошибки — `RemoteEnvError(code)`.
+- Решения среды, принятые при реализации:
+  - кривые аргументы `submit` (нет `findings`, лишние ключи) — `invalid_arguments`, шаг тратится, эпизод идёт дальше; содержимое `findings` целиком уходит оценщику, и кривая структура там завершает эпизод с наградой −1;
+  - результат `submit` не сообщает, валиден ли ответ; в открытом режиме единственный сигнал — награда;
+  - исключение в оценщике: эпизод завершается с наградой 0.0, в журнале `grader_failure: true`;
+  - `info`: при сбросе `{episode_id, mode, env_version, max_steps}`, на шагах исследования `{}`, на последнем шаге `{"reward_withheld": bool}`;
+  - `viewed_ids` для экспериментальной награды — все ID, которые агенту показали: строки страниц `list_records`, `get_record`, `get_document`.
 
 ## WP4 — оценщик (`grading/`)
 

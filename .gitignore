@@ -8,3 +8,4 @@ runs/
 dist/
 build/
 *.egg-info/
+.claude/worktrees/
