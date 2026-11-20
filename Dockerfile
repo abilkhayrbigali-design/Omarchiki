@@ -1,7 +1,8 @@
 # Official verification image: Python 3.11, no network needed at run time.
 #   docker build -t auditgym .
 #   docker run --rm --network none --cpus 2 --memory 4g auditgym
-FROM python:3.11-slim
+# python:3.11-slim, pinned by digest (multi-arch index) for reproducible builds.
+FROM python:3.11-slim@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
