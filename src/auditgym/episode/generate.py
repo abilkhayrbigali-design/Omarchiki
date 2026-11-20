@@ -9,7 +9,11 @@ Every random choice comes from a named child of
 
 `stream_config_hash` is the hash of the normalized config without its `presentation` section, so
 `presentation.id_salt` and `presentation.order` change IDs and row order but never the semantic
-content of the episode.
+content of the episode. `secret_salt` is part of it.
+
+Size: the published episode has a number of invoice documents inside `size.invoices`. A config
+whose errors and minimum distractors cannot fit raises CapacityError (a ConfigError) before any
+attempt (auditgym.world.sizing).
 
 Self-check: every attempt runs the invariant check against the truth (auditgym.episode.selfcheck)
 and, if given, `verify_fn(public)` against the truth on (type, affected_ids, amount, currency). A
@@ -28,17 +32,28 @@ from auditgym.contracts.types import Episode, Issue, PrivateEpisode, PublicEpiso
 from auditgym.contracts.versions import GENERATOR_VERSION
 from auditgym.episode.bundle import Built, bundle
 from auditgym.episode.selfcheck import issue_signatures, problems
-from auditgym.inject.plan import sample_plan, world_needs
+from auditgym.inject.plan import sample_plan, world_demand
 from auditgym.inject.run import run_injections
 from auditgym.inject.state import CandidateError
 from auditgym.present.presenter import Presenter
 from auditgym.util.rng import root_stream
 from auditgym.world.build import build_world
 from auditgym.world.model import WorldError
+from auditgym.world.sizing import CapacityError, check_capacity
 
 MAX_ATTEMPTS = 8
 
 VerifyFn = Callable[[PublicEpisode], Iterable[Issue]]
+
+__all__ = [
+    "MAX_ATTEMPTS",
+    "CapacityError",
+    "GenerationError",
+    "build_attempt",
+    "generate_episode",
+    "generate_with_clean",
+    "stream_config_hash",
+]
 
 
 class GenerationError(RuntimeError):
@@ -54,7 +69,7 @@ def build_attempt(seed: int, cfg: dict[str, Any], attempt: int) -> Built:
     sem = stream_config_hash(cfg)
     root = root_stream(seed, sem, GENERATOR_VERSION, attempt)
     plan = sample_plan(root.child("plan"), cfg)
-    world = build_world(root, cfg, world_needs(plan))
+    world = build_world(root, cfg, world_demand(plan))
     clean_rows = post_all(world)
     state = run_injections(root, world, clean_rows, plan)
     presenter = Presenter(root.child("presentation"), cfg["presentation"])
@@ -74,6 +89,7 @@ def _generate(
     seed: int, config: dict[str, Any] | None, verify_fn: VerifyFn | None
 ) -> tuple[Episode, PublicEpisode]:
     cfg = normalize_config(config)
+    check_capacity(cfg)  # fails fast, before any attempt, when size.invoices is too small
     failures: list[dict[str, Any]] = []
     for attempt in range(MAX_ATTEMPTS):
         try:
@@ -82,6 +98,11 @@ def _generate(
             failures.append({"attempt": attempt, "reason": f"construction: {exc.code}"})
             continue
         found = problems(built.public, built.truth, built.clean)
+        lo, hi = cfg["size"]["invoices"]
+        if not lo <= len(built.public.invoices) <= hi:
+            found.append(
+                f"{len(built.public.invoices)} invoices outside size.invoices [{lo}, {hi}]"
+            )
         if found:
             failures.append({"attempt": attempt, "reason": "self-check", "problems": found[:10]})
             continue

@@ -35,16 +35,6 @@ POOL_OF = {
     "duplicate_invoice": "dup",
     "payment_allocation": "alloc",
 }
-# Upper bound of existing records one injection can take out of another pool's candidates.
-CONSUMES = {
-    "fx_partial_at_boundary": 2,
-    "duplicate_misallocated": 2,
-    "period_cutoff": 2,
-    "fx_conversion": 1,
-    "duplicate_invoice": 2,
-    "payment_allocation": 3,
-}
-SPARE = 1
 
 
 @dataclass
@@ -52,6 +42,7 @@ class Plan:
     interactions: dict[str, int]
     errors: dict[str, int]
     removed: list[str] = field(default_factory=list)
+    dup_copies: list[int] = field(default_factory=list)  # copies per duplicate_invoice (1 or 2)
 
     def count(self, name: str) -> int:
         if name in self.interactions:
@@ -70,6 +61,7 @@ class Plan:
             "errors": dict(self.errors),
             "removed_by_max_issues": list(self.removed),
             "total_issues": self.total_issues,
+            "duplicate_copies_drawn": list(self.dup_copies),
         }
 
 
@@ -91,19 +83,15 @@ def sample_plan(s: Stream, cfg: dict[str, Any]) -> Plan:
             plan.removed.append(t)
     if plan.total_issues > cap:
         raise ValueError("max_issues cannot be met")  # excluded by normalize_config
+    plan.dup_copies = [2 if s.chance(1, 5) else 1 for _ in range(errors["duplicate_invoice"])]
     return plan
 
 
-def world_needs(plan: Plan) -> dict[str, int]:
-    """Minimum candidates per pool so that every planned injection finds one."""
-    needs: dict[str, int] = {}
-    consumed_before = 0
-    for name in ORDER:
-        n = plan.count(name)
-        pool = POOL_OF[name]
-        if n:
-            # Earlier injections of the same kind also take extra candidates (CONSUMES - 1 each).
-            own = n + (n - 1) * (CONSUMES[name] - 1)
-            needs[pool] = max(needs.get(pool, 0), own + consumed_before + SPARE)
-        consumed_before += n * CONSUMES[name]
-    return needs
+def world_demand(plan: Plan) -> dict[str, Any]:
+    """What the world must provide: one reserved carrier per planned injection, and room for
+    the invoice copies the duplicate injectors will add (see auditgym.world.sizing)."""
+    return {
+        "carriers": {POOL_OF[name]: plan.count(name) for name in ORDER if plan.count(name)},
+        "dup_copies": list(plan.dup_copies),
+        "dm_copies": plan.interactions["duplicate_misallocated"],
+    }

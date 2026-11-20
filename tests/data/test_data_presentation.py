@@ -91,7 +91,7 @@ def test_T6_injected_rows_are_not_positioned_apart():
         order = {r.row_id: n for n, r in enumerate(episode.public.ledger)}
         size = len(order)
         for ch in episode.private.provenance["changes"]:
-            if ch["table"] == "ledger":
+            if ch["table"] == "ledger" and ch["after"] is not None:
                 positions.append(order[ch["id"]] / size)
     mean = sum(positions) / len(positions)
     assert 0.3 < mean < 0.7

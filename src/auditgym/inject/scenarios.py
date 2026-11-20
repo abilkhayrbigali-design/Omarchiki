@@ -30,7 +30,8 @@ def fx_partial_at_boundary(state: InjectState, s: Stream) -> None:
     posting date instead of the document date, and applied only partly."""
     world = state.world
     tl = world.tl
-    for pay, inv in s.shuffled(candidates.fxb_pairs(world, state.used)):
+    for cand in s.shuffled(candidates.fxb_pairs(world, state.used)):
+        pay, inv = cand.pay, cand.inv
         boundary = tl.boundary_before(pay.ts)
         assert boundary is not None
         part = pay.plan[0][1]
@@ -90,7 +91,8 @@ def duplicate_misallocated(state: InjectState, s: Stream) -> None:
     """An invoice is entered again under a new invoice_id; a payment that references the original
     is applied to the copy."""
     world = state.world
-    for pay, inv in s.shuffled(candidates.dm_pairs(world, state.used)):
+    for cand in s.shuffled(candidates.dm_pairs(world, state.used)):
+        pay, inv = cand.pay, cand.inv
         lo, hi = candidates.dm_copy_window(world, pay, inv)
         if hi - lo < candidates.HOUR:
             continue

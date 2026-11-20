@@ -41,6 +41,7 @@ class Snapshot:
     obj: Any  # live record
     before: Any  # deep copy before the first change, None if added in this group
     after: Any = None  # deep copy after the group, None if removed
+    removed: bool = False
 
 
 @dataclass
@@ -61,6 +62,7 @@ class InjectState:
         self.used: set[str] = set()  # membership only
         self.issues: list[IssueRec] = []
         self.groups: list[Group] = []
+        self.duplicates_done = 0
         self._open: Group | None = None
         self._seen: dict[str, Snapshot] = {}
 
@@ -83,7 +85,7 @@ class InjectState:
         g.affected_keys = list(affected)
         g.details = details
         for snap in g.snapshots:
-            snap.after = copy.deepcopy(snap.obj)
+            snap.after = None if snap.removed else copy.deepcopy(snap.obj)
         self.used.update(affected)
         self.groups.append(g)
         self._open = None
@@ -111,6 +113,11 @@ class InjectState:
     def add_row(self, row: WRow) -> None:
         self._touch("ledger", row.key, row, added=True)
         self.rows.append(row)
+
+    def remove_row(self, row: WRow) -> None:
+        self._touch("ledger", row.key, row, added=False)
+        self._seen[row.key].removed = True
+        self.rows = [r for r in self.rows if r.key != row.key]
 
     def add_invoice(self, inv: WInvoice) -> None:
         self._touch("invoices", inv.key, inv, added=True)

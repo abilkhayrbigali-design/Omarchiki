@@ -23,8 +23,37 @@ BUSINESS_START = 8 * 3600
 BUSINESS_END = 20 * 3600  # exclusive
 
 
+# Kinds of reporting period and how often each is drawn. Boundaries are always local midnights.
+PERIOD_KINDS = ("month", "quarter", "fiscal_4w", "fiscal_5w")
+PERIOD_WEIGHTS = (6, 2, 1, 1)
+
+
 def _next_month(year: int, month: int) -> tuple[int, int]:
     return (year + 1, 1) if month == 12 else (year, month + 1)
+
+
+def _add_months(year: int, month: int, n: int) -> tuple[int, int]:
+    total = year * 12 + (month - 1) + n
+    return total // 12, total % 12 + 1
+
+
+def draw_period(s: Stream, year: int) -> tuple[str, date, date]:
+    """(kind, first day, day after the last day) of a reporting period in `year`.
+
+    month: a calendar month; quarter: a calendar quarter; fiscal_4w / fiscal_5w: 28 or 35 days
+    starting on any day of the year.
+    """
+    kind = s.weighted_choice(list(PERIOD_KINDS), list(PERIOD_WEIGHTS))
+    if kind == "month":
+        month = s.randint(1, 12)
+        ny, nm = _next_month(year, month)
+        return kind, date(year, month, 1), date(ny, nm, 1)
+    if kind == "quarter":
+        month = 3 * s.randint(0, 3) + 1
+        ny, nm = _add_months(year, month, 3)
+        return kind, date(year, month, 1), date(ny, nm, 1)
+    first = date(year, 1, 1) + timedelta(days=s.randint(0, 364))
+    return kind, first, first + timedelta(days=28 if kind == "fiscal_4w" else 35)
 
 
 @dataclass(frozen=True)
@@ -35,15 +64,22 @@ class Timeline:
     period_end: datetime
     range_start: datetime
     range_end: datetime
+    period_kind: str = "month"
 
     @classmethod
-    def build(cls, tz_text: str, year: int, month: int, margin_days: int) -> Timeline:
+    def build(
+        cls, tz_text: str, first: date, end: date, margin_days: int, kind: str = "month"
+    ) -> Timeline:
+        """Period [first, end) as local midnights, data range widened by margin_days each side."""
         tz = parse_offset(tz_text)
-        start = datetime(year, month, 1, tzinfo=tz)
-        ny, nm = _next_month(year, month)
-        end = datetime(ny, nm, 1, tzinfo=tz)
+        start = datetime(first.year, first.month, first.day, tzinfo=tz)
+        stop = datetime(end.year, end.month, end.day, tzinfo=tz)
         margin = timedelta(days=margin_days)
-        return cls(tz, tz_text, start, end, start - margin, end + margin)
+        return cls(tz, tz_text, start, stop, start - margin, stop + margin, kind)
+
+    @property
+    def period_days(self) -> int:
+        return (self.local_date(self.period_end) - self.local_date(self.period_start)).days
 
     # ------------------------------------------------------------------ calendar
     def local(self, t: datetime) -> datetime:
@@ -62,14 +98,32 @@ class Timeline:
             return "in"
         return "after"
 
-    def next_month_start(self, t: datetime) -> datetime:
-        local = self.local(t)
-        ny, nm = _next_month(local.year, local.month)
-        return datetime(ny, nm, 1, tzinfo=self.tz)
+    def in_period(self, t: datetime) -> bool:
+        return self.period_start <= t < self.period_end
 
-    def same_month(self, a: datetime, b: datetime) -> bool:
+    def class_end(self, t: datetime) -> datetime | None:
+        """First instant of the next period class after t (None after the period)."""
+        if t < self.period_start:
+            return self.period_start
+        if t < self.period_end:
+            return self.period_end
+        return None
+
+    def same_calendar_month(self, a: datetime, b: datetime) -> bool:
         la, lb = self.local(a), self.local(b)
         return (la.year, la.month) == (lb.year, lb.month)
+
+    def month_starts(self) -> list[datetime]:
+        """Local midnights starting a calendar month inside the data range."""
+        local = self.local(self.range_start)
+        y, m = local.year, local.month
+        out = []
+        while True:
+            y, m = _next_month(y, m)
+            t = datetime(y, m, 1, tzinfo=self.tz)
+            if t >= self.range_end:
+                return out
+            out.append(t)
 
     def boundaries(self) -> tuple[datetime, datetime]:
         return (self.period_start, self.period_end)

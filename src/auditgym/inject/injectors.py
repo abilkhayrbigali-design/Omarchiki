@@ -7,7 +7,7 @@ table) together with record-level before/after values.
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from auditgym.contracts.constants import FX_RATE_DATE_RULES
@@ -15,6 +15,7 @@ from auditgym.inject.common import (
     FX_TOLERANCE_MINOR,
     add_copy,
     alloc_evidence,
+    apply_none,
     apply_partial,
     ar_row,
     cutoff_evidence,
@@ -38,27 +39,29 @@ def _iso(state: InjectState, t: datetime) -> str:
 
 
 # ---------------------------------------------------------------------------------- duplicate_invoice
-def copy_times(state: InjectState, s: Stream, inv: WInvoice, k: int) -> list[datetime]:
-    """Issue (and posting) instants for k-1 copies: later than the original, same period,
+def copy_times(state: InjectState, s: Stream, inv: WInvoice, copies: int) -> list[datetime]:
+    """Issue (and posting) instants for the copies: later than the original, inside the period,
     distinct from every document instant and from the original's posting instant."""
     tl, world = state.world.tl, state.world
+    lo = inv.issued + HOUR
+    hi = min(tl.period_end - HOUR, lo + 10 * DAY)
+    step = int((hi - lo).total_seconds()) // copies
+    if step < 60:
+        raise CandidateError("duplicate_invoice_time")
     out: list[datetime] = []
-    t = inv.issued
-    for _ in range(k - 1):
-        lo = t + HOUR
-        hi = min(tl.period_end - HOUR, lo + 10 * DAY)
-        if hi - lo < HOUR:
-            break
+    for i in range(copies):
+        # Copy i lies in the i-th slice of the window, so later copies always have room.
+        a = lo + timedelta(seconds=step * i)
+        b = lo + timedelta(seconds=step * (i + 1))
 
-        def draw(lo: datetime = lo, hi: datetime = hi) -> datetime:
+        def draw(a: datetime = a, b: datetime = b) -> datetime:
             for _ in range(16):
-                c = tl.business_between(s, lo, hi)
+                c = tl.business_between(s, a, b)
                 if c != inv.post_ts:
                     return c
             raise CandidateError("duplicate_invoice_time")
 
-        t = world.claim(draw)
-        out.append(t)
+        out.append(world.claim(draw))
     return out
 
 
@@ -68,10 +71,10 @@ def inject_duplicate(state: InjectState, s: Stream) -> None:
         raise CandidateError("duplicate_invoice")
     inv = s.choice(pool)
     variant = s.choice(["same_invoice_id", "new_invoice_id"])
-    k = 3 if s.chance(1, 5) else 2
-    times = copy_times(state, s, inv, k)
-    if not times:
-        raise CandidateError("duplicate_invoice_time")
+    planned = state.world.sizing.get("dup_copies", [])
+    copies = planned[state.duplicates_done] if state.duplicates_done < len(planned) else 1
+    state.duplicates_done += 1
+    times = copy_times(state, s, inv, copies)
     state.begin("duplicate_invoice")
     copies = [add_copy(state, inv, t, new_number=(variant == "new_invoice_id")) for t in times]
     group = [inv.key] + [c.key for c in copies]
@@ -88,12 +91,24 @@ def inject_duplicate(state: InjectState, s: Stream) -> None:
 
 
 # ---------------------------------------------------------------------------------- payment_allocation
+ALLOC_SHAPES = ("first", "later", "multi_ref")
+ALLOC_SHAPE_WEIGHTS = (2, 4, 2)
+
+
 def inject_allocation(state: InjectState, s: Stream) -> None:
+    """Shapes: the first payment on an invoice; a later instalment (expected = what is still
+    open, which may be less than the payment); a payment naming several invoices, the target
+    first. Variants: nothing applied, partly applied, applied to another invoice."""
     world = state.world
-    pool = candidates.alloc_pairs(world, state.used)
+    pool = candidates.alloc_candidates(world, state.used)
     if not pool:
         raise CandidateError("payment_allocation")
-    pay, inv = s.choice(pool)
+    shapes = [sh for sh in ALLOC_SHAPES if any(c.shape == sh for c in pool)]
+    shape = s.weighted_choice(
+        shapes, [ALLOC_SHAPE_WEIGHTS[ALLOC_SHAPES.index(sh)] for sh in shapes]
+    )
+    cand = s.choice([c for c in pool if c.shape == shape])
+    pay, inv = cand.pay, cand.inv
     part = pay.plan[0][1]
     variant = s.weighted_choice(["none", "partial", "other_invoice"], [2, 3, 2])
     counts = world.number_counts()
@@ -103,7 +118,8 @@ def inject_allocation(state: InjectState, s: Stream) -> None:
         if b.key != inv.key
         and b.customer == inv.customer
         and b.currency == inv.currency
-        and candidates.plain_invoice(b, state.used, counts)
+        and b.key not in world.reserved
+        and candidates.plain_invoice(world, b, state.used, counts, "alloc")
     ]
     if variant == "other_invoice" and not others:
         variant = "partial"
@@ -115,11 +131,16 @@ def inject_allocation(state: InjectState, s: Stream) -> None:
     row = ar_row(state, pay, inv.number)
     before = row.signed
     affected = [pay.key, inv.key]
-    details: dict[str, Any] = {"payment": pay.key, "invoice": inv.key, "expected_applied": part}
+    details: dict[str, Any] = {
+        "payment": pay.key,
+        "invoice": inv.key,
+        "shape": shape,
+        "expected_applied": part,
+        "payment_amount": pay.amount,
+        "invoice_total": inv.total,
+    }
     if variant == "none":
-        state.touch_row(row)
-        row.role = "UNAPPLIED"
-        row.invoice = None
+        apply_none(state, pay, inv.number)
         amount = part
     elif variant == "partial":
         assert short is not None
@@ -132,7 +153,7 @@ def inject_allocation(state: InjectState, s: Stream) -> None:
         state.used.add(other.key)
         amount = part
     details["ar_row_before"] = before
-    details["ar_row_after"] = row.signed if row.role == "AR" else 0
+    details["ar_row_after"] = row.signed if variant == "partial" else 0
     state.issue(
         "payment_allocation", affected, amount, pay.currency, alloc_evidence(state, pay, inv)
     )

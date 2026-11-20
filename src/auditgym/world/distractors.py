@@ -2,6 +2,9 @@
 
 Each kind has its own random stream. Records created here carry `tag = kind`, so injectors never
 modify them and they stay correct. The tag is internal and never published.
+
+Every builder takes `sizes`: one entry per instance with the number of invoice documents that
+instance creates (auditgym.world.sizing), and creates exactly that many.
 """
 
 from __future__ import annotations
@@ -12,8 +15,8 @@ from datetime import UTC, date, datetime, timedelta, timezone
 from auditgym.util.rng import Stream
 from auditgym.util.timeutil import format_offset
 from auditgym.world.amounts import draw_minor, split_part
-from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_installments, pay_time
-from auditgym.world.model import DistractorRec, WLine, World, WorldError
+from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_time
+from auditgym.world.model import DistractorRec, WInvoice, WLine, World, WorldError, WPayment
 from auditgym.world.names import DESCRIPTIONS, SUBSCRIPTIONS
 from auditgym.world.timeline import DAY, HOUR
 
@@ -30,20 +33,6 @@ DISTRACTOR_CODES = {
     "posting_lag": "X10",
 }
 
-# Rough number of invoices each distractor instance creates; used to size the regular history.
-INVOICES_PER_INSTANCE = {
-    "split_payment": 1,
-    "multi_invoice_payment": 3,
-    "partial_open": 1,
-    "credit_note_refund": 2,
-    "subscription": 2,
-    "same_amount_orders": 2,
-    "unapplied_payment": 0,
-    "boundary_offset": 1,
-    "fx_spike": 1,
-    "posting_lag": 1,
-}
-
 
 def _record(world: World, kind: str, docs: list[str], note: str = "") -> None:
     world.distractors.append(DistractorRec(kind, DISTRACTOR_CODES[kind], docs, note))
@@ -53,22 +42,60 @@ def _issued_between(world: World, s: Stream, lo: datetime, hi: datetime) -> date
     return world.claim(lambda: world.tl.business_between(s, lo, hi))
 
 
+def _instalment(
+    world: World, s: Stream, inv: WInvoice, kind: str, ts: datetime, amount: int, applied: int
+) -> WPayment:
+    return add_payment(
+        world,
+        s,
+        payer=inv.customer,
+        ts=ts,
+        currency=inv.currency,
+        amount=amount,
+        refs=[inv.number],
+        plan=[(inv.number, applied)],
+        tag=kind,
+    )
+
+
 # ---------------------------------------------------------------------------------- X1
-def split_payment(world: World, s: Stream, n: int) -> None:
+def split_payment(world: World, s: Stream, sizes: list[int]) -> None:
+    """One invoice settled by 2-3 payments. Sometimes the last one pays more than is still
+    open: it is applied up to the open balance and the rest is unapplied."""
     tl = world.tl
     kind = "split_payment"
-    for _ in range(n):
+    for _ in sizes:
         issued = _issued_between(world, s, tl.range_start, tl.range_end - 20 * DAY)
         inv = new_invoice(world, s, tag=kind, issued=issued)
-        pays = pay_installments(world, s, inv, s.randint(2, 3), tag=kind)
-        _record(world, kind, [inv.key] + [p.key for p in pays], f"{len(pays)} payments")
+        k = s.randint(2, 3)
+        over = s.chance(1, 3)
+        pays: list[WPayment] = []
+        remaining, t = inv.total, inv.issued
+        for i in range(k):
+            last = i == k - 1
+            part = remaining if last else split_part(s, remaining, 30, 70)
+            if part is None:
+                part, last = remaining, True
+            ts = pay_time(world, s, t, max_days=6)
+            if ts is None:
+                break
+            extra = draw_minor(s, inv.currency, 5, 300) if last and over else 0
+            pays.append(_instalment(world, s, inv, kind, ts, part + extra, part))
+            remaining -= part
+            t = ts
+            if last:
+                break
+        note = f"{len(pays)} payments"
+        if over and remaining == 0 and pays:
+            note += "; the last one overpays, the rest of it is unapplied"
+        _record(world, kind, [inv.key] + [p.key for p in pays], note)
 
 
 # ---------------------------------------------------------------------------------- X2
-def multi_invoice_payment(world: World, s: Stream, n: int) -> None:
+def multi_invoice_payment(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "multi_invoice_payment"
-    for _ in range(n):
+    for m in sizes:
         cust = s.choice(world.customers)
         t0 = tl.business_between(s, tl.range_start, tl.range_end - 16 * DAY)
         invs = [
@@ -79,7 +106,7 @@ def multi_invoice_payment(world: World, s: Stream, n: int) -> None:
                 customer=cust,
                 issued=_issued_between(world, s, t0, t0 + 4 * DAY),
             )
-            for _ in range(s.randint(2, 3))
+            for _ in range(m)
         ]
         order = s.shuffled(invs)
         plan = [(inv.number, inv.total) for inv in order]
@@ -109,10 +136,10 @@ def multi_invoice_payment(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X3
-def partial_open(world: World, s: Stream, n: int) -> None:
+def partial_open(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "partial_open"
-    for _ in range(n):
+    for _ in sizes:
         issued = _issued_between(world, s, tl.range_start, tl.range_end - 12 * DAY)
         inv = new_invoice(world, s, tag=kind, issued=issued)
         docs = [inv.key]
@@ -135,10 +162,10 @@ def partial_open(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X4
-def credit_note_refund(world: World, s: Stream, n: int) -> None:
+def credit_note_refund(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "credit_note_refund"
-    for _ in range(n):
+    for _ in sizes:
         cust = s.choice(world.customers)
         issued = _issued_between(world, s, tl.range_start, tl.range_end - 20 * DAY)
         inv = new_invoice(world, s, tag=kind, customer=cust, issued=issued)
@@ -174,41 +201,55 @@ def credit_note_refund(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X5
-def subscription(world: World, s: Stream, n: int) -> None:
+def _subscription_slots(world: World) -> list[tuple[date, date]]:
+    """Pairs of the same day-of-month in two consecutive months, both inside the data range."""
+    tl = world.tl
+    local = tl.local(tl.range_start)
+    y, m = local.year, local.month
+    out = []
+    while datetime(y, m, 1, tzinfo=tl.tz) < tl.range_end:
+        ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+        for dd in range(1, 29):
+            a, b = date(y, m, dd), date(ny, nm, dd)
+            if tl.midnight(a) >= tl.range_start and tl.midnight(b) + DAY <= tl.range_end - DAY:
+                out.append((a, b))
+        y, m = ny, nm
+    return out
+
+
+def subscription(world: World, s: Stream, sizes: list[int]) -> None:
+    """The same amount to the same customer in two consecutive months: two invoices with
+    different service_period and order_ref."""
     tl = world.tl
     kind = "subscription"
-    margin_days = (tl.period_start - tl.range_start).days
-    for _ in range(n):
+    slots = _subscription_slots(world)
+    if not slots:
+        raise WorldError("subscription_slots")
+    for _ in sizes:
         cust = s.choice(world.customers)
         price = draw_minor(s, cust.currency, 50, 2000)
         desc = s.choice(SUBSCRIPTIONS)
-        dd = s.randint(1, min(28, margin_days))
         docs = []
-        local = tl.local(tl.range_start)
-        y, m = local.year, local.month
-        while datetime(y, m, 1, tzinfo=tl.tz) < tl.range_end:
-            day = date(y, m, dd)
-            first, last = tl.midnight(day), tl.midnight(day) + DAY
-            if first >= tl.range_start and last <= tl.range_end - DAY:
-                issued = world.claim(lambda day=day: tl.business_time(s, day))
-                lines = [WLine(desc, 1, price, world.mint("ord"), f"{y:04d}-{m:02d}")]
-                inv = new_invoice(world, s, tag=kind, customer=cust, issued=issued, lines=lines)
-                docs.append(inv.key)
-                if s.chance(3, 4):
-                    pay = pay_full(world, s, inv, tag=kind, max_days=10)
-                    if pay is not None:
-                        docs.append(pay.key)
-            y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+        for day in s.choice(slots):
+            issued = world.claim(lambda day=day: tl.business_time(s, day))
+            period = f"{day.year:04d}-{day.month:02d}"
+            lines = [WLine(desc, 1, price, world.mint("ord"), period)]
+            inv = new_invoice(world, s, tag=kind, customer=cust, issued=issued, lines=lines)
+            docs.append(inv.key)
+            if s.chance(3, 4):
+                pay = pay_full(world, s, inv, tag=kind, max_days=10)
+                if pay is not None:
+                    docs.append(pay.key)
         _record(
             world, kind, docs, "same amount every month, different service_period and order_ref"
         )
 
 
 # ---------------------------------------------------------------------------------- X6
-def same_amount_orders(world: World, s: Stream, n: int) -> None:
+def same_amount_orders(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "same_amount_orders"
-    for _ in range(n):
+    for _ in sizes:
         cust = s.choice(world.customers)
         desc = s.choice(DESCRIPTIONS)
         qty = s.randint(1, 5)
@@ -239,10 +280,10 @@ def same_amount_orders(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X7
-def unapplied_payment(world: World, s: Stream, n: int) -> None:
+def unapplied_payment(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "unapplied_payment"
-    for _ in range(n):
+    for _ in sizes:
         payer = s.choice(world.customers)
         ts = world.claim(lambda: tl.payment_between(s, tl.range_start, tl.range_end - HOUR))
         pay = add_payment(
@@ -274,10 +315,10 @@ def _date_flipping_offsets(world: World, t: datetime) -> list[str]:
     return out
 
 
-def boundary_offset(world: World, s: Stream, n: int) -> None:
+def boundary_offset(world: World, s: Stream, sizes: list[int]) -> None:
     tl = world.tl
     kind = "boundary_offset"
-    for _ in range(n):
+    for _ in sizes:
         b = s.choice(tl.boundaries())
         side = s.choice(["before", "after"])
         # Probe the farthest instant from midnight we may draw: an offset that flips the date
@@ -349,11 +390,11 @@ def _spike_payment_time(world: World, s: Stream, day: date) -> datetime:
     return tl.local(midnight_utc + timedelta(seconds=s.randint(8 * 3600, 18 * 3600)))
 
 
-def fx_spike(world: World, s: Stream, n: int) -> None:
+def fx_spike(world: World, s: Stream, sizes: list[int]) -> None:
     """Foreign payments whose policy rate date is a spike day; converted correctly."""
     tl = world.tl
     kind = "fx_spike"
-    del n  # the spikes were planned before the FX table was built (see build.plan_spikes)
+    del sizes  # the spikes were planned before the FX table was built (see build.plan_spikes)
     for spike in world.spikes:
         cur = spike["currency"]
         day = date.fromisoformat(spike["day"])
@@ -383,28 +424,60 @@ def fx_spike(world: World, s: Stream, n: int) -> None:
 
 
 # ---------------------------------------------------------------------------------- X10
-def posting_lag(world: World, s: Stream, n: int) -> None:
+MAX_LAG_DAYS = 6
+
+
+def _max_lag_days(world: World, t: datetime) -> int:
+    """Longest lag in whole days that keeps the posting in the same period class as t."""
+    end = world.tl.class_end(t)
+    if end is None:
+        return MAX_LAG_DAYS
+    return min(MAX_LAG_DAYS, (world.tl.local_date(end) - world.tl.local_date(t)).days - 1)
+
+
+def _month_crossing_starts(world: World) -> list[datetime]:
+    """Calendar-month starts that a lag of up to MAX_LAG_DAYS can cross without leaving the
+    period class (only possible for periods that are not calendar months, or in long margins)."""
+    tl = world.tl
+    out = []
+    for m in tl.month_starts():
+        lo, hi = m - 5 * DAY, m + (MAX_LAG_DAYS - 1) * DAY
+        if lo >= tl.range_start + DAY and tl.period_class(lo) == tl.period_class(hi):
+            out.append(m)
+    return out
+
+
+def posting_lag(world: World, s: Stream, sizes: list[int]) -> None:
+    """Postings days after the document, in the same period class. Where the calendar allows,
+    half of them cross a calendar-month start, so "another month" is not "another period"."""
     tl = world.tl
     kind = "posting_lag"
-    for _ in range(n):
+    for _ in sizes:
+        crossings = _month_crossing_starts(world)
+        if crossings and s.chance(1, 2):
+            m = s.choice(crossings)
+            t = _issued_between(world, s, m - 5 * DAY, m)
+            first = (tl.local_date(m) - tl.local_date(t)).days
+            lag_days = s.randint(first, min(_max_lag_days(world, t), first + 3))
+        else:
 
-        def draw() -> datetime:
-            for _ in range(64):
-                t = tl.business_between(s, tl.range_start + DAY, tl.range_end - 2 * DAY)
-                last_day = tl.local_date(tl.next_month_start(t)) - DAY
-                if (last_day - tl.local_date(t)).days >= 1:
-                    return t
-            raise WorldError("posting_lag_time")
+            def draw() -> datetime:
+                for _ in range(64):
+                    t = tl.business_between(s, tl.range_start + DAY, tl.range_end - 2 * DAY)
+                    if _max_lag_days(world, t) >= 1:
+                        return t
+                raise WorldError("posting_lag_time")
 
-        t = world.claim(draw)
-        last_day = tl.local_date(tl.next_month_start(t)) - DAY
-        lag_days = s.randint(1, min(6, (last_day - tl.local_date(t)).days))
+            t = world.claim(draw)
+            lag_days = s.randint(1, _max_lag_days(world, t))
         post = tl.business_time(s, tl.local_date(t) + timedelta(days=lag_days))
+        if tl.period_class(post) != tl.period_class(t) or post <= t:
+            raise WorldError("posting_lag_class")
         if s.chance(1, 2):
             inv = new_invoice(world, s, tag=kind, issued=t, lag=False)
             inv.post_ts = post
             docs = [inv.key]
-            note = f"invoice posted {lag_days} day(s) late, same month"
+            note = f"invoice posted {lag_days} day(s) late, same period"
         else:
             lo = max(tl.range_start, t - 15 * DAY)
             inv = new_invoice(
@@ -424,11 +497,13 @@ def posting_lag(world: World, s: Stream, n: int) -> None:
             )
             pay.post_ts = post
             docs = [inv.key, pay.key]
-            note = f"payment posted {lag_days} day(s) late, same month"
+            note = f"payment posted {lag_days} day(s) late, same period"
+        if not tl.same_calendar_month(t, post):
+            note += ", another calendar month"
         _record(world, kind, docs, note)
 
 
-BUILDERS: dict[str, Callable[[World, Stream, int], None]] = {
+BUILDERS: dict[str, Callable[[World, Stream, list[int]], None]] = {
     "split_payment": split_payment,
     "multi_invoice_payment": multi_invoice_payment,
     "partial_open": partial_open,
