@@ -320,10 +320,10 @@ def _cmd_check(args: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
-def _cmd_serve(_: argparse.Namespace) -> int:
-    from auditgym.server.__main__ import main as serve_main
+def _cmd_serve(args: argparse.Namespace) -> int:
+    from auditgym.server.app import main as serve_main
 
-    return int(serve_main() or 0)
+    return int(serve_main(args.server_args) or 0)
 
 
 # ---------------------------------------------------------------------------------- parser
@@ -392,7 +392,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", default="runs/check")
     p.set_defaults(func=_cmd_check)
 
-    p = sub.add_parser("serve", help="grader-side server speaking JSON lines on stdin/stdout")
+    p = sub.add_parser(
+        "serve",
+        help="grader-side server speaking JSON lines on stdin/stdout "
+        "(options: --mode, --grader-log, --episode-dir)",
+    )
+    p.add_argument("server_args", nargs=argparse.REMAINDER)
     p.set_defaults(func=_cmd_serve)
     return parser
 
