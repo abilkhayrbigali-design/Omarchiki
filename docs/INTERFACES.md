@@ -29,11 +29,17 @@ episode, clean = generate_with_clean(seed: int, config: dict | None = None, *, v
 from auditgym.env import AuditEnv
 
 env = AuditEnv(mode="open" | "closed", generate_fn=None, grader=None, grader_log=None)
-obs, info = env.reset(seed: int, config: dict | None = None)
-obs, info = env.reset_with_episode(episode: Episode)          # для тестов и фикстур
+obs, info = env.reset(seed: int | None = None, config: dict | None = None, *, options: dict | None = None)
+obs, info = env.reset_with_episode(episode: Episode)          # для тестов, фикстур, эпизодов с диска
 obs, reward, terminated, truncated, info = env.step(action: dict)
+obs, reward, terminated, truncated, info = env.truncate()     # лимит времени (решает вызывающий)
+obs, reward, terminated, truncated, info = env.abandon()      # вызывающий бросил эпизод
+env.active                                                    # идёт ли эпизод
 ```
 
+- `reset` в стиле Gymnasium: `env.reset(seed=1, options=None)` работает; `options` может содержать только `{"config": ...}` (конфиг и в аргументе, и в `options` — `ValueError`). `seed=None` даёт детерминированную последовательность: 0 при первом сбросе, дальше предыдущий seed + 1 (`reset_with_episode` её не сдвигает).
+- Неудачный `reset` ничего не ломает: новый эпизод генерируется и проверяется до того, как трогается текущий. Плохой конфиг — `ConfigError` (или `TypeError`/`ValueError` на кривые аргументы), текущий эпизод продолжается как был и не пишется в журнал.
+- Успешный `reset`/`reset_with_episode` посреди эпизода завершает старый как брошенный: `truncated=true`, оценка пустого ответа, `inspection_steps` = потраченные шаги, запись в журнале с `"end": "abandoned"`. Это делается, когда задан `grader_log`; без журнала (быстрые тесты, обучение в процессе) старый эпизод просто отбрасывается. `env.abandon()` делает то же явно и оценивает всегда.
 - `generate_fn` по умолчанию — `auditgym.episode.generate.generate_episode` (импорт при первом вызове). `grader` по умолчанию — `auditgym.grading.grade_submission` (сигнатура в `contracts/grading_api.py`). В тестах WP3 передаёт свои заглушки.
 - Действие: `{"action": name, "args": {...}}`, схема `schemas/action.schema.json`.
 - Наблюдение: `{"result", "error", "steps_remaining"}`; первое — `{"task", "manifest", "policy", "steps_remaining"}`. Схема `schemas/observation.schema.json`.
@@ -48,15 +54,24 @@ obs, reward, terminated, truncated, info = env.step(action: dict)
   | `calculator` | `{"value": "<десятичная строка>"}` |
   | `submit` | `{"submitted": true, "findings_count": n}` — ничего о правильности |
 - `inspection_steps` — все шаги до `submit`, включая ошибочные. При исчерпании 100 шагов: `truncated=true`, оценка пустого ответа.
-- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`. В обоих режимах, если задан `grader_log`, туда пишется `GradeResult.to_log()`.
-- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа. Его вызывает harness при превышении 60 секунд; сама среда часы не читает. В протоколе сервера — `{"op": "truncate"}`.
-- Сервер: `python -m auditgym serve` (или `python -m auditgym.server`) читает JSON-строки `{"op": "reset", "seed", "config"}`, `{"op": "step", "action"}`, `{"op": "truncate"}`, `{"op": "close"}` и отвечает JSON-строками. Опции: `--mode open|closed`, `--grader-log PATH` (в закрытом режиме по умолчанию `runs/grader_log.jsonl`), `--episode-dir DIR` (раздавать эпизод с диска). Ошибки протокола — отдельные коды `invalid_request`, `invalid_config`, `internal_error`; кривая строка запроса шаг не тратит. `auditgym.client.RemoteEnv` — те же `reset/step/truncate` поверх него, ошибки — `RemoteEnvError(code)`.
+- `closed`: политике `reward=0.0`, `info={"reward_withheld": true}`. В обоих режимах, если задан `grader_log`, туда пишется `GradeResult.to_log()` плюс заголовок `{episode_id, step_count, end, env_version, mode}`; `end` — `submit`, `step_limit`, `timeout` или `abandoned`.
+- `env.truncate()` завершает эпизод по тайм-ауту: `truncated=true`, оценка пустого ответа, шаг не тратится, `end: "timeout"`. Его вызывают сервер и harness; сама среда и генератор часы не читают.
+- Время. Лимит на эпизод считается монотонными часами от ответа на `reset` и живёт только в транспорте: в сервере (`auditgym.server.host.EpisodeHost`, опция `--time-limit`, часы подставляются в тестах) и в `harness.run.run_episode` (`time_limit_s`, `clock`). Запрос шага, пришедший после лимита, не выполняется: сервер вызывает `env.truncate()` и отвечает его результатом. В harness время `policy.act` входит в лимит: если действие вернулось после лимита, оно отбрасывается и вызывается `env.truncate()`.
+- Сервер: `python -m auditgym.server [опции]` (или `python -m auditgym serve -- [опции]`), JSON-строки на stdin/stdout.
+  - Запросы: `{"op": "reset"}` (следующий эпизод расписания), `{"op": "reset", "seed", "config"}` (только открытый режим без расписания), `{"op": "step", "action"}`, `{"op": "truncate"}` (сдаться: оценка пустого ответа), `{"op": "close"}`.
+  - Опции: `--mode open|closed`; `--grader-log PATH`; `--schedule FILE` — JSON-список `{"seed": int, "config": путь | объект | null}`, относительный путь конфига — от каталога файла расписания, конфиги проверяются при старте; `--episode-dir DIR` (повторяемая) — каталог одного эпизода или каталог, подкаталоги которого — эпизоды (по порядку имён, каталоги с точкой пропускаются; нужен `private/`); источники раздаются в порядке опций командной строки; `--time-limit SECONDS` — в закрытом режиме по умолчанию 60, в открытом по умолчанию выключен.
+  - Закрытый режим без расписания (`--schedule`/`--episode-dir`) или без абсолютного `--grader-log` не стартует (код 2, сообщение в stderr). Путь журнала по умолчанию нет ни в каком режиме; журнал не может совпадать с каналом stdout. В stdout в закрытом режиме нет ничего об оценках.
+  - С расписанием (в закрытом режиме всегда) `reset` с `seed` или `config` (даже `null`) или любым другим полем — `invalid_request`, состояние не меняется. Каждый `reset` берёт следующий эпизод; эпизод расписания не выдаётся повторно, даже если не загрузился. После последнего — `schedule_exhausted`. В открытом режиме без расписания клиент сам выбирает `seed` и `config` (обучение); `reset` без `seed` — `invalid_request`.
+  - Без бесплатных повторов, в обоих режимах: если эпизод идёт, когда приходит корректный `reset`, `close`, EOF (или SIGTERM серверу), он сначала завершается как `truncated` с пустым ответом, оценивается и пишется в журнал с `end: "abandoned"` (или `"timeout"`, если лимит уже вышел). Только потом выполняется сам запрос.
+  - Ошибки протокола — фиксированные коды `invalid_request`, `invalid_config`, `schedule_exhausted`, `internal_error`; кривая строка запроса шаг не тратит.
+  - `auditgym.client.RemoteEnv` — те же `reset(seed=None, config=None, *, options=None)/step/truncate` поверх сервера, ошибки — `RemoteEnvError(code)`. `RemoteEnv(...)` сам запускает сервер (обучение, тесты); `RemoteEnv.from_streams(reader, writer)` подключается к каналу, который выдал организатор (закрытый прогон).
 - Решения среды, принятые при реализации:
-  - кривые аргументы `submit` (нет `findings`, лишние ключи) — `invalid_arguments`, шаг тратится, эпизод идёт дальше; содержимое `findings` целиком уходит оценщику, и кривая структура там завершает эпизод с наградой −1;
+  - любое действие-объект с `"action": "submit"` завершает эпизод (`terminated=true`). Если аргументы не по схеме действия (нет `args`, `args` не объект, нет `findings`, лишние ключи, слишком глубокая вложенность), наблюдение — `invalid_arguments`, оценщику уходит сырое значение `args` (или `null`, если `args` нет), и он оценивает это как неверную структуру: награда −1 (в закрытом режиме удерживается), в журнале `valid: false` и `action_error: "invalid_arguments"`. Исключение: если `args` сам по себе — объект ответа `{"episode_id", "findings"}` без обёртки `findings`, оценщику уходит `null`, чтобы кривое действие никогда не засчитывалось как верный ответ. Если `args` по схеме, содержимое `findings` целиком уходит оценщику, и кривая структура там тоже завершает эпизод с наградой −1;
   - результат `submit` не сообщает, валиден ли ответ; в открытом режиме единственный сигнал — награда;
   - исключение в оценщике: эпизод завершается с наградой 0.0, в журнале `grader_failure: true`;
   - `info`: при сбросе `{episode_id, mode, env_version, max_steps}`, на шагах исследования `{}`, на последнем шаге `{"reward_withheld": bool}`;
-  - `viewed_ids` для экспериментальной награды — все ID, которые агенту показали: строки страниц `list_records`, `get_record`, `get_document`.
+  - `viewed_ids` для экспериментальной награды — все ID, которые агенту показали: строки страниц `list_records`, `get_record`, `get_document`;
+  - калькулятор принимает обычную десятичную запись: унарный плюс и минус (`+5`, `-+5`), `.5`, `5.`; отвергает экспоненты, `**`, `_`, имена, не-ASCII цифры, одинокую точку; лимиты длины (256 символов) и цифр (40 на число) прежние.
 
 ## WP4 — оценщик (`grading/`)
 

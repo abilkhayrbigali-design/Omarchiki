@@ -5,14 +5,26 @@ grader. Observations are built by auditgym.env.observe from the public RecordSto
 
 Step accounting: every step() call on a running episode costs one step, errors included.
 `submit` grades the findings with inspection_steps = steps before it and ends the episode with
-terminated=True. If step MAX_STEPS is not a submit, the episode ends with truncated=True and is
-graded as an empty submission (inspection_steps = MAX_STEPS). `truncate()` (wall-clock limit
-reached, decided by the harness) ends it the same way without costing a step. After the end,
-step() returns `episode_finished`, reward 0.0, and changes nothing.
+terminated=True. Any action that is a JSON object with "action": "submit" ends the episode, even
+when its arguments are malformed (missing `args`, extra keys, too deep): it is then graded as a
+structurally invalid submission and the observation carries `invalid_arguments`. If step
+MAX_STEPS is not a submit, the episode ends with truncated=True and is graded as an empty
+submission (inspection_steps = MAX_STEPS). `truncate()` (wall-clock limit reached, decided by the
+caller) and `abandon()` (the caller walked away: reset, close, disconnect) end it the same way
+without costing a step. After the end, step() returns `episode_finished`, reward 0.0, and changes
+nothing.
+
+reset: `reset(seed=None, config=None, *, options=None)` in the Gymnasium style. The new episode
+is generated and checked before the running one is touched, so a failed reset raises and leaves
+the running episode as it was. A successful reset during a running episode ends that episode as
+abandoned; it is graded and logged when a grader log is configured.
 
 Modes: `open` returns the terminal reward to the caller; `closed` returns 0.0 and
 info["reward_withheld"] = True. If `grader_log` is set (a path or a callable), the full grade
 record is written there in both modes; it never reaches an observation or info.
+
+The environment never reads the clock: time limits are enforced by the caller (server or
+harness) through truncate().
 """
 
 from __future__ import annotations
@@ -29,11 +41,12 @@ from auditgym.contracts.grading_api import GraderFn
 from auditgym.contracts.types import Episode, Truth
 from auditgym.contracts.versions import ENV_VERSION
 from auditgym.env import observe
-from auditgym.env.actions import ActionError, parse_action
+from auditgym.env.actions import ActionError, parse_action, plain_json
 from auditgym.env.store import RecordStore
 from auditgym.util import canon
 
 MODES = ("open", "closed")
+RESET_OPTIONS = frozenset({"config"})
 
 GenerateFn = Callable[..., Episode]
 GraderLog = str | os.PathLike | Callable[[dict[str, Any]], None]
@@ -50,6 +63,34 @@ def _default_grader() -> GraderFn:
     from auditgym.grading import grade_submission
 
     return grade_submission
+
+
+def _is_submit(raw: Any) -> bool:
+    """A JSON object whose "action" is "submit", whatever else is wrong with it."""
+    if not isinstance(raw, dict):
+        return False
+    name = dict.get(raw, "action")
+    return isinstance(name, str) and str(name) == "submit"
+
+
+def _malformed_submit_payload(raw: dict[Any, Any]) -> Any:
+    """What the grader gets for a submit action that does not match the action schema.
+
+    The raw `args` value (None when it is missing), so the grader records why it is invalid. One
+    exception: `args` that are themselves a findings object (`{"episode_id", "findings"}`, sent
+    without the `findings` wrapper) are replaced by None, so that a malformed action can never be
+    graded as a valid submission.
+    """
+    if not dict.__contains__(raw, "args"):
+        return None
+    args = dict.__getitem__(raw, "args")
+    try:
+        args = plain_json(args)
+    except (ValueError, RecursionError):
+        return args  # too deep or not JSON: the grader rejects it on its own
+    if isinstance(args, dict) and set(args) == {"episode_id", "findings"}:
+        return None
+    return args
 
 
 class AuditEnv:
@@ -69,11 +110,17 @@ class AuditEnv:
         self._grader = grader
         self._grader_log = grader_log
         self._unlogged: list[dict[str, Any]] = []  # grade records when no grader_log is set
+        self._last_seed: int | None = None
         self._clear()
 
     @property
     def mode(self) -> str:
         return self._mode
+
+    @property
+    def active(self) -> bool:
+        """True while an episode is running: reset done, not yet ended."""
+        return self._active
 
     # ------------------------------------------------------------------ state
     def _clear(self) -> None:
@@ -89,23 +136,58 @@ class AuditEnv:
         return MAX_STEPS - self._steps_used
 
     # ------------------------------------------------------------------ reset
-    def reset(self, seed: int, config: dict[str, Any] | None = None) -> tuple[dict, dict]:
-        if isinstance(seed, bool) or not isinstance(seed, int):
-            raise TypeError("seed must be an integer")
+    def reset(
+        self,
+        seed: int | None = None,
+        config: dict[str, Any] | None = None,
+        *,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[dict, dict]:
+        """Start a new episode from `seed` and `config` (or `options["config"]`).
+
+        `seed=None` continues a deterministic sequence: 0 on the first reset, then the previous
+        seed + 1. Raises TypeError / ValueError on bad arguments and whatever the generator raises
+        (ConfigError for a bad config); in every failure case the running episode is untouched.
+        """
+        if seed is not None and (isinstance(seed, bool) or not isinstance(seed, int)):
+            raise TypeError("seed must be an integer or None")
+        if options is not None:
+            if not isinstance(options, dict):
+                raise TypeError("options must be a dict or None")
+            if not set(options) <= RESET_OPTIONS:
+                raise ValueError("reset options may only contain 'config'")
+            if options.get("config") is not None:
+                if config is not None:
+                    raise ValueError("config given both as an argument and in options")
+                config = options["config"]
         if config is not None and not isinstance(config, dict):
             raise TypeError("config must be a dict or None")
-        self._clear()
+        if seed is None:
+            seed = 0 if self._last_seed is None else self._last_seed + 1
         generate = self._generate_fn or _default_generate()
         episode = generate(seed, config)
-        return self.reset_with_episode(episode)
+        result = self._start(episode)
+        self._last_seed = seed
+        return result
 
     def reset_with_episode(self, episode: Episode) -> tuple[dict, dict]:
-        self._clear()
+        """Start the given episode (tests, fixtures, episodes read from disk)."""
+        return self._start(episode)
+
+    def _start(self, episode: Episode) -> tuple[dict, dict]:
+        # Build everything the new episode needs first: if anything fails, the running episode
+        # is left exactly as it was.
         store = RecordStore(episode.public)
+        truth = episode.private.truth
+        if not isinstance(truth, Truth):
+            raise TypeError("episode.private.truth must be a Truth")
+        obs = observe.first_observation(store, MAX_STEPS)
+        if self._active and self._grader_log is not None:
+            self.abandon()
+        self._clear()
         self._store = store
-        self._truth = episode.private.truth
+        self._truth = truth
         self._active = True
-        obs = observe.first_observation(store, self._remaining())
         info = {
             "episode_id": store.episode_id,
             "mode": self._mode,
@@ -133,17 +215,29 @@ class AuditEnv:
         try:
             action = parse_action(raw)
         except ActionError as err:
+            if _is_submit(raw):
+                return self._submit(
+                    _malformed_submit_payload(raw), None, ErrorCode.INVALID_ARGUMENTS
+                )
             return self._after_exploration(None, err.code, [])
         if action.name == "submit":
             payload = action.args["findings"]
-            result = observe.submit_result(payload)
-            reward, info, failed = self._end(
-                payload, inspection_steps=self._steps_used - 1, end="submit", truncated=False
-            )
-            obs = self._terminal_observation(result, None, failed)
-            return obs, reward, True, False, info
+            return self._submit(payload, observe.submit_result(payload), None)
         result, error, ids = observe.run_tool(self._store, action)
         return self._after_exploration(result, error, ids)
+
+    def _submit(
+        self, payload: Any, result: dict[str, Any] | None, action_error: ErrorCode | None
+    ) -> StepResult:
+        reward, info, failed = self._end(
+            payload,
+            inspection_steps=self._steps_used - 1,
+            end="submit",
+            truncated=False,
+            action_error=action_error,
+        )
+        obs = self._terminal_observation(result, action_error, failed)
+        return obs, reward, True, False, info
 
     def _after_exploration(
         self, result: dict[str, Any] | None, error: ErrorCode | None, ids: list[str]
@@ -165,16 +259,27 @@ class AuditEnv:
     def truncate(self) -> StepResult:
         """End the running episode as a timeout: truncated=True, graded as an empty submission.
 
-        Called by the harness when the wall-clock limit is reached; the environment itself never
-        reads the clock. Costs no step.
+        Called by the server or the harness when the wall-clock limit is reached; the environment
+        itself never reads the clock. Costs no step.
         """
+        return self._end_early("timeout")
+
+    def abandon(self) -> StepResult:
+        """End the running episode because the caller left it (reset, close, disconnect).
+
+        Same as truncate() (truncated=True, empty submission, no step spent), logged with
+        end="abandoned". The episode is always graded, so a walk-away is never a free retry.
+        """
+        return self._end_early("abandoned")
+
+    def _end_early(self, end: str) -> StepResult:
         if not self._active:
             return self._finished()
         try:
             reward, info, failed = self._end(
                 self._empty_submission(),
                 inspection_steps=self._steps_used,
-                end="timeout",
+                end=end,
                 truncated=True,
             )
         except Exception:
@@ -203,7 +308,13 @@ class AuditEnv:
         return {"episode_id": self._store.episode_id, "findings": []}
 
     def _end(
-        self, payload: Any, *, inspection_steps: int, end: str, truncated: bool
+        self,
+        payload: Any,
+        *,
+        inspection_steps: int,
+        end: str,
+        truncated: bool,
+        action_error: ErrorCode | None = None,
     ) -> tuple[float, dict[str, Any], bool]:
         """Close the episode, grade it, log the grade.
 
@@ -219,6 +330,8 @@ class AuditEnv:
             "env_version": ENV_VERSION,
             "mode": self._mode,
         }
+        if action_error is not None:
+            record["action_error"] = action_error.value
         reward = 0.0
         failed = False
         try:

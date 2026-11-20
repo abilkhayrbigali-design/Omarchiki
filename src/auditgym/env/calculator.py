@@ -6,9 +6,12 @@ the only accepted characters are ASCII digits, '.', '+', '-', '*', '/', '(', ')'
 Grammar:
     expression := term (('+' | '-') term)*
     term       := unary (('*' | '/') unary)*
-    unary      := '-'* primary
+    unary      := ('+' | '-')* primary
     primary    := NUMBER | '(' expression ')'
-    NUMBER     := DIGITS ('.' DIGITS)?
+    NUMBER     := DIGITS ('.' DIGITS?)? | '.' DIGITS
+
+So `+5`, `5.` and `.5` are accepted, as in ordinary decimal notation. Exponents (`1e5`), `**`,
+underscores, names and non-ASCII digits are not.
 
 Limits: at most CALCULATOR_MAX_CHARS characters, at most CALCULATOR_MAX_DIGITS digits per number,
 at most MAX_NESTING levels of parentheses, every intermediate value below
@@ -68,7 +71,7 @@ def _tokenize(expression: str) -> list[str | Decimal]:
             tokens.append(ch)
             i += 1
             continue
-        if ch in _DIGITS:
+        if ch in _DIGITS or ch == ".":
             j = i
             while j < n and expression[j] in _DIGITS:
                 j += 1
@@ -79,12 +82,13 @@ def _tokenize(expression: str) -> list[str | Decimal]:
                 while k < n and expression[k] in _DIGITS:
                     k += 1
                 frac_digits = k - j - 1
-                if frac_digits == 0:
-                    raise CalculatorError
                 j = k
+            if int_digits + frac_digits == 0:  # a lone '.'
+                raise CalculatorError
             if int_digits + frac_digits > CALCULATOR_MAX_DIGITS:
                 raise CalculatorError
-            tokens.append(Decimal(expression[i:j]))  # exact: built from an ASCII digit string
+            # Exact: built from an ASCII digit string ("5.", ".5" and "5.5" are all valid).
+            tokens.append(Decimal(expression[i:j]))
             i = j
             continue
         raise CalculatorError
@@ -148,9 +152,9 @@ class _Parser:
 
     def _unary(self, depth: int) -> Decimal:
         negate = False
-        while self._peek() == "-":
-            self._take()
-            negate = not negate
+        while self._peek() in ("+", "-"):
+            if self._take() == "-":
+                negate = not negate
         value = self._primary(depth)
         return self._ctx.minus(value) if negate else value
 

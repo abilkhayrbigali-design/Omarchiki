@@ -1,8 +1,10 @@
 """Run policies on environments, record trajectories and grader diagnostics.
 
 The harness plays the organizers' side: it creates the environment, owns the grader log, and
-for the oracle it reads the truth of the generated episode. Wall-clock timing is measured here
-(diagnostics only); the environment and the generator never read the clock.
+for the oracle it reads the truth of the generated episode. The wall-clock limit is enforced
+here, with the time spent in the policy included: an action that comes back after the limit is
+discarded and the episode is ended with env.truncate(). The environment and the generator never
+read the clock.
 """
 
 from __future__ import annotations
@@ -79,16 +81,24 @@ def run_episode(
     mode: str = "open",
     seed: int | None = None,
     config_id: str | None = None,
-    time_limit_s: float = EPISODE_TIME_LIMIT_S,
+    time_limit_s: float | None = EPISODE_TIME_LIMIT_S,
     record: bool = True,
+    clock: Callable[[], float] = time.perf_counter,
 ) -> EpisodeRun:
-    """Play one episode. The environment is created fresh for every episode (E03)."""
+    """Play one episode. The environment is created fresh for every episode (E03).
+
+    `time_limit_s=None` disables the wall-clock limit; `clock` is injectable for tests.
+    """
     grades: list[dict[str, Any]] = []
     env = make_env(mode, grades.append)
     episode_id = episode.public.episode_id
     trajectory: list[dict[str, Any]] = []
 
-    started = time.perf_counter()
+    started = clock()
+
+    def over_limit() -> bool:
+        return time_limit_s is not None and clock() - started > time_limit_s
+
     obs, info = env.reset_with_episode(episode)
     policy.reset(obs, info)
     if record:
@@ -96,12 +106,17 @@ def run_episode(
 
     reward, terminated, truncated, steps = 0.0, False, False, 0
     while not (terminated or truncated):
-        if time.perf_counter() - started > time_limit_s:
+        action = None
+        if over_limit():
             obs, reward, terminated, truncated, info = env.truncate()
-            action = None
         else:
-            action = policy.act(obs)
-            obs, reward, terminated, truncated, info = env.step(action)
+            late_action = policy.act(obs)
+            if over_limit():
+                # The policy answered after the limit: its action is discarded, never executed.
+                obs, reward, terminated, truncated, info = env.truncate()
+            else:
+                action = late_action
+                obs, reward, terminated, truncated, info = env.step(action)
         steps += 1
         if record:
             trajectory.append(
@@ -109,7 +124,7 @@ def run_episode(
             )
         if steps > MAX_STEPS + 1:  # defensive: the env must end episodes by itself
             raise RuntimeError("environment did not end the episode after the step limit")
-    seconds = time.perf_counter() - started
+    seconds = clock() - started
 
     return EpisodeRun(
         episode_id=episode_id,
