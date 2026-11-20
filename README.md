@@ -50,11 +50,16 @@ obs, reward, terminated, truncated, info = env.step(
 - **Эпизоды задаёт организатор**: `--schedule FILE` (JSON-список `{"seed": N, "config": "путь" | {...}}`) и/или `--episode-dir DIR` (каталог эпизода или каталог с эпизодами, повторяемая опция). Каждый `{"op": "reset"}` даёт следующий эпизод; `reset` с `seed` или `config` отклоняется (`invalid_request`), после последнего эпизода — `schedule_exhausted`.
 - **Журнал оценщика — у организатора**: `--grader-log` обязателен и должен быть абсолютным путём вне досягаемости агента. Награда, метрики и сопоставления пишутся только туда; агенту в закрытом режиме возвращается `reward=0.0`.
 - **Без повторов**: эпизод, брошенный через `reset`, `close` или обрыв канала, оценивается как пустой ответ и пишется в журнал (`end: "abandoned"`). Лимит времени `--time-limit` (по умолчанию 60 с) считает сервер; шаг после лимита не выполняется, эпизод завершается с `truncated=true` и пустым ответом (`end: "timeout"`).
+- **Секретная соль**: генератор открыт, поэтому для скрытых seed задайте в конфигурации расписания `"secret_salt": "<секрет организатора>"`. Без соли эпизод можно пересобрать перебором seed; с солью — нельзя, а тот же seed с той же солью воспроизводит эпизод побайтово.
 
 ```bash
 # организатор, от пользователя grader:
-python -m auditgym.server --mode closed \
-    --episode-dir /srv/grader/hidden_episodes \
+cat > /srv/grader/schedule.json <<'EOF'
+[{"seed": 734119, "config": {"config_id": "hidden.v1", "secret_salt": "change-me"}},
+ {"seed": 902211, "config": {"config_id": "hidden.v1", "clean": true, "secret_salt": "change-me"}}]
+EOF
+python -m auditgym serve --mode closed \
+    --schedule /srv/grader/schedule.json \
     --grader-log /srv/grader/logs/grader_log.jsonl
 ```
 
