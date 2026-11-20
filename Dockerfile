@@ -25,7 +25,10 @@ COPY trajectories ./trajectories
 COPY docs ./docs
 COPY reports ./reports
 
-RUN useradd --create-home --uid 10001 runner && mkdir -p /app/runs && chown runner /app/runs
+# Make the package importable in every subprocess, then run as an unprivileged user that may
+# write only inside /app (runs/, test caches).
+RUN echo /app/src > "$(python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/auditgym.pth" \
+    && useradd --create-home --uid 10001 runner && mkdir -p /app/runs && chown -R runner /app
 USER runner
 
 ENTRYPOINT ["python", "-m", "auditgym"]

@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 
@@ -53,7 +54,7 @@ def test_independent_of_pythonhashseed():
     outs = {
         subprocess.run(
             [sys.executable, "-c", code],
-            env={"PYTHONHASHSEED": seed, "PATH": ""},
+            env=dict(os.environ, PYTHONHASHSEED=seed),
             capture_output=True,
             text=True,
             check=True,
