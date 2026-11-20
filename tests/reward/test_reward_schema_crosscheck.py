@@ -162,8 +162,9 @@ def payloads(draw) -> Any:
 def _known_stricter(payload: Any) -> bool:
     """Payloads the schema validator accepts but the parser rejects on purpose.
 
-    1. `claimed_amount_minor` given as a float with zero fraction (5.0): JSON Schema "integer"
-       accepts it, money must be an int token (AGENTS.md rule 1).
+    1. `claimed_amount_minor` given as an integral float beyond 2**53: JSON Schema "integer"
+       accepts it, but it cannot be an exact amount. (Integral floats up to 2**53, like 5.0, are
+       accepted by both and converted to int.)
     2. `currency` with a trailing newline ("USD\\n"): Python's re `$` matches before a final
        newline, ECMA-262 `$` (the JSON Schema regex dialect) does not.
     """
@@ -172,7 +173,8 @@ def _known_stricter(payload: Any) -> bool:
     for item in payload["findings"]:
         if type(item) is not dict:
             continue
-        if isinstance(item.get("claimed_amount_minor"), float):
+        amount = item.get("claimed_amount_minor")
+        if isinstance(amount, float) and abs(amount) > 2**53:
             return True
         currency = item.get("currency")
         if isinstance(currency, str) and currency.endswith("\n"):
@@ -238,6 +240,12 @@ def test_S01_documented_divergences_from_python_jsonschema():
     }
     integral_float = {"episode_id": EID, "findings": [{**base, "claimed_amount_minor": 3e6}]}
     newline_currency = {"episode_id": EID, "findings": [{**base, "currency": "KZT\n"}]}
-    for payload in (integral_float, newline_currency):
+    huge_float = {"episode_id": EID, "findings": [{**base, "claimed_amount_minor": 1e300}]}
+    assert VALIDATOR.is_valid(integral_float) and _parser_accepts(integral_float)
+    parsed = parse_submission(copy.deepcopy(integral_float), EID)
+    assert (
+        type(parsed[0].claimed_amount_minor) is int and parsed[0].claimed_amount_minor == 3_000_000
+    )
+    for payload in (huge_float, newline_currency):
         assert VALIDATOR.is_valid(payload)  # generic Python validator lets these through
         assert not _parser_accepts(payload)  # the grader does not

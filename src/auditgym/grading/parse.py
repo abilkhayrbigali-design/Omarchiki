@@ -20,10 +20,12 @@ Python types are checked exactly (`type(x) is int`, not `isinstance`): `True` is
 and subclasses of dict, list and str are rejected. Duplicates inside an id list are structurally
 allowed (the schema has no `uniqueItems`); the limits count list items before de-duplication.
 
-Two places are deliberately stricter than the Python `jsonschema` package:
+Integers follow JSON Schema's "integer": a number with a zero fraction (`5.0`) is accepted and
+converted to the exact int; any other float is rejected. This keeps the grader and the published
+schema in agreement. Money stays `int` after parsing (AGENTS.md rule 1).
 
-- `claimed_amount_minor` must be a JSON integer token. `5.0` is rejected because money is `int`
-  (AGENTS.md rule 1), although JSON Schema's "integer" accepts numbers with a zero fraction.
+One place is deliberately stricter than the Python `jsonschema` package:
+
 - `currency` must be exactly three ASCII capitals. `"USD\\n"` is rejected (ECMA-262 `$`), although
   Python's `re.search("^[A-Z]{3}$", ...)` lets a trailing newline through.
 
@@ -129,6 +131,8 @@ def _finding(value: Any, path: str) -> Finding:
     )
 
     amount = value["claimed_amount_minor"]
+    if type(amount) is float and amount.is_integer() and abs(amount) <= 2**53:
+        amount = int(amount)  # JSON Schema "integer" admits 5.0; the value is exact below 2**53
     if type(amount) is not int:
         raise _fail(SubmissionErrorCode.WRONG_TYPE, f"{path}.claimed_amount_minor")
     if amount < 0:

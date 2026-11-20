@@ -211,7 +211,7 @@ MALFORMED = {
     "affected_none_item": (_with(("findings", 0, "affected_ids"), [None]), C.WRONG_TYPE),
     "affected_empty_item": (_with(("findings", 0, "affected_ids"), [""]), C.BAD_ID),
     "affected_nested": (_with(("findings", 0, "affected_ids"), [["D-I3"]]), C.WRONG_TYPE),
-    "amount_float": (_with(("findings", 0, "claimed_amount_minor"), 7_500_000.0), C.WRONG_TYPE),
+    "amount_float": (_with(("findings", 0, "claimed_amount_minor"), 7_500_000.5), C.WRONG_TYPE),
     "amount_fraction": (_with(("findings", 0, "claimed_amount_minor"), 0.5), C.WRONG_TYPE),
     "amount_bool": (_with(("findings", 0, "claimed_amount_minor"), True), C.WRONG_TYPE),
     "amount_string": (_with(("findings", 0, "claimed_amount_minor"), "7500000"), C.WRONG_TYPE),

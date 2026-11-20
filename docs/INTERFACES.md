@@ -66,7 +66,10 @@ reward: float = shared_reward(f1, inspection_steps)
 ```
 
 - Структура строго по `schemas/submission.schema.json`. Любое отклонение: `valid=False`, `reward=-1.0`.
-- Арифметика награды точная (`Fraction`), в `float` — только на выходе.
+- Арифметика награды точная (`Fraction`), в `float` — только на выходе. `metrics()` возвращает `Fraction`.
+- Дополнительно экспортируются `empty_submission`, `reward_exact`, `match_findings`, `compatible`, `SubmissionError`, `SubmissionErrorCode`, `STEP_COST_FRACTION`, `INVALID_REWARD`.
+- `grade_submission` не бросает исключений ни на каком входе: любая кривая структура даёт `valid=False`, награда −1.
+- Целое, записанное как `5.0`, принимается и переводится в `int`, как в JSON Schema; дробное отвергается. Валюта — ровно три заглавные латинские буквы.
 - Зависит только от `contracts/` и `util/`.
 
 ## WP5 — независимый решатель (`verify/`)
