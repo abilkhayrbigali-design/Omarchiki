@@ -244,8 +244,11 @@ def _cmd_baselines(args: argparse.Namespace) -> int:
 
     cfg = _config(args.config)
     runs, failures = [], []
+    rows, docs = [], []
     for seed in range(args.start, args.start + args.seeds):
         episode = generate_episode(seed, cfg)
+        rows.append(len(episode.public.ledger))
+        docs.append(len(episode.public.invoices) + len(episode.public.payments))
         for name in POLICY_NAMES:
             run = run_episode(
                 _policy(name, episode),
@@ -265,18 +268,61 @@ def _cmd_baselines(args: argparse.Namespace) -> int:
         "summary": aggregate(runs),
         "reconcile_or_oracle_failures": failures[:50],
         "failure_count": len(failures),
+        "sizes": {"ledger_rows": [min(rows), max(rows)], "documents": [min(docs), max(docs)]},
         "max_steps": {
             p: max(r.steps for r in runs if r.policy == p) for p in {r.policy for r in runs}
         },
     }
     if args.out:
         _write_json(Path(args.out), report)
-    _print({k: report[k] for k in ("config_id", "seeds", "failure_count", "max_steps")})
+    _print({k: report[k] for k in ("config_id", "seeds", "failure_count", "max_steps", "sizes")})
     for policy, cats in report["summary"].items():
         a = cats["all"]
         print(
             f"  {policy:<16} reward {a['reward']}  F1 {a['f1']}  steps {a['steps']}  truncated {a['truncated']}"
         )
+    return 0
+
+
+def _cmd_failure_modes(args: argparse.Namespace) -> int:
+    """Measured failure mode: what the rule-based solver does with incomplete books."""
+    from dataclasses import replace as dc_replace
+
+    from auditgym.episode.generate import generate_episode
+    from auditgym.verify import solve
+    from auditgym.verify.errors import VerifyError
+
+    cfg = _config(args.config)
+    outcome = {"refused": 0, "subset_of_truth": 0, "reported_non_truth": 0}
+    codes: dict[str, int] = {}
+    for seed in range(args.start, args.start + args.seeds):
+        episode = generate_episode(seed, cfg)
+        pub = episode.public
+        kept = pub.ledger[: int(len(pub.ledger) * args.keep)]
+        manifest = pub.manifest
+        if args.fix_counts:  # hide the gap from the manifest: only accounting can reveal it
+            manifest = dict(manifest, counts=dict(manifest["counts"], ledger=len(kept)))
+        cut = dc_replace(pub, ledger=kept, manifest=manifest)
+        try:
+            found = {(i.type, i.affected_ids) for i in solve(cut)}
+        except VerifyError as exc:
+            outcome["refused"] += 1
+            code = str(getattr(exc, "code", type(exc).__name__))
+            codes[code] = codes.get(code, 0) + 1
+            continue
+        truth = {(i.type, i.affected_ids) for i in episode.private.truth.issues}
+        outcome["subset_of_truth" if found <= truth else "reported_non_truth"] += 1
+    report = {
+        "config_id": cfg["config_id"],
+        "seeds": [args.start, args.start + args.seeds - 1],
+        "ledger_kept": args.keep,
+        "manifest_counts_adjusted": args.fix_counts,
+        "outcome": outcome,
+        "refusal_codes": dict(sorted(codes.items())),
+    }
+    if args.out:
+        _write_json(Path(args.out), report)
+    _print(report)
     return 0
 
 
@@ -425,6 +471,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--start", type=int, default=0)
     p.add_argument("--out", default=None)
     p.set_defaults(func=_cmd_baselines)
+
+    p = sub.add_parser("failure-modes", help="solver behaviour on books with missing rows")
+    p.add_argument("--config", default=str(REPO / "configs" / "dev.v1.json"))
+    p.add_argument("--seeds", type=int, default=60)
+    p.add_argument("--start", type=int, default=500)
+    p.add_argument("--keep", type=float, default=0.7, help="share of ledger rows kept")
+    p.add_argument("--fix-counts", action="store_true", help="also adjust the manifest counts")
+    p.add_argument("--out", default=None)
+    p.set_defaults(func=_cmd_failure_modes)
 
     p = sub.add_parser("export", help="write open train/dev episodes and trajectories.jsonl")
     p.add_argument("--out", default=str(REPO / "episodes"))
