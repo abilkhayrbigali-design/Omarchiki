@@ -1,0 +1,119 @@
+{
+  "episode_id": "ep_E8JS18Q3XET8",
+  "issues": [
+    {
+      "affected_ids": [
+        "REC-2JAYK6P3P",
+        "REC-VW6TH4X6Q"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "REC-2JAYK6P3P",
+          "REC-VW6TH4X6Q"
+        ]
+      ],
+      "expected_amount_minor": 15050,
+      "issue_id": "iss_VHD5HEXQ6N",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "REC-381DS9JBB",
+        "REC-8YX1DFRYX"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "REC-381DS9JBB",
+          "REC-8YX1DFRYX"
+        ]
+      ],
+      "expected_amount_minor": 15141400,
+      "issue_id": "iss_7NY7NRTW3N",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "REC-ACKPRNK8D",
+        "REC-X852B9P56",
+        "REC-XXB1EQ97W"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "REC-ACKPRNK8D",
+          "REC-X852B9P56",
+          "REC-XXB1EQ97W"
+        ]
+      ],
+      "expected_amount_minor": 26020,
+      "issue_id": "iss_1MD8A3ZW3A",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "REC-SPZFKQESE"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2025-09-19/CNY/USD",
+          "R-K11SHMGHMH",
+          "REC-SPZFKQESE"
+        ],
+        [
+          "2025-09-19/CNY/USD",
+          "R-QVVEZHW253",
+          "REC-SPZFKQESE"
+        ]
+      ],
+      "expected_amount_minor": 11391,
+      "issue_id": "iss_QYNFG9160P",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "REC-0NDBVXJV3",
+        "REC-GD16S70P5"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "R-KTTEBTA5A3",
+          "R-WAGDW5EXX8",
+          "R-Y100KRH8Z8",
+          "REC-0NDBVXJV3",
+          "REC-GD16S70P5"
+        ]
+      ],
+      "expected_amount_minor": 1500000,
+      "issue_id": "iss_SCQ1VZF4ME",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-20ABY3VR6",
+        "REC-381DS9JBB"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "R-50TYQZCCWF",
+          "R-SY9JE3HXG7",
+          "REC-20ABY3VR6",
+          "REC-381DS9JBB"
+        ]
+      ],
+      "expected_amount_minor": 15141400,
+      "issue_id": "iss_NYRNV1PZKM",
+      "type": "payment_allocation"
+    }
+  ]
+}

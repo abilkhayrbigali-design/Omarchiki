@@ -1,0 +1,32 @@
+{
+  "base_currency": "KZT",
+  "company": "Umberlyn Instruments GmbH",
+  "counts": {
+    "documents": 152,
+    "fx": 196,
+    "invoices": 82,
+    "ledger": 964,
+    "payments": 70
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "GBP": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_33S8NVR2RTD2",
+  "generator_version": "0.2.0",
+  "period_end": "2025-06-30T00:00:00+03:00",
+  "period_start": "2025-05-26T00:00:00+03:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+03:00"
+}

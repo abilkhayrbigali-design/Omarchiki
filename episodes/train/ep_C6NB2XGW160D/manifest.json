@@ -1,0 +1,32 @@
+{
+  "base_currency": "EUR",
+  "company": "Dunemark Systems GmbH",
+  "counts": {
+    "documents": 96,
+    "fx": 182,
+    "invoices": 53,
+    "ledger": 570,
+    "payments": 43
+  },
+  "currencies": {
+    "EUR": {
+      "exponent": 2
+    },
+    "KWD": {
+      "exponent": 3
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_C6NB2XGW160D",
+  "generator_version": "0.2.0",
+  "period_end": "2025-08-20T00:00:00+01:00",
+  "period_start": "2025-07-23T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

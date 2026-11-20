@@ -1,0 +1,35 @@
+{
+  "base_currency": "EUR",
+  "company": "Altair Engineering LLP",
+  "counts": {
+    "documents": 149,
+    "fx": 459,
+    "invoices": 79,
+    "ledger": 850,
+    "payments": 70
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "CNY": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_671H0H50XRER",
+  "generator_version": "0.2.0",
+  "period_end": "2025-04-01T00:00:00+06:00",
+  "period_start": "2025-01-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}

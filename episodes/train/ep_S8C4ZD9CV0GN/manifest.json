@@ -1,0 +1,32 @@
+{
+  "base_currency": "USD",
+  "company": "Irisvale Media GmbH",
+  "counts": {
+    "documents": 77,
+    "fx": 182,
+    "invoices": 38,
+    "ledger": 416,
+    "payments": 39
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_S8C4ZD9CV0GN",
+  "generator_version": "0.2.0",
+  "period_end": "2026-11-26T00:00:00+01:00",
+  "period_start": "2026-10-29T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

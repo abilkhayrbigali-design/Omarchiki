@@ -1,0 +1,32 @@
+{
+  "base_currency": "KZT",
+  "company": "Fjordway Media Ltd",
+  "counts": {
+    "documents": 119,
+    "fx": 188,
+    "invoices": 58,
+    "ledger": 462,
+    "payments": 61
+  },
+  "currencies": {
+    "GBP": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_9SVSVP46V7KF",
+  "generator_version": "0.2.0",
+  "period_end": "2025-02-01T00:00:00+03:00",
+  "period_start": "2025-01-01T00:00:00+03:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+03:00"
+}

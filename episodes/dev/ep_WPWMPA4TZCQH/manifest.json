@@ -1,0 +1,29 @@
+{
+  "base_currency": "KZT",
+  "company": "Harborlight Instruments Trading Co.",
+  "counts": {
+    "documents": 96,
+    "fx": 154,
+    "invoices": 51,
+    "ledger": 816,
+    "payments": 45
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_WPWMPA4TZCQH",
+  "generator_version": "0.2.0",
+  "period_end": "2026-07-01T00:00:00+01:00",
+  "period_start": "2026-04-01T00:00:00+01:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+01:00"
+}

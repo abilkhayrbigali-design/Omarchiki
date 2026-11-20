@@ -1,0 +1,113 @@
+{
+  "episode_id": "ep_WPWMPA4TZCQH",
+  "issues": [
+    {
+      "affected_ids": [
+        "D4NMJWBWM5CA",
+        "DF1KCGYS3WX9"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "D4NMJWBWM5CA",
+          "DF1KCGYS3WX9"
+        ]
+      ],
+      "expected_amount_minor": 150000,
+      "issue_id": "iss_2BYRPF97NY",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "D6MH6PNBT3VP",
+        "DRVVGPB4BCEC"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "D6MH6PNBT3VP",
+          "DRVVGPB4BCEC"
+        ]
+      ],
+      "expected_amount_minor": 3300000,
+      "issue_id": "iss_27Y7A17PRH",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DV7Q4JWQ57PH"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2026-04-23/CNY/KZT",
+          "DV7Q4JWQ57PH",
+          "JEBNSX3VZP48"
+        ],
+        [
+          "2026-04-23/CNY/KZT",
+          "DV7Q4JWQ57PH",
+          "JEWQGJCZBFWC"
+        ]
+      ],
+      "expected_amount_minor": 284715,
+      "issue_id": "iss_VHVW9GMBW3",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "D3YCCR1Q56VC"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "D3YCCR1Q56VC",
+          "JE0NGGEMS1Q9"
+        ],
+        [
+          "D3YCCR1Q56VC",
+          "JE29NCAX5QHW"
+        ],
+        [
+          "D3YCCR1Q56VC",
+          "JECDEBP6AP0H"
+        ],
+        [
+          "D3YCCR1Q56VC",
+          "JEETX6X36HBF"
+        ],
+        [
+          "D3YCCR1Q56VC",
+          "JEQQMW3Y6P7K"
+        ]
+      ],
+      "expected_amount_minor": 4879900,
+      "issue_id": "iss_WKHZDRNC9T",
+      "type": "period_cutoff"
+    },
+    {
+      "affected_ids": [
+        "DKRRB0MCT1R0"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "DKRRB0MCT1R0",
+          "JE2YSYDQZNZS"
+        ],
+        [
+          "DKRRB0MCT1R0",
+          "JEK43MR05QRW"
+        ]
+      ],
+      "expected_amount_minor": 4843200,
+      "issue_id": "iss_N6J4YA0N1Y",
+      "type": "period_cutoff"
+    }
+  ]
+}

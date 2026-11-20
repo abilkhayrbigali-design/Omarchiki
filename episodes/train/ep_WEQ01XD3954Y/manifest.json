@@ -1,0 +1,29 @@
+{
+  "base_currency": "KZT",
+  "company": "Granitex Logistics Trading Co.",
+  "counts": {
+    "documents": 48,
+    "fx": 93,
+    "invoices": 26,
+    "ledger": 229,
+    "payments": 22
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_WEQ01XD3954Y",
+  "generator_version": "0.2.0",
+  "period_end": "2025-05-01T00:00:00-04:00",
+  "period_start": "2025-04-01T00:00:00-04:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "-04:00"
+}

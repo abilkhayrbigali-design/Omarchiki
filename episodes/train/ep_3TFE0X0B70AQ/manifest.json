@@ -1,0 +1,29 @@
+{
+  "base_currency": "EUR",
+  "company": "Lumenford Packaging LLP",
+  "counts": {
+    "documents": 80,
+    "fx": 91,
+    "invoices": 44,
+    "ledger": 450,
+    "payments": 36
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_3TFE0X0B70AQ",
+  "generator_version": "0.2.0",
+  "period_end": "2025-10-23T00:00:00-04:00",
+  "period_start": "2025-09-25T00:00:00-04:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "-04:00"
+}

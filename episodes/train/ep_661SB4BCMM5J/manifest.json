@@ -1,0 +1,29 @@
+{
+  "base_currency": "USD",
+  "company": "Lumenford Media Ltd",
+  "counts": {
+    "documents": 63,
+    "fx": 93,
+    "invoices": 35,
+    "ledger": 285,
+    "payments": 28
+  },
+  "currencies": {
+    "JPY": {
+      "exponent": 0
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_661SB4BCMM5J",
+  "generator_version": "0.2.0",
+  "period_end": "2026-05-01T00:00:00+06:00",
+  "period_start": "2026-04-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}

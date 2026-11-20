@@ -1,0 +1,32 @@
+{
+  "base_currency": "USD",
+  "company": "Altair Systems Trading Co.",
+  "counts": {
+    "documents": 80,
+    "fx": 182,
+    "invoices": 41,
+    "ledger": 504,
+    "payments": 39
+  },
+  "currencies": {
+    "GBP": {
+      "exponent": 2
+    },
+    "JPY": {
+      "exponent": 0
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_C5QPTG679Y53",
+  "generator_version": "0.2.0",
+  "period_end": "2026-05-15T00:00:00+05:00",
+  "period_start": "2026-04-17T00:00:00+05:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+05:00"
+}

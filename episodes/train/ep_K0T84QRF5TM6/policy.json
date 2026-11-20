@@ -1,0 +1,92 @@
+{
+  "account_roles": {
+    "AR": "accounts receivable, invoice currency",
+    "CASH": "bank account, base currency",
+    "EXPENSE": "operating expenses, base currency, not linked to documents",
+    "FX_CLEARING": "clearing account for currency conversion of payments",
+    "REVENUE": "sales revenue, invoice currency",
+    "UNAPPLIED": "received cash not applied to any invoice, payment currency"
+  },
+  "accounts": {
+    "AR": "11728",
+    "CASH": "10706",
+    "EXPENSE": "60297",
+    "FX_CLEARING": "18702",
+    "REVENUE": "41875",
+    "UNAPPLIED": "22469"
+  },
+  "allocation": {
+    "applied_in_books": "credits to AR (debits for refunds) with the payment_id and the invoice_id; an amount booked to another invoice is where the shortfall went, not a second issue",
+    "currency": "a payment references only invoices in its own currency",
+    "description": "Payments are processed in timestamp order. A payment is applied to the invoices in invoice_refs in the listed order, to each at most its open balance computed from documents. The remainder is booked to UNAPPLIED. invoice_refs = null means the whole amount goes to UNAPPLIED. Negative payments (refunds) apply the same rule to negative open balances (credit notes).",
+    "open_balance": "total_minor of the invoice minus amounts applied to it by earlier payments, both taken from documents. If several documents share an invoice_id (a duplicate), the invoice is counted once, from the document with the earliest issued_at.",
+    "rule": "listed_order_up_to_open_balance"
+  },
+  "base_currency": "USD",
+  "duplicates": {
+    "description": "Each order_ref is invoiced once; each invoice_id belongs to one document.",
+    "grouping": "documents linked by a shared invoice_id or a shared order_ref form one group, transitively (A~B, B~C -> one group of 3 copies)",
+    "rule": "one_invoice_per_order_ref"
+  },
+  "evidence": {
+    "rule": "a finding counts only if evidence_ids contain at least one complete evidence set for its issue; extra ids are allowed up to 10",
+    "sets": {
+      "duplicate_invoice": "doc_id of every copy in the duplicate group.",
+      "fx_conversion": "doc_id of the payment, row_id of the payment's CASH row (or of its FX_CLEARING row in the base currency), and the id of the correct fx row: 'YYYY-MM-DD/<payment currency>/<base>'.",
+      "payment_allocation": "doc_id of the payment, doc_id of the invoice, row_id of every ledger row of the payment's entry in the payment currency (CASH or FX_CLEARING, AR, UNAPPLIED), and doc_id of every earlier payment that references the same invoice.",
+      "period_cutoff": "doc_id of the document and the row_id of any one row of its ledger entry."
+    }
+  },
+  "formats": {
+    "fx_rate": "decimal string",
+    "ids": "opaque strings, unique across all tables; fx row id is 'YYYY-MM-DD/SRC/TGT'",
+    "missing_link": "null in JSON; an empty field in CSV",
+    "money": "integers in minor units; exponents per currency in manifest.currencies",
+    "time": "ISO-8601 with an explicit UTC offset"
+  },
+  "fx": {
+    "booking": "foreign payment: Dr FX_CLEARING and Cr AR/UNAPPLIED in payment currency; Dr CASH and Cr FX_CLEARING in base currency for the converted amount",
+    "conversion": "base_minor = round(amount_minor * 10^(exp_base - exp_payment) * rate)",
+    "rate_date": "payment_local_date_minus_1",
+    "rate_date_options": {
+      "payment_local_date": "local date of the payment timestamp in the company timezone",
+      "payment_local_date_minus_1": "the day before the local date of the payment",
+      "payment_utc_date": "UTC date of the payment timestamp"
+    },
+    "rate_meaning": "1 unit of source_currency = rate units of target_currency",
+    "rounding": "half_up"
+  },
+  "issue_types": {
+    "duplicate_invoice": "The same sale is invoiced and booked more than once: two or more invoice documents share an invoice_id, or share an order_ref. affected_ids = doc_id of every copy. Amount = (copies - 1) * |total_minor|, invoice currency.",
+    "fx_conversion": "A foreign-currency payment is converted with the wrong rate (wrong date or wrong pair). affected_ids = [payment doc_id]. Amount = |booked CASH - expected CASH|, base currency.",
+    "payment_allocation": "A payment is not applied to an invoice it references as the allocation rule requires: missing, partial, or booked against another invoice. One finding per (payment, invoice) pair that received less than expected. affected_ids = [payment doc_id, invoice doc_id]. Amount = expected minus actual amount applied, payment currency.",
+    "period_cutoff": "A document's ledger entry is posted in a different reporting period than the document date (local date in the company timezone). affected_ids = [document doc_id]. Amount = |document amount|, document currency."
+  },
+  "period": {
+    "boundaries": "start_inclusive_end_exclusive",
+    "classes": "each timestamp is before, in or after the reporting period; a cut-off error is a document and its ledger entry in different classes",
+    "document_date": "local date of the document timestamp in the company timezone",
+    "end": "2025-07-01T00:00:00+03:00",
+    "posting_date": "local date of the ledger entry timestamp in the company timezone",
+    "start": "2025-04-01T00:00:00+03:00"
+  },
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units",
+    "note": "half_up rounds halves away from zero, also for negative amounts"
+  },
+  "schema_version": "1.0.0",
+  "scope": "Audit the reporting period: errors are only reported on documents whose date or whose ledger entry is inside the period. Records in the weeks around the period are context (earlier payments, rates, postings across the boundary).",
+  "submission": {
+    "amount": "claimed_amount_minor is a non-negative magnitude in minor units of `currency`",
+    "invalid": "a submission that breaks this structure ends the episode with reward -1",
+    "limits": "at most 30 findings, 10 affected ids and 10 evidence ids per finding, explanation up to 1000 characters",
+    "matching": "one finding per issue; repeated or unmatched findings are false positives",
+    "shape": "{episode_id, findings: [{type, affected_ids, claimed_amount_minor, currency, evidence_ids, explanation}]}"
+  },
+  "timezone": "+03:00",
+  "tolerances": {
+    "default_minor": 0,
+    "fx_conversion_minor": 1
+  }
+}

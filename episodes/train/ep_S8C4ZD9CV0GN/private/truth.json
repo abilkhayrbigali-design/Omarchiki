@@ -1,0 +1,75 @@
+{
+  "episode_id": "ep_S8C4ZD9CV0GN",
+  "issues": [
+    {
+      "affected_ids": [
+        "DC2Z071MRGXP"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2026-11-08/CNY/USD",
+          "DC2Z071MRGXP",
+          "L-34398KH1PX"
+        ],
+        [
+          "2026-11-08/CNY/USD",
+          "DC2Z071MRGXP",
+          "L-3DQDZFG3DV"
+        ]
+      ],
+      "expected_amount_minor": 5868,
+      "issue_id": "iss_1TYYWBXJ20",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DCSB0HTDM7SW"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DCSB0HTDM7SW",
+          "L-41Y0MQYK83"
+        ],
+        [
+          "DCSB0HTDM7SW",
+          "L-YKRQ3QMQ43"
+        ]
+      ],
+      "expected_amount_minor": 50560,
+      "issue_id": "iss_GX2AZFV8PY",
+      "type": "period_cutoff"
+    },
+    {
+      "affected_ids": [
+        "DCYH9MSWVMD1"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DCYH9MSWVMD1",
+          "L-1V1XVD9QJ3"
+        ],
+        [
+          "DCYH9MSWVMD1",
+          "L-5K69RS4FGA"
+        ],
+        [
+          "DCYH9MSWVMD1",
+          "L-DKHQND845Z"
+        ],
+        [
+          "DCYH9MSWVMD1",
+          "L-ZXDM4KSFZH"
+        ]
+      ],
+      "expected_amount_minor": 1371940,
+      "issue_id": "iss_WP657FPX7R",
+      "type": "period_cutoff"
+    }
+  ]
+}

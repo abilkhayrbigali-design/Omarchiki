@@ -1,0 +1,201 @@
+{
+  "episode_id": "ep_33S8NVR2RTD2",
+  "issues": [
+    {
+      "affected_ids": [
+        "REC-38H1WC5M3",
+        "REC-E3H4XEGEE"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "REC-38H1WC5M3",
+          "REC-E3H4XEGEE"
+        ]
+      ],
+      "expected_amount_minor": 38906,
+      "issue_id": "iss_JGMFZYG6ZX",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "REC-AFM83E1PV"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-06-01/GBP/KZT",
+          "JE1KSBHGJ5EX",
+          "REC-AFM83E1PV"
+        ],
+        [
+          "2025-06-01/GBP/KZT",
+          "JEK817YGS7W5",
+          "REC-AFM83E1PV"
+        ]
+      ],
+      "expected_amount_minor": 436861,
+      "issue_id": "iss_WN2W41MD77",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "REC-ARXD1Y47H"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-05-30/GBP/KZT",
+          "JEPS6PZF5RGK",
+          "REC-ARXD1Y47H"
+        ],
+        [
+          "2025-05-30/GBP/KZT",
+          "JETE1TGT1TEF",
+          "REC-ARXD1Y47H"
+        ]
+      ],
+      "expected_amount_minor": 17858,
+      "issue_id": "iss_G9KF0PRGHX",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "REC-PYS0HXGNT"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "2025-06-27/GBP/KZT",
+          "JE4Z5XKR7KB8",
+          "REC-PYS0HXGNT"
+        ],
+        [
+          "2025-06-27/GBP/KZT",
+          "JEDS7YG5ZNPQ",
+          "REC-PYS0HXGNT"
+        ]
+      ],
+      "expected_amount_minor": 2988757,
+      "issue_id": "iss_48MPAEHYG5",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "REC-38H1WC5M3",
+        "REC-AA9NY74T5"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "JEA64BQR7D24",
+          "JEWWDVM3C4PB",
+          "REC-38H1WC5M3",
+          "REC-AA9NY74T5"
+        ]
+      ],
+      "expected_amount_minor": 38906,
+      "issue_id": "iss_V67MWPV124",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-BS39NP66B",
+        "REC-GTG60QZNN"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "JE4RX434R571",
+          "JEAG9WPXZH60",
+          "JETBDYJWDPWN",
+          "REC-AFM83E1PV",
+          "REC-BS39NP66B",
+          "REC-GTG60QZNN"
+        ]
+      ],
+      "expected_amount_minor": 57220,
+      "issue_id": "iss_Y8KMZS3HW8",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-J6MPZW09Z",
+        "REC-YTW7K4CAR"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "JE26ADE38T6N",
+          "JE5TYNKRE0HT",
+          "JEC8Y4B66V15",
+          "JEPGN5EWSE37",
+          "REC-J6MPZW09Z",
+          "REC-YTW7K4CAR"
+        ]
+      ],
+      "expected_amount_minor": 700000,
+      "issue_id": "iss_3FAH4NABKK",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-PYS0HXGNT",
+        "REC-ZHRBZN4RN"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "JE7V6CMHFHXP",
+          "JETMEW9S9R13",
+          "JEVTW61AG485",
+          "REC-PYS0HXGNT",
+          "REC-ZHRBZN4RN"
+        ]
+      ],
+      "expected_amount_minor": 640000,
+      "issue_id": "iss_SVN7NQZGEF",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-PYS0HXGNT"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "GBP",
+      "evidence_sets": [
+        [
+          "JE4Z5XKR7KB8",
+          "REC-PYS0HXGNT"
+        ],
+        [
+          "JE7V6CMHFHXP",
+          "REC-PYS0HXGNT"
+        ],
+        [
+          "JEDS7YG5ZNPQ",
+          "REC-PYS0HXGNT"
+        ],
+        [
+          "JETMEW9S9R13",
+          "REC-PYS0HXGNT"
+        ],
+        [
+          "JEVTW61AG485",
+          "REC-PYS0HXGNT"
+        ]
+      ],
+      "expected_amount_minor": 882290,
+      "issue_id": "iss_Q5YSJ7QYB8",
+      "type": "period_cutoff"
+    }
+  ]
+}

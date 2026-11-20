@@ -1,0 +1,1684 @@
+{
+  "attempt_failures": [],
+  "attempts": 1,
+  "changes": [
+    {
+      "after": {
+        "account": "18557",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 2990400,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-0G1MH6DCZW",
+        "timestamp": "2026-04-20T14:49:12+05:00"
+      },
+      "before": {
+        "account": "18557",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 2990400,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-0G1MH6DCZW",
+        "timestamp": "2026-04-16T16:11:50+05:00"
+      },
+      "id": "GL-0G1MH6DCZW",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "18557",
+        "credit_minor": 1949914,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-WPWNCA3TH2",
+        "timestamp": "2026-04-20T14:49:12+05:00"
+      },
+      "before": {
+        "account": "18557",
+        "credit_minor": 1960067,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-WPWNCA3TH2",
+        "timestamp": "2026-04-16T16:11:50+05:00"
+      },
+      "id": "GL-WPWNCA3TH2",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "10375",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 1949914,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-3XDN8WGVRM",
+        "timestamp": "2026-04-20T14:49:12+05:00"
+      },
+      "before": {
+        "account": "10375",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 1960067,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-3XDN8WGVRM",
+        "timestamp": "2026-04-16T16:11:50+05:00"
+      },
+      "id": "GL-3XDN8WGVRM",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "12898",
+        "credit_minor": 1405400,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": "SI-17J0AZZS",
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-A91JEHYPG8",
+        "timestamp": "2026-04-20T14:49:12+05:00"
+      },
+      "before": {
+        "account": "12898",
+        "credit_minor": 2990400,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": "SI-17J0AZZS",
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-A91JEHYPG8",
+        "timestamp": "2026-04-16T16:11:50+05:00"
+      },
+      "id": "GL-A91JEHYPG8",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "23018",
+        "credit_minor": 1585000,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CUST-2C4XJB",
+        "invoice_id": null,
+        "payment_id": "PMT1S1N0KFQN",
+        "row_id": "GL-TZECT5Q7E3",
+        "timestamp": "2026-04-20T14:49:12+05:00"
+      },
+      "before": null,
+      "id": "GL-TZECT5Q7E3",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "currency": "USD",
+        "doc_id": "REC-K68DPG0KC",
+        "due_at": "2026-06-10T14:07:34+05:00",
+        "entity_id": "CUST-PFMFXN",
+        "invoice_id": "SI-H337AY5E",
+        "issued_at": "2026-04-26T14:07:34+05:00",
+        "line_items": [
+          {
+            "amount_minor": 356399,
+            "description": "Equipment rental",
+            "order_ref": "POR1E2AGESZ",
+            "quantity": 1,
+            "service_period": null,
+            "unit_price_minor": 356399
+          }
+        ],
+        "total_minor": 356399
+      },
+      "before": null,
+      "id": "REC-K68DPG0KC",
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "table": "invoices"
+    },
+    {
+      "after": {
+        "account": "12898",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 356399,
+        "entity_id": "CUST-PFMFXN",
+        "invoice_id": "SI-H337AY5E",
+        "payment_id": null,
+        "row_id": "GL-1B76EZB4PR",
+        "timestamp": "2026-04-26T14:07:34+05:00"
+      },
+      "before": null,
+      "id": "GL-1B76EZB4PR",
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "40747",
+        "credit_minor": 356399,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-PFMFXN",
+        "invoice_id": "SI-H337AY5E",
+        "payment_id": null,
+        "row_id": "GL-BDJZYXG5FS",
+        "timestamp": "2026-04-26T14:07:34+05:00"
+      },
+      "before": null,
+      "id": "GL-BDJZYXG5FS",
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "12898",
+        "credit_minor": 356399,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-PFMFXN",
+        "invoice_id": "SI-H337AY5E",
+        "payment_id": "PMT8QE16KR47",
+        "row_id": "GL-N1X6XZYRD0",
+        "timestamp": "2026-05-02T17:50:10+05:00"
+      },
+      "before": {
+        "account": "12898",
+        "credit_minor": 356399,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-PFMFXN",
+        "invoice_id": "SI-7AATBWVE",
+        "payment_id": "PMT8QE16KR47",
+        "row_id": "GL-N1X6XZYRD0",
+        "timestamp": "2026-05-02T17:50:10+05:00"
+      },
+      "id": "GL-N1X6XZYRD0",
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "12898",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 295880,
+        "entity_id": "CUST-39CE3Q",
+        "invoice_id": "SI-D6E81YMA",
+        "payment_id": null,
+        "row_id": "GL-T92WZC4FKX",
+        "timestamp": "2026-05-17T09:09:42+05:00"
+      },
+      "before": {
+        "account": "12898",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 295880,
+        "entity_id": "CUST-39CE3Q",
+        "invoice_id": "SI-D6E81YMA",
+        "payment_id": null,
+        "row_id": "GL-T92WZC4FKX",
+        "timestamp": "2026-05-14T14:47:59+05:00"
+      },
+      "id": "GL-T92WZC4FKX",
+      "issue_ids": [
+        "iss_CYQE1ZGW3V"
+      ],
+      "table": "ledger"
+    },
+    {
+      "after": {
+        "account": "40747",
+        "credit_minor": 295880,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-39CE3Q",
+        "invoice_id": "SI-D6E81YMA",
+        "payment_id": null,
+        "row_id": "GL-CF0J9YKFC7",
+        "timestamp": "2026-05-17T09:09:42+05:00"
+      },
+      "before": {
+        "account": "40747",
+        "credit_minor": 295880,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "CUST-39CE3Q",
+        "invoice_id": "SI-D6E81YMA",
+        "payment_id": null,
+        "row_id": "GL-CF0J9YKFC7",
+        "timestamp": "2026-05-14T14:47:59+05:00"
+      },
+      "id": "GL-CF0J9YKFC7",
+      "issue_ids": [
+        "iss_CYQE1ZGW3V"
+      ],
+      "table": "ledger"
+    }
+  ],
+  "config": {
+    "clean": false,
+    "config_id": "interacting.v1",
+    "currencies": {
+      "base_pool": [
+        "KZT",
+        "USD",
+        "EUR"
+      ],
+      "foreign_count": [
+        1,
+        2
+      ],
+      "foreign_pool": [
+        "USD",
+        "EUR",
+        "GBP",
+        "CNY",
+        "JPY",
+        "KWD",
+        "AED"
+      ]
+    },
+    "distractors": {
+      "boundary_offset": [
+        1,
+        3
+      ],
+      "credit_note_refund": [
+        0,
+        2
+      ],
+      "fx_spike": [
+        0,
+        1
+      ],
+      "multi_invoice_payment": [
+        1,
+        2
+      ],
+      "partial_open": [
+        1,
+        3
+      ],
+      "posting_lag": [
+        2,
+        6
+      ],
+      "same_amount_orders": [
+        0,
+        2
+      ],
+      "split_payment": [
+        1,
+        3
+      ],
+      "subscription": [
+        1,
+        3
+      ],
+      "unapplied_payment": [
+        0,
+        2
+      ]
+    },
+    "errors": {
+      "duplicate_invoice": [
+        0,
+        1
+      ],
+      "fx_conversion": [
+        0,
+        1
+      ],
+      "payment_allocation": [
+        0,
+        1
+      ],
+      "period_cutoff": [
+        0,
+        1
+      ]
+    },
+    "interactions": {
+      "duplicate_misallocated": [
+        1,
+        1
+      ],
+      "fx_partial_at_boundary": [
+        1,
+        1
+      ]
+    },
+    "max_issues": 12,
+    "period": {
+      "margin_days": 21,
+      "year_pool": [
+        2025,
+        2026
+      ]
+    },
+    "presentation": {
+      "id_salt": "",
+      "order": "chronological"
+    },
+    "secret_salt": "",
+    "size": {
+      "background_entries": [
+        40,
+        160
+      ],
+      "customers": [
+        6,
+        12
+      ],
+      "invoices": [
+        24,
+        60
+      ]
+    },
+    "timezone_pool": [
+      "+05:00",
+      "+03:00",
+      "+06:00",
+      "+01:00",
+      "-04:00"
+    ]
+  },
+  "distractors": [
+    {
+      "code": "X1",
+      "ids": [
+        "REC-T4VHJ5MN5",
+        "REC-WBXDWKPJW",
+        "REC-3PA0PM5SW",
+        "REC-PBJTJQH23"
+      ],
+      "keys": [
+        "k:inv:00001",
+        "k:pay:00001",
+        "k:pay:00002",
+        "k:pay:00003"
+      ],
+      "kind": "split_payment",
+      "note": "3 payments"
+    },
+    {
+      "code": "X1",
+      "ids": [
+        "REC-0G3TD2P0Q",
+        "REC-B97Z10QHJ",
+        "REC-KVGYFW8XS"
+      ],
+      "keys": [
+        "k:inv:00002",
+        "k:pay:00004",
+        "k:pay:00005"
+      ],
+      "kind": "split_payment",
+      "note": "2 payments; the last one overpays, the rest of it is unapplied"
+    },
+    {
+      "code": "X1",
+      "ids": [
+        "REC-69C3Y1N3X",
+        "REC-BAD07EH0E",
+        "REC-ZVQKXYMGJ",
+        "REC-8RRF7H0FK"
+      ],
+      "keys": [
+        "k:inv:00003",
+        "k:pay:00006",
+        "k:pay:00007",
+        "k:pay:00008"
+      ],
+      "kind": "split_payment",
+      "note": "3 payments"
+    },
+    {
+      "code": "X2",
+      "ids": [
+        "REC-C5SCV6HP0",
+        "REC-SSY8Z9Q59",
+        "REC-XZE5F2SDX"
+      ],
+      "keys": [
+        "k:inv:00004",
+        "k:inv:00005",
+        "k:pay:00009"
+      ],
+      "kind": "multi_invoice_payment",
+      "note": "settles all listed invoices"
+    },
+    {
+      "code": "X2",
+      "ids": [
+        "REC-KRVB5AXSZ",
+        "REC-707Y2GX4E",
+        "REC-X8E5Z7AK9",
+        "REC-7Q379H35Z"
+      ],
+      "keys": [
+        "k:inv:00006",
+        "k:inv:00007",
+        "k:inv:00008",
+        "k:pay:00010"
+      ],
+      "kind": "multi_invoice_payment",
+      "note": "settles all listed invoices"
+    },
+    {
+      "code": "X3",
+      "ids": [
+        "REC-8TM9DVVGY",
+        "REC-HE0EA9ZQV"
+      ],
+      "keys": [
+        "k:inv:00009",
+        "k:pay:00011"
+      ],
+      "kind": "partial_open",
+      "note": ""
+    },
+    {
+      "code": "X3",
+      "ids": [
+        "REC-94G278EB2",
+        "REC-29J18XPJA"
+      ],
+      "keys": [
+        "k:inv:00010",
+        "k:pay:00012"
+      ],
+      "kind": "partial_open",
+      "note": ""
+    },
+    {
+      "code": "X3",
+      "ids": [
+        "REC-E17F48C34",
+        "REC-2HBAF1M6B"
+      ],
+      "keys": [
+        "k:inv:00011",
+        "k:pay:00013"
+      ],
+      "kind": "partial_open",
+      "note": ""
+    },
+    {
+      "code": "X4",
+      "ids": [
+        "REC-NFJWRBA7A",
+        "REC-R2FXWYW2A",
+        "REC-34ZWFGY3F",
+        "REC-V7JASCH6H"
+      ],
+      "keys": [
+        "k:inv:00012",
+        "k:pay:00014",
+        "k:inv:00013",
+        "k:pay:00015"
+      ],
+      "kind": "credit_note_refund",
+      "note": "credit note and refund"
+    },
+    {
+      "code": "X5",
+      "ids": [
+        "REC-QC2FZEQ9X",
+        "REC-T1FMJ02S8",
+        "REC-MG9KMMDWP"
+      ],
+      "keys": [
+        "k:inv:00014",
+        "k:pay:00016",
+        "k:inv:00015"
+      ],
+      "kind": "subscription",
+      "note": "same amount every month, different service_period and order_ref"
+    },
+    {
+      "code": "X5",
+      "ids": [
+        "REC-5Q6MQVAEH",
+        "REC-10X29PTFH",
+        "REC-HQ66DGG44",
+        "REC-EBVM0SSDH"
+      ],
+      "keys": [
+        "k:inv:00016",
+        "k:pay:00017",
+        "k:inv:00017",
+        "k:pay:00018"
+      ],
+      "kind": "subscription",
+      "note": "same amount every month, different service_period and order_ref"
+    },
+    {
+      "code": "X5",
+      "ids": [
+        "REC-3PBBKMJV0",
+        "REC-DFCAQ52XZ",
+        "REC-7RBWJG29H",
+        "REC-WYK93AP6D"
+      ],
+      "keys": [
+        "k:inv:00018",
+        "k:pay:00019",
+        "k:inv:00019",
+        "k:pay:00020"
+      ],
+      "kind": "subscription",
+      "note": "same amount every month, different service_period and order_ref"
+    },
+    {
+      "code": "X6",
+      "ids": [
+        "REC-D0HPXYFYR",
+        "REC-1QRYSF4HX",
+        "REC-F651JNRSJ"
+      ],
+      "keys": [
+        "k:inv:00020",
+        "k:inv:00021",
+        "k:pay:00021"
+      ],
+      "kind": "same_amount_orders",
+      "note": "two orders, same customer, amount and day"
+    },
+    {
+      "code": "X7",
+      "ids": [
+        "REC-E8MK0DCDE"
+      ],
+      "keys": [
+        "k:pay:00022"
+      ],
+      "kind": "unapplied_payment",
+      "note": "no invoice reference, booked to UNAPPLIED"
+    },
+    {
+      "code": "X8",
+      "ids": [
+        "REC-10VJ3RTT3",
+        "REC-VJGBMGTG1"
+      ],
+      "keys": [
+        "k:inv:00022",
+        "k:pay:00023"
+      ],
+      "kind": "boundary_offset",
+      "note": "payment written in +14:00"
+    },
+    {
+      "code": "X8",
+      "ids": [
+        "REC-E5DNHMX6R",
+        "REC-QHGR4HEFZ"
+      ],
+      "keys": [
+        "k:inv:00023",
+        "k:pay:00024"
+      ],
+      "kind": "boundary_offset",
+      "note": "invoice written in +08:00"
+    },
+    {
+      "code": "X8",
+      "ids": [
+        "REC-4TJRCJQEY",
+        "REC-58VVD4AKQ"
+      ],
+      "keys": [
+        "k:inv:00024",
+        "k:pay:00025"
+      ],
+      "kind": "boundary_offset",
+      "note": "invoice written in +10:00"
+    },
+    {
+      "code": "X10",
+      "ids": [
+        "REC-0389XCV0M",
+        "REC-BNX82TSH2"
+      ],
+      "keys": [
+        "k:inv:00025",
+        "k:pay:00026"
+      ],
+      "kind": "posting_lag",
+      "note": "payment posted 3 day(s) late, same period, another calendar month"
+    },
+    {
+      "code": "X10",
+      "ids": [
+        "REC-AZ20JK357"
+      ],
+      "keys": [
+        "k:inv:00026"
+      ],
+      "kind": "posting_lag",
+      "note": "invoice posted 5 day(s) late, same period"
+    },
+    {
+      "code": "X10",
+      "ids": [
+        "REC-CP7TW15Q6"
+      ],
+      "keys": [
+        "k:inv:00027"
+      ],
+      "kind": "posting_lag",
+      "note": "invoice posted 6 day(s) late, same period, another calendar month"
+    },
+    {
+      "code": "X10",
+      "ids": [
+        "REC-RP4GMNC46",
+        "REC-9KM533ZHX"
+      ],
+      "keys": [
+        "k:inv:00028",
+        "k:pay:00027"
+      ],
+      "kind": "posting_lag",
+      "note": "payment posted 2 day(s) late, same period, another calendar month"
+    }
+  ],
+  "generator": "auditgym.episode.generate",
+  "generator_version": "0.2.0",
+  "id_map": {
+    "k:cust:00001": "CUST-JZRCJH",
+    "k:cust:00002": "CUST-WB5B4M",
+    "k:cust:00003": "CUST-39CE3Q",
+    "k:cust:00004": "CUST-2C4XJB",
+    "k:cust:00005": "CUST-6J5BC3",
+    "k:cust:00006": "CUST-PFMFXN",
+    "k:exp:00001#CASH": "GL-BPSNEWXN0X",
+    "k:exp:00001#EXP": "GL-A3V7VWTM80",
+    "k:exp:00002#CASH": "GL-2KQX5V519W",
+    "k:exp:00002#EXP": "GL-C72JMEQ8SF",
+    "k:exp:00003#CASH": "GL-PZ10CNHDQX",
+    "k:exp:00003#EXP": "GL-4ZB80HWA4C",
+    "k:exp:00004#CASH": "GL-P2FW50T657",
+    "k:exp:00004#EXP": "GL-DVMRXAEEAB",
+    "k:exp:00005#CASH": "GL-YXE3VRDSZ6",
+    "k:exp:00005#EXP": "GL-AWT67T3YYP",
+    "k:exp:00006#CASH": "GL-QD81SSPJG5",
+    "k:exp:00006#EXP": "GL-8C4TK4JHV9",
+    "k:exp:00007#CASH": "GL-BQWNHHTJBX",
+    "k:exp:00007#EXP": "GL-AHZA9A3KEJ",
+    "k:exp:00008#CASH": "GL-7158RFYZV6",
+    "k:exp:00008#EXP": "GL-9NY2GRX41F",
+    "k:exp:00009#CASH": "GL-VP89TVYP2W",
+    "k:exp:00009#EXP": "GL-YWF45JQ4S7",
+    "k:exp:00010#CASH": "GL-WSNMDV6C2C",
+    "k:exp:00010#EXP": "GL-8PQ0ASV5XV",
+    "k:exp:00011#CASH": "GL-CD65CPAYSH",
+    "k:exp:00011#EXP": "GL-CTV7R7M7KW",
+    "k:exp:00012#CASH": "GL-JHJFS510CP",
+    "k:exp:00012#EXP": "GL-AN1ETXPCJ0",
+    "k:exp:00013#CASH": "GL-CFZMPR332B",
+    "k:exp:00013#EXP": "GL-KQPHM9TB8E",
+    "k:exp:00014#CASH": "GL-0QXJ67JGTB",
+    "k:exp:00014#EXP": "GL-WG8P681BJ0",
+    "k:exp:00015#CASH": "GL-0AF3TSYW0G",
+    "k:exp:00015#EXP": "GL-C2S3HS7ZDT",
+    "k:exp:00016#CASH": "GL-9GBHC8EK5N",
+    "k:exp:00016#EXP": "GL-18H0ES3KTJ",
+    "k:exp:00017#CASH": "GL-KW8D5XWH2C",
+    "k:exp:00017#EXP": "GL-5BXZ0W4FGP",
+    "k:exp:00018#CASH": "GL-7CE0RFVATP",
+    "k:exp:00018#EXP": "GL-XGJ2EHV8X9",
+    "k:exp:00019#CASH": "GL-WX58Q0JE38",
+    "k:exp:00019#EXP": "GL-ZCCA1D5YXY",
+    "k:exp:00020#CASH": "GL-ZF5MX20ZYD",
+    "k:exp:00020#EXP": "GL-PZGGDMHVK7",
+    "k:exp:00021#CASH": "GL-62JM54E81X",
+    "k:exp:00021#EXP": "GL-CPW0C02D1A",
+    "k:exp:00022#CASH": "GL-PAMMJ0Z57A",
+    "k:exp:00022#EXP": "GL-4GBFQGRHET",
+    "k:exp:00023#CASH": "GL-4C2296ZP7R",
+    "k:exp:00023#EXP": "GL-73R3X0XKSC",
+    "k:exp:00024#CASH": "GL-RFW37XCX64",
+    "k:exp:00024#EXP": "GL-3G34AE133N",
+    "k:exp:00025#CASH": "GL-XBDMFKS5J6",
+    "k:exp:00025#EXP": "GL-3PQR8CA6JT",
+    "k:exp:00026#CASH": "GL-1QX4Z1P42M",
+    "k:exp:00026#EXP": "GL-97K1JBNGVD",
+    "k:exp:00027#CASH": "GL-2THD8MK0DH",
+    "k:exp:00027#EXP": "GL-8W4K7S2RJE",
+    "k:exp:00028#CASH": "GL-CA0NRZKWEW",
+    "k:exp:00028#EXP": "GL-QN2DD9GM5M",
+    "k:exp:00029#CASH": "GL-W4HZ0DEMYN",
+    "k:exp:00029#EXP": "GL-R15W4MABNB",
+    "k:exp:00030#CASH": "GL-5D167SZMSA",
+    "k:exp:00030#EXP": "GL-MGS63NP408",
+    "k:exp:00031#CASH": "GL-XQN7KQ2GYH",
+    "k:exp:00031#EXP": "GL-PC3XSBKKD6",
+    "k:exp:00032#CASH": "GL-ZER6SXGH3Q",
+    "k:exp:00032#EXP": "GL-3AQCMTPXCC",
+    "k:exp:00033#CASH": "GL-QMG65MQ648",
+    "k:exp:00033#EXP": "GL-DCQ9FG1C40",
+    "k:exp:00034#CASH": "GL-WKCYDK21XZ",
+    "k:exp:00034#EXP": "GL-Y5HY5NDGNE",
+    "k:exp:00035#CASH": "GL-G9ZTX20A9P",
+    "k:exp:00035#EXP": "GL-KFESGPP92Q",
+    "k:exp:00036#CASH": "GL-C7Y51Z99R4",
+    "k:exp:00036#EXP": "GL-MP1VDBP6RB",
+    "k:exp:00037#CASH": "GL-21GXBJPG8R",
+    "k:exp:00037#EXP": "GL-YSFC276H5S",
+    "k:exp:00038#CASH": "GL-J2YZ6GJJCJ",
+    "k:exp:00038#EXP": "GL-6C5EHX9CBM",
+    "k:exp:00039#CASH": "GL-Z12DNRCM22",
+    "k:exp:00039#EXP": "GL-KYYXETWBKR",
+    "k:exp:00040#CASH": "GL-Z9CTK64GH4",
+    "k:exp:00040#EXP": "GL-8PJ2WMBAVE",
+    "k:exp:00041#CASH": "GL-HT543CXDKN",
+    "k:exp:00041#EXP": "GL-2VEDGTTF2T",
+    "k:exp:00042#CASH": "GL-Q4AMF82ENQ",
+    "k:exp:00042#EXP": "GL-3AKCSJA37E",
+    "k:exp:00043#CASH": "GL-TW6WZP31WH",
+    "k:exp:00043#EXP": "GL-6HHA06G52J",
+    "k:exp:00044#CASH": "GL-3C2WH407T4",
+    "k:exp:00044#EXP": "GL-0ZJC39DKNP",
+    "k:exp:00045#CASH": "GL-BWBXM8CBF5",
+    "k:exp:00045#EXP": "GL-937PTK7FNT",
+    "k:exp:00046#CASH": "GL-3FRF6STP2B",
+    "k:exp:00046#EXP": "GL-XHK3ZBEB2N",
+    "k:exp:00047#CASH": "GL-Z4JRYRQ6PZ",
+    "k:exp:00047#EXP": "GL-1A600JNCSX",
+    "k:exp:00048#CASH": "GL-YHSQVTCVZ0",
+    "k:exp:00048#EXP": "GL-S6EFWFNBBE",
+    "k:exp:00049#CASH": "GL-SYPJE87P5B",
+    "k:exp:00049#EXP": "GL-1ZT5FPS5JR",
+    "k:exp:00050#CASH": "GL-FVM0NH2A2D",
+    "k:exp:00050#EXP": "GL-5RRG4FPX2P",
+    "k:exp:00051#CASH": "GL-3NGXR7VH20",
+    "k:exp:00051#EXP": "GL-1N0E5S59BP",
+    "k:exp:00052#CASH": "GL-G30A7KF022",
+    "k:exp:00052#EXP": "GL-40BWFYHZZ1",
+    "k:exp:00053#CASH": "GL-9Y0P23050R",
+    "k:exp:00053#EXP": "GL-XVGPRZ7YQB",
+    "k:exp:00054#CASH": "GL-ZZZJQKAGPW",
+    "k:exp:00054#EXP": "GL-V09PKTNYYK",
+    "k:exp:00055#CASH": "GL-QG7P00G0GR",
+    "k:exp:00055#EXP": "GL-QTZ1T62Q0Z",
+    "k:exp:00056#CASH": "GL-N9JFD7C75S",
+    "k:exp:00056#EXP": "GL-ZSZ2YYKDH7",
+    "k:exp:00057#CASH": "GL-XXAEBPX86K",
+    "k:exp:00057#EXP": "GL-APXSN9K0ZD",
+    "k:exp:00058#CASH": "GL-QRKH8ZDCSX",
+    "k:exp:00058#EXP": "GL-JZ09MBXFJD",
+    "k:exp:00059#CASH": "GL-FHVTNE0746",
+    "k:exp:00059#EXP": "GL-BW2456ZSQ1",
+    "k:exp:00060#CASH": "GL-5EHS9FQ5SA",
+    "k:exp:00060#EXP": "GL-4A4FPDH180",
+    "k:exp:00061#CASH": "GL-6FN6XEEA3N",
+    "k:exp:00061#EXP": "GL-J7HKB1BF32",
+    "k:exp:00062#CASH": "GL-B8XK972Z3S",
+    "k:exp:00062#EXP": "GL-D9QPHQDQ16",
+    "k:exp:00063#CASH": "GL-25JKREGJHM",
+    "k:exp:00063#EXP": "GL-8ME8QFAETF",
+    "k:exp:00064#CASH": "GL-62C68H94FY",
+    "k:exp:00064#EXP": "GL-5EX84VMEZS",
+    "k:exp:00065#CASH": "GL-4DD46JA1FM",
+    "k:exp:00065#EXP": "GL-Q51BD09TD5",
+    "k:exp:00066#CASH": "GL-N4PG51XY4X",
+    "k:exp:00066#EXP": "GL-HNNWPZPTVJ",
+    "k:exp:00067#CASH": "GL-MF5SMGQ4JT",
+    "k:exp:00067#EXP": "GL-A8ECWXQZBM",
+    "k:exp:00068#CASH": "GL-FFGQ11SQXC",
+    "k:exp:00068#EXP": "GL-9NMBQKKDR7",
+    "k:exp:00069#CASH": "GL-78K06ASRAR",
+    "k:exp:00069#EXP": "GL-RMZE1T0X51",
+    "k:exp:00070#CASH": "GL-HS4KPTHW9V",
+    "k:exp:00070#EXP": "GL-ZB4R635B7Q",
+    "k:exp:00071#CASH": "GL-KHCECQSMHJ",
+    "k:exp:00071#EXP": "GL-XBPMY2D9XJ",
+    "k:exp:00072#CASH": "GL-SXV81GYEA9",
+    "k:exp:00072#EXP": "GL-MGJ5NVYS24",
+    "k:exp:00073#CASH": "GL-0VFKD5C1T2",
+    "k:exp:00073#EXP": "GL-1EFK6ECDN1",
+    "k:exp:00074#CASH": "GL-NZNAGF54JY",
+    "k:exp:00074#EXP": "GL-VHXN210XMX",
+    "k:exp:00075#CASH": "GL-Y3YXTSGY6G",
+    "k:exp:00075#EXP": "GL-Z6VNMHQH9A",
+    "k:exp:00076#CASH": "GL-4MNKD9KGYX",
+    "k:exp:00076#EXP": "GL-JE6SJ4N8GD",
+    "k:exp:00077#CASH": "GL-Q6N8M157ZE",
+    "k:exp:00077#EXP": "GL-1A2B8KNAHV",
+    "k:exp:00078#CASH": "GL-1B9RXPMTWZ",
+    "k:exp:00078#EXP": "GL-V0W7JHF15K",
+    "k:exp:00079#CASH": "GL-YSYJ13QVHP",
+    "k:exp:00079#EXP": "GL-70W1A5S7DE",
+    "k:exp:00080#CASH": "GL-8DMS3X46PX",
+    "k:exp:00080#EXP": "GL-EM6TXSE673",
+    "k:exp:00081#CASH": "GL-XFBSPD9HKE",
+    "k:exp:00081#EXP": "GL-G71B7YB4AX",
+    "k:exp:00082#CASH": "GL-G9T6K76PPC",
+    "k:exp:00082#EXP": "GL-YDMFAGCN8Y",
+    "k:exp:00083#CASH": "GL-WKTVAQJYXB",
+    "k:exp:00083#EXP": "GL-8EGMNXRQES",
+    "k:exp:00084#CASH": "GL-7192EMKXBV",
+    "k:exp:00084#EXP": "GL-T1R6YHBP38",
+    "k:exp:00085#CASH": "GL-59T1TNHD1M",
+    "k:exp:00085#EXP": "GL-RNRNQVBBEE",
+    "k:exp:00086#CASH": "GL-TAPYJ9QV8B",
+    "k:exp:00086#EXP": "GL-F9XM0G9XAR",
+    "k:exp:00087#CASH": "GL-CH0XHYTAXG",
+    "k:exp:00087#EXP": "GL-PTSQ2ED2GB",
+    "k:exp:00088#CASH": "GL-FNDHT6VJZH",
+    "k:exp:00088#EXP": "GL-HARF5MRWKN",
+    "k:exp:00089#CASH": "GL-7VG89BMJWA",
+    "k:exp:00089#EXP": "GL-MAXB69XBGB",
+    "k:exp:00090#CASH": "GL-4SFSXF1R87",
+    "k:exp:00090#EXP": "GL-2CDCWE4C7X",
+    "k:exp:00091#CASH": "GL-SAFAW91S54",
+    "k:exp:00091#EXP": "GL-AF6GZMFE1G",
+    "k:exp:00092#CASH": "GL-RTBW7FPCGQ",
+    "k:exp:00092#EXP": "GL-6V2HEV72X1",
+    "k:exp:00093#CASH": "GL-1HYAFNQ2SW",
+    "k:exp:00093#EXP": "GL-7Q19QM9GKE",
+    "k:exp:00094#CASH": "GL-8W0FKBF68A",
+    "k:exp:00094#EXP": "GL-X33ZWHSH56",
+    "k:exp:00095#CASH": "GL-8MV8P23XHE",
+    "k:exp:00095#EXP": "GL-KC9F3P3QP4",
+    "k:exp:00096#CASH": "GL-N7SQYSKAK6",
+    "k:exp:00096#EXP": "GL-V427ZW11ZA",
+    "k:exp:00097#CASH": "GL-S94EE76E2W",
+    "k:exp:00097#EXP": "GL-GBZDE4CS21",
+    "k:exp:00098#CASH": "GL-96QZQ4GM77",
+    "k:exp:00098#EXP": "GL-6P9EEW4J4Z",
+    "k:exp:00099#CASH": "GL-S40VYFH7D0",
+    "k:exp:00099#EXP": "GL-GJ1DB34RAR",
+    "k:exp:00100#CASH": "GL-FHFW1GBD9K",
+    "k:exp:00100#EXP": "GL-WPSWGGGW17",
+    "k:exp:00101#CASH": "GL-F080259BAE",
+    "k:exp:00101#EXP": "GL-CV0T9VTXS1",
+    "k:exp:00102#CASH": "GL-683R71MNGC",
+    "k:exp:00102#EXP": "GL-T7JJTQF09T",
+    "k:exp:00103#CASH": "GL-PAHHT2QP2J",
+    "k:exp:00103#EXP": "GL-44ZT2N4A0B",
+    "k:exp:00104#CASH": "GL-7CXRVT1FYY",
+    "k:exp:00104#EXP": "GL-KFT17KRN7A",
+    "k:exp:00105#CASH": "GL-45ADKG5B9S",
+    "k:exp:00105#EXP": "GL-BPG6WGQ1TT",
+    "k:exp:00106#CASH": "GL-1P53FZ9VF5",
+    "k:exp:00106#EXP": "GL-DKEM3MP2TS",
+    "k:exp:00107#CASH": "GL-VBMFG9SWJ7",
+    "k:exp:00107#EXP": "GL-JX9TFP362V",
+    "k:exp:00108#CASH": "GL-PKY0DAPHC9",
+    "k:exp:00108#EXP": "GL-DD78F4SRW7",
+    "k:exp:00109#CASH": "GL-1WW7NDYWHJ",
+    "k:exp:00109#EXP": "GL-BCDQA2J625",
+    "k:exp:00110#CASH": "GL-Q5Q21WHBRS",
+    "k:exp:00110#EXP": "GL-D3QY6WY7JA",
+    "k:exp:00111#CASH": "GL-7RYFAGNCX8",
+    "k:exp:00111#EXP": "GL-Y39361Q9DW",
+    "k:exp:00112#CASH": "GL-TPMA7SQ8CA",
+    "k:exp:00112#EXP": "GL-TABEVCGDMN",
+    "k:exp:00113#CASH": "GL-40A35NH7PW",
+    "k:exp:00113#EXP": "GL-2BJV3KSNKJ",
+    "k:exp:00114#CASH": "GL-342XWTFZT6",
+    "k:exp:00114#EXP": "GL-WSK9GK687K",
+    "k:exp:00115#CASH": "GL-5ZN4AKWXCP",
+    "k:exp:00115#EXP": "GL-QJHK3KXT2W",
+    "k:exp:00116#CASH": "GL-8DYB2QX61P",
+    "k:exp:00116#EXP": "GL-TJHVG4CAXQ",
+    "k:exp:00117#CASH": "GL-XMQTQEVKW9",
+    "k:exp:00117#EXP": "GL-ATC9Y5JD2R",
+    "k:exp:00118#CASH": "GL-RY00P98VV2",
+    "k:exp:00118#EXP": "GL-ZN037FD6N6",
+    "k:exp:00119#CASH": "GL-1DF285KH2H",
+    "k:exp:00119#EXP": "GL-M2FER1RN6P",
+    "k:exp:00120#CASH": "GL-BAKGM4H3TA",
+    "k:exp:00120#EXP": "GL-QXHAM5FXSZ",
+    "k:exp:00121#CASH": "GL-VQ3MHSEH8G",
+    "k:exp:00121#EXP": "GL-PQ317NY3K6",
+    "k:exp:00122#CASH": "GL-869Z07E6SG",
+    "k:exp:00122#EXP": "GL-91FCN6KXN7",
+    "k:exp:00123#CASH": "GL-GQBD57NVP3",
+    "k:exp:00123#EXP": "GL-RQKJK08743",
+    "k:exp:00124#CASH": "GL-BTVF611Z5Z",
+    "k:exp:00124#EXP": "GL-7XHQPPFBZ0",
+    "k:exp:00125#CASH": "GL-YR8ZZ3698V",
+    "k:exp:00125#EXP": "GL-1SYP39D465",
+    "k:exp:00126#CASH": "GL-X926RJ425H",
+    "k:exp:00126#EXP": "GL-B64MM2FG4G",
+    "k:exp:00127#CASH": "GL-DBZHC59ZWG",
+    "k:exp:00127#EXP": "GL-ZM1YGDFQDD",
+    "k:exp:00128#CASH": "GL-H7T3ZXAW16",
+    "k:exp:00128#EXP": "GL-SQB0SC3YTF",
+    "k:exp:00129#CASH": "GL-6G83GQKW97",
+    "k:exp:00129#EXP": "GL-KFY8HYGHEJ",
+    "k:exp:00130#CASH": "GL-BK1G7MDD8K",
+    "k:exp:00130#EXP": "GL-QSAVHYW60N",
+    "k:exp:00131#CASH": "GL-05QNKX2X0P",
+    "k:exp:00131#EXP": "GL-6N0QJPJGJC",
+    "k:exp:00132#CASH": "GL-NWFWQM083F",
+    "k:exp:00132#EXP": "GL-31XT6TY55Z",
+    "k:exp:00133#CASH": "GL-J4G2C0TH99",
+    "k:exp:00133#EXP": "GL-NET4VFDEA6",
+    "k:exp:00134#CASH": "GL-AG5SW3JDYX",
+    "k:exp:00134#EXP": "GL-XB31RW50G8",
+    "k:exp:00135#CASH": "GL-B3YMQJD18D",
+    "k:exp:00135#EXP": "GL-1W9FHT2D49",
+    "k:exp:00136#CASH": "GL-ATSC8X3JH7",
+    "k:exp:00136#EXP": "GL-PC2STQCHD9",
+    "k:exp:00137#CASH": "GL-6QHNCZM5W5",
+    "k:exp:00137#EXP": "GL-EX5E1ENFGR",
+    "k:exp:00138#CASH": "GL-TVG1420MJQ",
+    "k:exp:00138#EXP": "GL-SWB242XC20",
+    "k:exp:00139#CASH": "GL-94BFYRHYXP",
+    "k:exp:00139#EXP": "GL-V0TA9QTK2P",
+    "k:exp:00140#CASH": "GL-BDVXTDDXF7",
+    "k:exp:00140#EXP": "GL-QKEZBWQ6AT",
+    "k:exp:00141#CASH": "GL-S1P0XFXWGD",
+    "k:exp:00141#EXP": "GL-V3HQKHT7TG",
+    "k:exp:00142#CASH": "GL-2F8ZHM5355",
+    "k:exp:00142#EXP": "GL-5EM42SHX97",
+    "k:exp:00143#CASH": "GL-5MPST6361V",
+    "k:exp:00143#EXP": "GL-WPGY978162",
+    "k:exp:00144#CASH": "GL-6VWXDY82CG",
+    "k:exp:00144#EXP": "GL-8N1C7RH6VT",
+    "k:exp:00145#CASH": "GL-PQ0M4N9GHE",
+    "k:exp:00145#EXP": "GL-5NM7TMD3SN",
+    "k:exp:00146#CASH": "GL-BNR4XM2X5S",
+    "k:exp:00146#EXP": "GL-BKY6B37AAB",
+    "k:exp:00147#CASH": "GL-2ADG3EG9TZ",
+    "k:exp:00147#EXP": "GL-ZJ0X81XPDD",
+    "k:exp:00148#CASH": "GL-2MDRG52RMA",
+    "k:exp:00148#EXP": "GL-R485TE2ERM",
+    "k:exp:00149#CASH": "GL-1MQQ122CPX",
+    "k:exp:00149#EXP": "GL-5C8MA8E9PT",
+    "k:exp:00150#CASH": "GL-1C3CBHYBSP",
+    "k:exp:00150#EXP": "GL-QDDVRGTTJY",
+    "k:exp:00151#CASH": "GL-1FDC5G2CPF",
+    "k:exp:00151#EXP": "GL-J1NDP29Y57",
+    "k:exp:00152#CASH": "GL-CMSDQTY77T",
+    "k:exp:00152#EXP": "GL-68N1MVBJGQ",
+    "k:exp:00153#CASH": "GL-VQX9DFA2Z3",
+    "k:exp:00153#EXP": "GL-A24AVA29ZB",
+    "k:exp:00154#CASH": "GL-D4AD5DC7R6",
+    "k:exp:00154#EXP": "GL-73NRG17MD9",
+    "k:exp:00155#CASH": "GL-D6G45909X0",
+    "k:exp:00155#EXP": "GL-FYN7QXRZ4T",
+    "k:exp:00156#CASH": "GL-K4RDQ4XS62",
+    "k:exp:00156#EXP": "GL-9XY5QYCE5A",
+    "k:exp:00157#CASH": "GL-2GE45BHS4X",
+    "k:exp:00157#EXP": "GL-8A6GKF867C",
+    "k:exp:00158#CASH": "GL-6HBC8S2PM8",
+    "k:exp:00158#EXP": "GL-59YSQ7B2CV",
+    "k:inv:00001": "REC-T4VHJ5MN5",
+    "k:inv:00001#AR": "GL-SHTZTAMSSR",
+    "k:inv:00001#REV": "GL-T0PNKXMY7D",
+    "k:inv:00002": "REC-0G3TD2P0Q",
+    "k:inv:00002#AR": "GL-HGVK611ZGW",
+    "k:inv:00002#REV": "GL-06282CXVM1",
+    "k:inv:00003": "REC-69C3Y1N3X",
+    "k:inv:00003#AR": "GL-DC4EJFN9SF",
+    "k:inv:00003#REV": "GL-C5YZRXSFBT",
+    "k:inv:00004": "REC-C5SCV6HP0",
+    "k:inv:00004#AR": "GL-VKAPCC5XVR",
+    "k:inv:00004#REV": "GL-MJSVQYSXRR",
+    "k:inv:00005": "REC-SSY8Z9Q59",
+    "k:inv:00005#AR": "GL-MFJNTRE4BJ",
+    "k:inv:00005#REV": "GL-WJ3PNTZ0MX",
+    "k:inv:00006": "REC-KRVB5AXSZ",
+    "k:inv:00006#AR": "GL-R61BKX0H2Y",
+    "k:inv:00006#REV": "GL-5YQTCKY6Y0",
+    "k:inv:00007": "REC-707Y2GX4E",
+    "k:inv:00007#AR": "GL-5A7MQ7NW8T",
+    "k:inv:00007#REV": "GL-809X8FRR5B",
+    "k:inv:00008": "REC-X8E5Z7AK9",
+    "k:inv:00008#AR": "GL-GMWEGF1138",
+    "k:inv:00008#REV": "GL-R6XCEDDRVA",
+    "k:inv:00009": "REC-8TM9DVVGY",
+    "k:inv:00009#AR": "GL-Z94K01AVBD",
+    "k:inv:00009#REV": "GL-VHF9Z2EGNX",
+    "k:inv:00010": "REC-94G278EB2",
+    "k:inv:00010#AR": "GL-JQK90P5CMY",
+    "k:inv:00010#REV": "GL-DZQDVN6HB5",
+    "k:inv:00011": "REC-E17F48C34",
+    "k:inv:00011#AR": "GL-8JK5JDJP82",
+    "k:inv:00011#REV": "GL-JVYY2DC8M1",
+    "k:inv:00012": "REC-NFJWRBA7A",
+    "k:inv:00012#AR": "GL-FW8Y8JXKXD",
+    "k:inv:00012#REV": "GL-85TJM6096A",
+    "k:inv:00013": "REC-34ZWFGY3F",
+    "k:inv:00013#AR": "GL-GDNMPM5WA5",
+    "k:inv:00013#REV": "GL-5CVY87GXPH",
+    "k:inv:00014": "REC-QC2FZEQ9X",
+    "k:inv:00014#AR": "GL-H2GCKDPZ6A",
+    "k:inv:00014#REV": "GL-H0M0R6FMC4",
+    "k:inv:00015": "REC-MG9KMMDWP",
+    "k:inv:00015#AR": "GL-0NRT49B9ZM",
+    "k:inv:00015#REV": "GL-7S4B5WYAKX",
+    "k:inv:00016": "REC-5Q6MQVAEH",
+    "k:inv:00016#AR": "GL-9KHBC4A0QY",
+    "k:inv:00016#REV": "GL-335K2T0DHX",
+    "k:inv:00017": "REC-HQ66DGG44",
+    "k:inv:00017#AR": "GL-B522QZJRT7",
+    "k:inv:00017#REV": "GL-5WWDH9JTSW",
+    "k:inv:00018": "REC-3PBBKMJV0",
+    "k:inv:00018#AR": "GL-JXE2VVQ35Q",
+    "k:inv:00018#REV": "GL-HJP3CA41ED",
+    "k:inv:00019": "REC-7RBWJG29H",
+    "k:inv:00019#AR": "GL-D8W3GBFX23",
+    "k:inv:00019#REV": "GL-DFX8PVCAHS",
+    "k:inv:00020": "REC-D0HPXYFYR",
+    "k:inv:00020#AR": "GL-WENPZV8F8N",
+    "k:inv:00020#REV": "GL-1RB4RRP53D",
+    "k:inv:00021": "REC-1QRYSF4HX",
+    "k:inv:00021#AR": "GL-5HHJA5ZDJV",
+    "k:inv:00021#REV": "GL-XFT979RR1K",
+    "k:inv:00022": "REC-10VJ3RTT3",
+    "k:inv:00022#AR": "GL-2F6D9M9DAK",
+    "k:inv:00022#REV": "GL-TBF8CEMRPK",
+    "k:inv:00023": "REC-E5DNHMX6R",
+    "k:inv:00023#AR": "GL-DNA7FRQ7WJ",
+    "k:inv:00023#REV": "GL-2AM7A2S85D",
+    "k:inv:00024": "REC-4TJRCJQEY",
+    "k:inv:00024#AR": "GL-N3FPRKANJS",
+    "k:inv:00024#REV": "GL-D32X2NR9AE",
+    "k:inv:00025": "REC-0389XCV0M",
+    "k:inv:00025#AR": "GL-NZ78HDHW01",
+    "k:inv:00025#REV": "GL-6D0NSTTQ4G",
+    "k:inv:00026": "REC-AZ20JK357",
+    "k:inv:00026#AR": "GL-RJKCKM31AZ",
+    "k:inv:00026#REV": "GL-VHS0Y4AN10",
+    "k:inv:00027": "REC-CP7TW15Q6",
+    "k:inv:00027#AR": "GL-DBSTMYJR61",
+    "k:inv:00027#REV": "GL-Y03YYC9QZA",
+    "k:inv:00028": "REC-RP4GMNC46",
+    "k:inv:00028#AR": "GL-N5ZV9CGN00",
+    "k:inv:00028#REV": "GL-9F6KGYSXP1",
+    "k:inv:00029": "REC-X52T9E44A",
+    "k:inv:00029#AR": "GL-356CY85NPN",
+    "k:inv:00029#REV": "GL-E81RZASW3C",
+    "k:inv:00030": "REC-GWAYNCJXE",
+    "k:inv:00030#AR": "GL-DDXR7A30Y7",
+    "k:inv:00030#REV": "GL-7FQBKT89PR",
+    "k:inv:00031": "REC-QEMGK6DKG",
+    "k:inv:00031#AR": "GL-N5N1HZE66K",
+    "k:inv:00031#REV": "GL-5C1WZ244ED",
+    "k:inv:00032": "REC-NDR4E2ZD1",
+    "k:inv:00032#AR": "GL-F04P00Q8C7",
+    "k:inv:00032#REV": "GL-QB36XPZX89",
+    "k:inv:00033": "REC-HCP4MPHP7",
+    "k:inv:00033#AR": "GL-S0T18MC45E",
+    "k:inv:00033#REV": "GL-M81KB8KZWH",
+    "k:inv:00034": "REC-ACEHZQSHE",
+    "k:inv:00034#AR": "GL-3ZK51451HP",
+    "k:inv:00034#REV": "GL-6ECDMBG9KB",
+    "k:inv:00035": "REC-MDVMACHHZ",
+    "k:inv:00035#AR": "GL-V6HDMVANTT",
+    "k:inv:00035#REV": "GL-F42H3CWN8Z",
+    "k:inv:00036": "REC-314DEQRRZ",
+    "k:inv:00036#AR": "GL-9QWYEDJANB",
+    "k:inv:00036#REV": "GL-D0AZCXGHK7",
+    "k:inv:00037": "REC-C978PDAH6",
+    "k:inv:00037#AR": "GL-VYBG3YC0QM",
+    "k:inv:00037#REV": "GL-DHB6AGRR8R",
+    "k:inv:00038": "REC-65GSH3RHG",
+    "k:inv:00038#AR": "GL-6EVXKZ9NRA",
+    "k:inv:00038#REV": "GL-2FXYTJBHM2",
+    "k:inv:00039": "REC-1XRSNXQDZ",
+    "k:inv:00039#AR": "GL-4HQ3S05215",
+    "k:inv:00039#REV": "GL-408PGWHFG9",
+    "k:inv:00040": "REC-37C2BY4VB",
+    "k:inv:00040#AR": "GL-T92WZC4FKX",
+    "k:inv:00040#REV": "GL-CF0J9YKFC7",
+    "k:inv:00041": "REC-K68DPG0KC",
+    "k:inv:00041#AR": "GL-1B76EZB4PR",
+    "k:inv:00041#REV": "GL-BDJZYXG5FS",
+    "k:invno:00001": "SI-D6PM1EMZ",
+    "k:invno:00002": "SI-C690627Q",
+    "k:invno:00003": "SI-K6P95R9B",
+    "k:invno:00004": "SI-AJS60HGD",
+    "k:invno:00005": "SI-HD0HBJEM",
+    "k:invno:00006": "SI-R2AWP274",
+    "k:invno:00007": "SI-2GWH29MK",
+    "k:invno:00008": "SI-5KB9EG7Y",
+    "k:invno:00009": "SI-F711QH0V",
+    "k:invno:00010": "SI-YJ0F9R3X",
+    "k:invno:00011": "SI-6XQKD2W2",
+    "k:invno:00012": "SI-HV3M659V",
+    "k:invno:00013": "SI-ADNT4VJ5",
+    "k:invno:00014": "SI-2FQJDZ1S",
+    "k:invno:00015": "SI-D25EEYVF",
+    "k:invno:00016": "SI-4V2DQ3QQ",
+    "k:invno:00017": "SI-DQKJ5M2B",
+    "k:invno:00018": "SI-JWBWTH8M",
+    "k:invno:00019": "SI-24167XP5",
+    "k:invno:00020": "SI-V7RE0PKG",
+    "k:invno:00021": "SI-3K726KZ7",
+    "k:invno:00022": "SI-JXRA5J37",
+    "k:invno:00023": "SI-ETCESSXX",
+    "k:invno:00024": "SI-4JTW1GA6",
+    "k:invno:00025": "SI-GW0AEQRD",
+    "k:invno:00026": "SI-2860N5XB",
+    "k:invno:00027": "SI-6G4W55E9",
+    "k:invno:00028": "SI-E7A561A3",
+    "k:invno:00029": "SI-17J0AZZS",
+    "k:invno:00030": "SI-QY7WP12Q",
+    "k:invno:00031": "SI-PJC908QZ",
+    "k:invno:00032": "SI-58EBDSXS",
+    "k:invno:00033": "SI-HD8EMBV1",
+    "k:invno:00034": "SI-KEE3TX96",
+    "k:invno:00035": "SI-7AATBWVE",
+    "k:invno:00036": "SI-XJEZ0G1E",
+    "k:invno:00037": "SI-8EMRRFWV",
+    "k:invno:00038": "SI-979CY9MZ",
+    "k:invno:00039": "SI-688KVHB3",
+    "k:invno:00040": "SI-D6E81YMA",
+    "k:invno:00041": "SI-H337AY5E",
+    "k:ord:00001": "PO4AHKKARSH",
+    "k:ord:00002": "PO8CF1X2MZ4",
+    "k:ord:00003": "PO1W53ZQX98",
+    "k:ord:00004": "POXA9QARNVX",
+    "k:ord:00005": "POZQG9ZGQ0G",
+    "k:ord:00006": "POHV3K884P1",
+    "k:ord:00007": "PO350MJJ86V",
+    "k:ord:00008": "POQPWEFTART",
+    "k:ord:00009": "POV5DSMSZJC",
+    "k:ord:00010": "PO42RBP3F6K",
+    "k:ord:00011": "PO3NKQ6KQCW",
+    "k:ord:00012": "PO77FY6AKBT",
+    "k:ord:00013": "PO1QS3MDZQ0",
+    "k:ord:00014": "POWDSXFDM2Y",
+    "k:ord:00015": "POEA5YFD0TS",
+    "k:ord:00016": "POQGE416JBC",
+    "k:ord:00017": "POZ1584KR7A",
+    "k:ord:00018": "POYFZMT319Z",
+    "k:ord:00019": "PO2J7FX3QTF",
+    "k:ord:00020": "PON444RKXYQ",
+    "k:ord:00021": "POPGQSKYKRE",
+    "k:ord:00022": "POCFJ2YMYPW",
+    "k:ord:00023": "POHZP97NNRD",
+    "k:ord:00024": "POPR4KS7YW5",
+    "k:ord:00025": "POC2XTVAT1G",
+    "k:ord:00026": "PO4Z3HYB9KB",
+    "k:ord:00027": "PO9GPFZVXTN",
+    "k:ord:00028": "PO5MZHRZA18",
+    "k:ord:00029": "POK2YD2659H",
+    "k:ord:00030": "PO7SEDHEGBR",
+    "k:ord:00031": "PORFZXPR5CH",
+    "k:ord:00032": "PORFBEGT43R",
+    "k:ord:00033": "POS99GK65ME",
+    "k:ord:00034": "PO0YNNC1CB3",
+    "k:ord:00035": "POR1E2AGESZ",
+    "k:ord:00036": "POSBFSXYSPJ",
+    "k:ord:00037": "PO4BPKZB57Y",
+    "k:ord:00038": "PO73ZWGWJ3P",
+    "k:ord:00039": "POFMN1M9AD8",
+    "k:ord:00040": "POC2XAK968D",
+    "k:pay:00001": "REC-WBXDWKPJW",
+    "k:pay:00001#AR0": "GL-TYBRB1V5FV",
+    "k:pay:00001#CASH": "GL-XNXJZBCWWV",
+    "k:pay:00001#FXB": "GL-F31XP6D1HX",
+    "k:pay:00001#FXF": "GL-QVAV5CPK8D",
+    "k:pay:00002": "REC-3PA0PM5SW",
+    "k:pay:00002#AR0": "GL-8SC7R16AVA",
+    "k:pay:00002#CASH": "GL-WHZB94BEYY",
+    "k:pay:00002#FXB": "GL-MXYD4CVBX9",
+    "k:pay:00002#FXF": "GL-4ZGW6NNS22",
+    "k:pay:00003": "REC-PBJTJQH23",
+    "k:pay:00003#AR0": "GL-9NGE5E81A2",
+    "k:pay:00003#CASH": "GL-M5K6HJ2980",
+    "k:pay:00003#FXB": "GL-F68Z57JBE7",
+    "k:pay:00003#FXF": "GL-N2VG1EGJNM",
+    "k:pay:00004": "REC-B97Z10QHJ",
+    "k:pay:00004#AR0": "GL-KTQ14ZQEHM",
+    "k:pay:00004#CASH": "GL-6F191XMN16",
+    "k:pay:00005": "REC-KVGYFW8XS",
+    "k:pay:00005#AR0": "GL-HJPTP2SRN8",
+    "k:pay:00005#CASH": "GL-1VCMF0G96F",
+    "k:pay:00005#UNAP": "GL-0FQY6VJS8P",
+    "k:pay:00006": "REC-BAD07EH0E",
+    "k:pay:00006#AR0": "GL-CPY3GMPBB6",
+    "k:pay:00006#CASH": "GL-V5N109JSD8",
+    "k:pay:00006#FXB": "GL-Q425D1JJKM",
+    "k:pay:00006#FXF": "GL-AC5SVX5WD7",
+    "k:pay:00007": "REC-ZVQKXYMGJ",
+    "k:pay:00007#AR0": "GL-D7JAWVCB97",
+    "k:pay:00007#CASH": "GL-XCX0WJ4X11",
+    "k:pay:00007#FXB": "GL-XAQSZ0EC0K",
+    "k:pay:00007#FXF": "GL-N4JY4YYZRT",
+    "k:pay:00008": "REC-8RRF7H0FK",
+    "k:pay:00008#AR0": "GL-HHZ0CSGNG6",
+    "k:pay:00008#CASH": "GL-KW5BFXTNR1",
+    "k:pay:00008#FXB": "GL-4S1EB53Z7P",
+    "k:pay:00008#FXF": "GL-5HNJE9S7B1",
+    "k:pay:00009": "REC-XZE5F2SDX",
+    "k:pay:00009#AR0": "GL-MRB63SBV62",
+    "k:pay:00009#AR1": "GL-A8T1BH1PCX",
+    "k:pay:00009#CASH": "GL-QTKHSX2HTD",
+    "k:pay:00010": "REC-7Q379H35Z",
+    "k:pay:00010#AR0": "GL-KF0M4CDEX4",
+    "k:pay:00010#AR1": "GL-XVSNV961SA",
+    "k:pay:00010#AR2": "GL-QR6JK774SB",
+    "k:pay:00010#CASH": "GL-GKA7BCC4N0",
+    "k:pay:00011": "REC-HE0EA9ZQV",
+    "k:pay:00011#AR0": "GL-P8EGPG6JYQ",
+    "k:pay:00011#CASH": "GL-A9Q29B65GA",
+    "k:pay:00011#FXB": "GL-34AN2ZNP7A",
+    "k:pay:00011#FXF": "GL-5FFZ9QVY1J",
+    "k:pay:00012": "REC-29J18XPJA",
+    "k:pay:00012#AR0": "GL-5PJP2Y9BZE",
+    "k:pay:00012#CASH": "GL-5XSAA6KKH8",
+    "k:pay:00013": "REC-2HBAF1M6B",
+    "k:pay:00013#AR0": "GL-R1N3JJB697",
+    "k:pay:00013#CASH": "GL-P1C6AYE7NS",
+    "k:pay:00014": "REC-R2FXWYW2A",
+    "k:pay:00014#AR0": "GL-P61ABTD5D4",
+    "k:pay:00014#CASH": "GL-J043N34A8D",
+    "k:pay:00015": "REC-V7JASCH6H",
+    "k:pay:00015#AR0": "GL-VC92B399VP",
+    "k:pay:00015#CASH": "GL-HSTD8ZNWRW",
+    "k:pay:00016": "REC-T1FMJ02S8",
+    "k:pay:00016#AR0": "GL-DQCFCA9BAJ",
+    "k:pay:00016#CASH": "GL-DFC6VQNH2W",
+    "k:pay:00017": "REC-10X29PTFH",
+    "k:pay:00017#AR0": "GL-HX8AXS5TY7",
+    "k:pay:00017#CASH": "GL-31X3N1WECT",
+    "k:pay:00018": "REC-EBVM0SSDH",
+    "k:pay:00018#AR0": "GL-B6V07RZ1H1",
+    "k:pay:00018#CASH": "GL-TWRWXTK5Z3",
+    "k:pay:00019": "REC-DFCAQ52XZ",
+    "k:pay:00019#AR0": "GL-1WJBQ82BR8",
+    "k:pay:00019#CASH": "GL-A83MQKM0EM",
+    "k:pay:00020": "REC-WYK93AP6D",
+    "k:pay:00020#AR0": "GL-C51JXES4F3",
+    "k:pay:00020#CASH": "GL-70B9F5WG1A",
+    "k:pay:00021": "REC-F651JNRSJ",
+    "k:pay:00021#AR0": "GL-PG98WREFBZ",
+    "k:pay:00021#CASH": "GL-YEMZDMEXT5",
+    "k:pay:00022": "REC-E8MK0DCDE",
+    "k:pay:00022#CASH": "GL-Z1XY62FJGJ",
+    "k:pay:00022#FXB": "GL-K9AE1TR1SS",
+    "k:pay:00022#FXF": "GL-7NV6VY4HHS",
+    "k:pay:00022#UNAP": "GL-FBM04YHZ23",
+    "k:pay:00023": "REC-VJGBMGTG1",
+    "k:pay:00023#AR0": "GL-BBJ7807023",
+    "k:pay:00023#CASH": "GL-36F6N8B26M",
+    "k:pay:00024": "REC-QHGR4HEFZ",
+    "k:pay:00024#AR0": "GL-HRPHR8V59B",
+    "k:pay:00024#CASH": "GL-3BTRM1HV1B",
+    "k:pay:00025": "REC-58VVD4AKQ",
+    "k:pay:00025#AR0": "GL-HED4BHWTHX",
+    "k:pay:00025#CASH": "GL-SX7VAJMM22",
+    "k:pay:00026": "REC-BNX82TSH2",
+    "k:pay:00026#AR0": "GL-RA72QK0M8E",
+    "k:pay:00026#CASH": "GL-ZY1GD6JW0B",
+    "k:pay:00027": "REC-9KM533ZHX",
+    "k:pay:00027#AR0": "GL-RQW2PK7KR7",
+    "k:pay:00027#CASH": "GL-DQA8E8GM27",
+    "k:pay:00027#FXB": "GL-6EWK0KASB4",
+    "k:pay:00027#FXF": "GL-7FS2YXSTCE",
+    "k:pay:00028": "REC-NF0P9J0WR",
+    "k:pay:00028#AR0": "GL-A91JEHYPG8",
+    "k:pay:00028#CASH": "GL-3XDN8WGVRM",
+    "k:pay:00028#FXB": "GL-WPWNCA3TH2",
+    "k:pay:00028#FXF": "GL-0G1MH6DCZW",
+    "k:pay:00028#UNAP": "GL-TZECT5Q7E3",
+    "k:pay:00029": "REC-FAG7P7CR4",
+    "k:pay:00029#AR0": "GL-TX1Y9GKSVN",
+    "k:pay:00029#CASH": "GL-V98E3FJ102",
+    "k:pay:00029#FXB": "GL-1HA1P853SQ",
+    "k:pay:00029#FXF": "GL-CFYS0A7B70",
+    "k:pay:00030": "REC-8J9HNR65T",
+    "k:pay:00030#AR0": "GL-DSQ6WR5A1G",
+    "k:pay:00030#CASH": "GL-0G6VETK00T",
+    "k:pay:00031": "REC-R45653P94",
+    "k:pay:00031#AR0": "GL-E02MTHQPDQ",
+    "k:pay:00031#CASH": "GL-B2G2FMGYJF",
+    "k:pay:00032": "REC-28Q2CXENM",
+    "k:pay:00032#AR0": "GL-7D2C7EAHXD",
+    "k:pay:00032#CASH": "GL-T70R9R63P9",
+    "k:pay:00033": "REC-MCNEB1D2Z",
+    "k:pay:00033#AR0": "GL-15J0SAWMSV",
+    "k:pay:00033#CASH": "GL-W1JA82T3F0",
+    "k:pay:00034": "REC-EDQ3QCX0T",
+    "k:pay:00034#AR0": "GL-N1X6XZYRD0",
+    "k:pay:00034#CASH": "GL-MFATT9C5V6",
+    "k:pay:00035": "REC-26JF3WYGA",
+    "k:pay:00035#AR0": "GL-3JPQH0NH4H",
+    "k:pay:00035#CASH": "GL-BQ72273AJ4",
+    "k:pay:00035#UNAP": "GL-HJTD8RKTQY",
+    "k:pay:00036": "REC-A67QTVR6E",
+    "k:pay:00036#AR0": "GL-QC4HPJKR05",
+    "k:pay:00036#CASH": "GL-F6QE1HPGDD",
+    "k:pay:00037": "REC-C8XNP6A23",
+    "k:pay:00037#AR0": "GL-4G39P2CT59",
+    "k:pay:00037#CASH": "GL-W54EPKQ2EH",
+    "k:pay:00038": "REC-SX985MTGJ",
+    "k:pay:00038#AR0": "GL-GKJRYMGPMS",
+    "k:pay:00038#CASH": "GL-ZN02QRWT9M",
+    "k:pay:00039": "REC-ZE3K96ZYX",
+    "k:pay:00039#AR0": "GL-HJ3485V4Z4",
+    "k:pay:00039#CASH": "GL-B21AA3H4MY",
+    "k:payno:00001": "PMT50EFM1RTG",
+    "k:payno:00002": "PMT7QDJ9MCQZ",
+    "k:payno:00003": "PMT04765VPAQ",
+    "k:payno:00004": "PMTSK48NCQRS",
+    "k:payno:00005": "PMTS6MW35MPP",
+    "k:payno:00006": "PMT5X16DCTHW",
+    "k:payno:00007": "PMT1S4V6MFA9",
+    "k:payno:00008": "PMT2N6WEBXBH",
+    "k:payno:00009": "PMTHJBF6103E",
+    "k:payno:00010": "PMTWQABGW1NF",
+    "k:payno:00011": "PMTW9K45TGGK",
+    "k:payno:00012": "PMT4GSX84H3P",
+    "k:payno:00013": "PMTNW6W0WQSS",
+    "k:payno:00014": "PMT2SWDNSWPE",
+    "k:payno:00015": "PMT6M1NACC56",
+    "k:payno:00016": "PMTHRZM61K2Q",
+    "k:payno:00017": "PMTQN5HX9735",
+    "k:payno:00018": "PMTJPCX2CSV9",
+    "k:payno:00019": "PMT7512DPNZY",
+    "k:payno:00020": "PMTRSHDKRBXD",
+    "k:payno:00021": "PMT3V6EEVSG4",
+    "k:payno:00022": "PMTBDZVPC6N6",
+    "k:payno:00023": "PMT6K8XST8H5",
+    "k:payno:00024": "PMTEP5BBW1E2",
+    "k:payno:00025": "PMTG04W7PBR4",
+    "k:payno:00026": "PMTDM661KQHN",
+    "k:payno:00027": "PMT1K86FA9C4",
+    "k:payno:00028": "PMT1S1N0KFQN",
+    "k:payno:00029": "PMTE3MC4VHV1",
+    "k:payno:00030": "PMTXNWRYWG16",
+    "k:payno:00031": "PMTRKH9YQ1JP",
+    "k:payno:00032": "PMT3EHP0G86B",
+    "k:payno:00033": "PMTS02QEPQ37",
+    "k:payno:00034": "PMT8QE16KR47",
+    "k:payno:00035": "PMTFKXQYGWV3",
+    "k:payno:00036": "PMTZZZ3T2Y9E",
+    "k:payno:00037": "PMTNM3644J6B",
+    "k:payno:00038": "PMT1K6ZXX2BB",
+    "k:payno:00039": "PMTWBDXVTXYW"
+  },
+  "injections": [
+    {
+      "affected_ids": [
+        "REC-NF0P9J0WR",
+        "REC-X52T9E44A"
+      ],
+      "affected_keys": [
+        "k:pay:00028",
+        "k:inv:00029"
+      ],
+      "details": {
+        "applied": 1405400,
+        "boundary": "period_start",
+        "cash_after": 1949914,
+        "cash_before": 1960067,
+        "expected_applied": 2990400,
+        "posted_after": "2026-04-20T14:49:12+05:00",
+        "posted_before": "2026-04-16T16:11:50+05:00",
+        "rate_date_used": "2026-04-20"
+      },
+      "injector": "fx_partial_at_boundary",
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "scenario": "fx_partial_at_boundary",
+      "variant": "posted_across_boundary_converted_at_posting_date_partly_applied"
+    },
+    {
+      "affected_ids": [
+        "REC-EDQ3QCX0T",
+        "REC-MDVMACHHZ",
+        "REC-K68DPG0KC"
+      ],
+      "affected_keys": [
+        "k:pay:00034",
+        "k:inv:00035",
+        "k:inv:00041"
+      ],
+      "details": {
+        "copy": "k:inv:00041",
+        "copy_issued_at": "2026-04-26T14:07:34+05:00",
+        "expected_applied": 356399,
+        "original": "k:inv:00035",
+        "payment": "k:pay:00034"
+      },
+      "injector": "duplicate_misallocated",
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "scenario": "duplicate_misallocated",
+      "variant": "copy_under_new_invoice_id_payment_applied_to_copy"
+    },
+    {
+      "affected_ids": [
+        "REC-37C2BY4VB"
+      ],
+      "affected_keys": [
+        "k:inv:00040"
+      ],
+      "details": {
+        "boundary": "period_end",
+        "posted_after": "2026-05-17T09:09:42+05:00",
+        "posted_before": "2026-05-14T14:47:59+05:00"
+      },
+      "injector": "period_cutoff",
+      "issue_ids": [
+        "iss_CYQE1ZGW3V"
+      ],
+      "scenario": null,
+      "variant": "invoice_posted_late"
+    }
+  ],
+  "plan": {
+    "duplicate_copies_drawn": [],
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "period_cutoff": 1
+    },
+    "interactions": {
+      "duplicate_misallocated": 1,
+      "fx_partial_at_boundary": 1
+    },
+    "removed_by_max_issues": [],
+    "total_issues": 6
+  },
+  "presentation": {
+    "id_formats": {
+      "doc": {
+        "chars": 9,
+        "prefix": "REC-"
+      },
+      "entity": {
+        "chars": 6,
+        "prefix": "CUST-"
+      },
+      "invoice": {
+        "chars": 8,
+        "prefix": "SI-"
+      },
+      "order": {
+        "chars": 9,
+        "prefix": "PO"
+      },
+      "payment": {
+        "chars": 9,
+        "prefix": "PMT"
+      },
+      "row": {
+        "chars": 10,
+        "prefix": "GL-"
+      }
+    },
+    "order": "chronological"
+  },
+  "scenarios": [
+    {
+      "issue_ids": [
+        "iss_DBGFS8HF36",
+        "iss_1XAQCFYCFM",
+        "iss_AC16NDQ8VJ"
+      ],
+      "scenario": "fx_partial_at_boundary"
+    },
+    {
+      "issue_ids": [
+        "iss_Q7PX0PFJR0",
+        "iss_3KM30C98VG"
+      ],
+      "scenario": "duplicate_misallocated"
+    }
+  ],
+  "seed": 1009,
+  "stream_config_hash": "7f1a0a37678d2d2aae61623bb05fefad3cd9d474d967f39631ea7014d389d9c6",
+  "world": {
+    "accounts": {
+      "AR": "12898",
+      "CASH": "10375",
+      "EXPENSE": "68341",
+      "FX_CLEARING": "18557",
+      "REVENUE": "40747",
+      "UNAPPLIED": "23018"
+    },
+    "base_currency": "USD",
+    "company": "Altair Systems Trading Co.",
+    "counts": {
+      "expenses": 158,
+      "invoices": 40,
+      "payments": 39,
+      "regular_invoices": 12,
+      "regular_payments": 12
+    },
+    "customers": [
+      {
+        "currency": "USD",
+        "key": "k:cust:00001",
+        "name": "Jasperine Studio"
+      },
+      {
+        "currency": "GBP",
+        "key": "k:cust:00002",
+        "name": "Lindqvast Group"
+      },
+      {
+        "currency": "USD",
+        "key": "k:cust:00003",
+        "name": "Valtessa Partners"
+      },
+      {
+        "currency": "JPY",
+        "key": "k:cust:00004",
+        "name": "Delvista Labs"
+      },
+      {
+        "currency": "USD",
+        "key": "k:cust:00005",
+        "name": "Korvella Studio"
+      },
+      {
+        "currency": "USD",
+        "key": "k:cust:00006",
+        "name": "Hollisden Studio"
+      }
+    ],
+    "foreign_currencies": [
+      "GBP",
+      "JPY"
+    ],
+    "fx_rate_date": "payment_local_date_minus_1",
+    "fx_spikes": [],
+    "period_end": "2026-05-15T00:00:00+05:00",
+    "period_kind": "fiscal_4w",
+    "period_start": "2026-04-17T00:00:00+05:00",
+    "range_end": "2026-06-05T00:00:00+05:00",
+    "range_start": "2026-03-27T00:00:00+05:00",
+    "reserved_carriers": {
+      "k:inv:00029": "fxb",
+      "k:inv:00030": "dm",
+      "k:inv:00031": "cutoff",
+      "k:pay:00028": "fxb",
+      "k:pay:00029": "dm"
+    },
+    "rounding": "half_up",
+    "sizing": {
+      "carrier_invoices": 3,
+      "carriers": {
+        "cutoff": 1,
+        "dm": 1,
+        "fxb": 1
+      },
+      "copies": 1,
+      "demand_invoices": 4,
+      "distractor_instances": {
+        "boundary_offset": 3,
+        "credit_note_refund": 1,
+        "fx_spike": 0,
+        "multi_invoice_payment": 2,
+        "partial_open": 3,
+        "posting_lag": 4,
+        "same_amount_orders": 1,
+        "split_payment": 3,
+        "subscription": 3,
+        "unapplied_payment": 1
+      },
+      "dup_copies": [],
+      "fx_redraws": 0,
+      "target_invoices": 41
+    },
+    "timezone": "+05:00"
+  }
+}

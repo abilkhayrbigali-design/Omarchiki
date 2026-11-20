@@ -1,0 +1,35 @@
+{
+  "base_currency": "EUR",
+  "company": "Zephyrant Media Ltd",
+  "counts": {
+    "documents": 117,
+    "fx": 282,
+    "invoices": 64,
+    "ledger": 836,
+    "payments": 53
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "CNY": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "JPY": {
+      "exponent": 0
+    }
+  },
+  "episode_id": "ep_RBMQT7GYCKMC",
+  "generator_version": "0.2.0",
+  "period_end": "2026-01-01T00:00:00+06:00",
+  "period_start": "2025-12-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}

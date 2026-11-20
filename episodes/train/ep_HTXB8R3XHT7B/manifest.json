@@ -1,0 +1,32 @@
+{
+  "base_currency": "EUR",
+  "company": "Umberlyn Logistics JSC",
+  "counts": {
+    "documents": 95,
+    "fx": 186,
+    "invoices": 51,
+    "ledger": 354,
+    "payments": 44
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "USD": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_HTXB8R3XHT7B",
+  "generator_version": "0.2.0",
+  "period_end": "2025-12-01T00:00:00+03:00",
+  "period_start": "2025-11-01T00:00:00+03:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+03:00"
+}

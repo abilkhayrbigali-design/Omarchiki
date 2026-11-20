@@ -1,0 +1,135 @@
+{
+  "episode_id": "ep_C5QPTG679Y53",
+  "issues": [
+    {
+      "affected_ids": [
+        "REC-K68DPG0KC",
+        "REC-MDVMACHHZ"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "REC-K68DPG0KC",
+          "REC-MDVMACHHZ"
+        ]
+      ],
+      "expected_amount_minor": 356399,
+      "issue_id": "iss_Q7PX0PFJR0",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "REC-NF0P9J0WR"
+      ],
+      "amount_tolerance_minor": 1,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "2026-04-15/JPY/USD",
+          "GL-3XDN8WGVRM",
+          "REC-NF0P9J0WR"
+        ],
+        [
+          "2026-04-15/JPY/USD",
+          "GL-WPWNCA3TH2",
+          "REC-NF0P9J0WR"
+        ]
+      ],
+      "expected_amount_minor": 10153,
+      "issue_id": "iss_1XAQCFYCFM",
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "REC-EDQ3QCX0T",
+        "REC-MDVMACHHZ"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "GL-MFATT9C5V6",
+          "GL-N1X6XZYRD0",
+          "REC-EDQ3QCX0T",
+          "REC-MDVMACHHZ"
+        ]
+      ],
+      "expected_amount_minor": 356399,
+      "issue_id": "iss_3KM30C98VG",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-NF0P9J0WR",
+        "REC-X52T9E44A"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "GL-0G1MH6DCZW",
+          "GL-A91JEHYPG8",
+          "GL-TZECT5Q7E3",
+          "REC-NF0P9J0WR",
+          "REC-X52T9E44A"
+        ]
+      ],
+      "expected_amount_minor": 1585000,
+      "issue_id": "iss_AC16NDQ8VJ",
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "REC-37C2BY4VB"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "GL-CF0J9YKFC7",
+          "REC-37C2BY4VB"
+        ],
+        [
+          "GL-T92WZC4FKX",
+          "REC-37C2BY4VB"
+        ]
+      ],
+      "expected_amount_minor": 295880,
+      "issue_id": "iss_CYQE1ZGW3V",
+      "type": "period_cutoff"
+    },
+    {
+      "affected_ids": [
+        "REC-NF0P9J0WR"
+      ],
+      "amount_tolerance_minor": 0,
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "GL-0G1MH6DCZW",
+          "REC-NF0P9J0WR"
+        ],
+        [
+          "GL-3XDN8WGVRM",
+          "REC-NF0P9J0WR"
+        ],
+        [
+          "GL-A91JEHYPG8",
+          "REC-NF0P9J0WR"
+        ],
+        [
+          "GL-TZECT5Q7E3",
+          "REC-NF0P9J0WR"
+        ],
+        [
+          "GL-WPWNCA3TH2",
+          "REC-NF0P9J0WR"
+        ]
+      ],
+      "expected_amount_minor": 2990400,
+      "issue_id": "iss_DBGFS8HF36",
+      "type": "period_cutoff"
+    }
+  ]
+}

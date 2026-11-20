@@ -1,0 +1,32 @@
+{
+  "base_currency": "KZT",
+  "company": "Birchfield Media GmbH",
+  "counts": {
+    "documents": 104,
+    "fx": 186,
+    "invoices": 57,
+    "ledger": 395,
+    "payments": 47
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "CNY": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_PH4WABJTJ2JH",
+  "generator_version": "0.2.0",
+  "period_end": "2026-05-01T00:00:00+06:00",
+  "period_start": "2026-04-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}

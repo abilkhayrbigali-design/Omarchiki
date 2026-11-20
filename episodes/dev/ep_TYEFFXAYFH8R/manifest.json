@@ -1,0 +1,29 @@
+{
+  "base_currency": "KZT",
+  "company": "Quartzel Foods Ltd",
+  "counts": {
+    "documents": 113,
+    "fx": 93,
+    "invoices": 67,
+    "ledger": 858,
+    "payments": 46
+  },
+  "currencies": {
+    "GBP": {
+      "exponent": 2
+    },
+    "KZT": {
+      "exponent": 2
+    }
+  },
+  "episode_id": "ep_TYEFFXAYFH8R",
+  "generator_version": "0.2.0",
+  "period_end": "2026-07-01T00:00:00+06:00",
+  "period_start": "2026-06-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_up",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}

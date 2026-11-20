@@ -1,0 +1,32 @@
+{
+  "base_currency": "EUR",
+  "company": "Granitex Packaging Trading Co.",
+  "counts": {
+    "documents": 58,
+    "fx": 186,
+    "invoices": 33,
+    "ledger": 380,
+    "payments": 25
+  },
+  "currencies": {
+    "CNY": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "JPY": {
+      "exponent": 0
+    }
+  },
+  "episode_id": "ep_81A8DHWN7ZQM",
+  "generator_version": "0.2.0",
+  "period_end": "2025-12-01T00:00:00+03:00",
+  "period_start": "2025-11-01T00:00:00+03:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+03:00"
+}

@@ -1,0 +1,35 @@
+{
+  "base_currency": "EUR",
+  "company": "Lumenford Engineering LLC",
+  "counts": {
+    "documents": 141,
+    "fx": 282,
+    "invoices": 77,
+    "ledger": 879,
+    "payments": 64
+  },
+  "currencies": {
+    "AED": {
+      "exponent": 2
+    },
+    "EUR": {
+      "exponent": 2
+    },
+    "GBP": {
+      "exponent": 2
+    },
+    "KWD": {
+      "exponent": 3
+    }
+  },
+  "episode_id": "ep_X3APSF9TMBKJ",
+  "generator_version": "0.2.0",
+  "period_end": "2025-08-01T00:00:00+06:00",
+  "period_start": "2025-07-01T00:00:00+06:00",
+  "rounding": {
+    "fx": "half_even",
+    "money": "integer_minor_units"
+  },
+  "schema_version": "1.0.0",
+  "timezone": "+06:00"
+}
