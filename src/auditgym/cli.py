@@ -326,6 +326,16 @@ def _cmd_failure_modes(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_traceability(args: argparse.Namespace) -> int:
+    from auditgym.harness.traceability import build
+
+    text = build(REPO)
+    Path(args.out).write_text(text, encoding="utf-8")
+    missing = [line for line in text.splitlines() if line.endswith("| — |")]
+    print(f"wrote {args.out}; requirements without named tests: {len(missing)}")
+    return 0 if not missing else 1
+
+
 def _cmd_transform(args: argparse.Namespace) -> int:
     from auditgym.contracts.io import read_episode, write_episode
     from auditgym.harness.transform import transform_episode
@@ -481,6 +491,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", default=None)
     p.set_defaults(func=_cmd_failure_modes)
 
+    p = sub.add_parser("traceability", help="rebuild docs/TRACEABILITY.md from the test list")
+    p.add_argument("--out", default=str(REPO / "docs" / "TRACEABILITY.md"))
+    p.set_defaults(func=_cmd_traceability)
+
     p = sub.add_parser("export", help="write open train/dev episodes and trajectories.jsonl")
     p.add_argument("--out", default=str(REPO / "episodes"))
     p.set_defaults(func=_cmd_export)
@@ -515,5 +529,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ["serve"]:  # the server has its own options (--mode, --schedule, ...)
+        from auditgym.server.app import main as serve_main
+
+        rest = argv[1:]
+        if rest[:1] == ["--"]:
+            rest = rest[1:]
+        return int(serve_main(rest) or 0)
     args = build_parser().parse_args(argv)
     return int(args.func(args))
