@@ -1,9 +1,14 @@
 """Build the hidden, consistent company history of one episode (pipeline step 1).
 
-Streams: "world" (company, customers, FX, regular history, top-up, background), and one stream per
-distractor kind ("distractor/<kind>"). The world never sees which errors will be injected; it only
-receives the minimum number of candidates each injector pool needs (`needs`), and adds ordinary
-records drawn from the same distributions when the random history has too few.
+Streams: "world" (company, period, customers, sizing, FX, carriers, regular history, background)
+and one stream per distractor kind ("distractor/<kind>").
+
+Order: company and period -> customers -> distractor counts -> sizing (fit to size.invoices) ->
+FX table -> distractors -> carriers for the planned errors -> ordinary sales up to the target
+number of invoice documents -> background expenses.
+
+The world never learns which records will carry errors; it only receives how many carriers each
+injector pool needs (`demand`), see auditgym.world.carriers.
 """
 
 from __future__ import annotations
@@ -14,14 +19,15 @@ from typing import Any
 
 from auditgym.contracts.constants import DISTRACTOR_KINDS, FX_RATE_DATE_RULES, ROUNDING_RULES
 from auditgym.util.rng import Stream
-from auditgym.world import candidates
-from auditgym.world.amounts import draw_minor
-from auditgym.world.distractors import BUILDERS, INVOICES_PER_INSTANCE
+from auditgym.world.amounts import draw_minor, split_part
+from auditgym.world.carriers import build_carriers, fxb_options
+from auditgym.world.distractors import BUILDERS
 from auditgym.world.docs import add_payment, new_invoice, pay_full, pay_installments, pay_time
 from auditgym.world.fx import build_fx
 from auditgym.world.model import Customer, WExpense, World, WorldError
 from auditgym.world.names import company_name, customer_name
-from auditgym.world.timeline import BOUNDARY_WINDOW, DAY, HOUR, Timeline
+from auditgym.world.sizing import INVOICES_PER_INSTANCE, demand_invoices, fit
+from auditgym.world.timeline import DAY, Timeline, draw_period
 
 # Account code ranges per role. Codes are drawn per episode (G06).
 ACCOUNT_RANGES = {
@@ -33,7 +39,22 @@ ACCOUNT_RANGES = {
     "EXPENSE": (6000, 6999),
 }
 FX_MARGIN_DAYS = 10  # FX rows extend this far beyond the data range on both sides
-MAX_TOPUP = 60
+MAX_FX_REDRAWS = 20
+
+
+# Ordinary sales. Besides full, split and open invoices there are clean cases where money
+# legitimately lands on UNAPPLIED although the payment names an invoice, and where an instalment
+# is applied only up to the remaining open balance; and payments naming several invoices.
+REGULAR_PATTERNS = (
+    "full",
+    "installments",
+    "installment_over",
+    "open",
+    "overpaid",
+    "paid_twice",
+    "multi_ref",
+)
+REGULAR_WEIGHTS = (50, 8, 5, 26, 3, 3, 6)
 
 
 def _accounts(s: Stream) -> dict[str, str]:
@@ -80,10 +101,9 @@ def plan_spikes(world: World, s: Stream, n: int) -> dict[tuple[str, Any], Decima
     if not payable:
         return spikes
     first = tl.local_date(tl.period_start)
-    days = (tl.local_date(tl.period_end) - first).days
     for _ in range(n):
         cur = s.choice(payable)
-        day = first + timedelta(days=s.randint(3, days - 4))
+        day = first + timedelta(days=s.randint(3, tl.period_days - 4))
         factor = s.decimal("1.03", "1.08", 3) if s.chance(1, 2) else s.decimal("0.92", "0.97", 3)
         if (cur, day) in spikes:
             continue
@@ -92,52 +112,109 @@ def plan_spikes(world: World, s: Stream, n: int) -> dict[tuple[str, Any], Decima
     return spikes
 
 
-REGULAR_PATTERNS = ("full", "installments", "open", "overpaid", "paid_twice")
-REGULAR_WEIGHTS = (60, 10, 30, 4, 3)
+def _distractor_plan(cfg: dict[str, Any], streams: dict[str, Stream]) -> dict[str, list[int]]:
+    """kind -> invoice documents per instance (the list length is the number of instances)."""
+    out = {}
+    for kind in DISTRACTOR_KINDS:
+        s = streams[kind]
+        n = s.in_range(cfg["distractors"][kind])
+        if kind == "multi_invoice_payment":
+            out[kind] = [s.randint(2, 3) for _ in range(n)]
+        else:
+            out[kind] = [INVOICES_PER_INSTANCE[kind]] * n
+    return out
+
+
+# ---------------------------------------------------------------------------------- ordinary sales
+def _pay(
+    world: World, s: Stream, inv: Any, ts: Any, amount: int, plan: list[tuple[str, int]]
+) -> None:
+    add_payment(
+        world,
+        s,
+        payer=inv.customer,
+        ts=ts,
+        currency=inv.currency,
+        amount=amount,
+        refs=[inv.number],
+        plan=plan,
+        tag="regular",
+    )
+
+
+def _multi_ref(world: World, s: Stream) -> None:
+    """Two invoices of one customer settled by one payment naming both, in the payer's order."""
+    tl = world.tl
+    cust = s.choice(world.customers)
+    t0 = tl.business_between(s, tl.range_start, tl.range_end - 12 * DAY)
+    invs = [
+        new_invoice(
+            world,
+            s,
+            tag="regular",
+            customer=cust,
+            issued=world.claim(lambda: tl.business_between(s, t0, t0 + 3 * DAY)),
+        )
+        for _ in range(2)
+    ]
+    order = s.shuffled(invs)
+    plan = [(inv.number, inv.total) for inv in order]
+    if s.chance(1, 3):
+        part = split_part(s, order[-1].total)
+        if part is not None:
+            plan[-1] = (order[-1].number, part)
+    ts = pay_time(world, s, max(inv.issued for inv in invs), max_days=8)
+    if ts is not None:
+        add_payment(
+            world,
+            s,
+            payer=cust.key,
+            ts=ts,
+            currency=cust.currency,
+            amount=sum(p for _, p in plan),
+            refs=[inv.number for inv in order],
+            plan=plan,
+            tag="regular",
+        )
 
 
 def _regular_history(world: World, s: Stream, n: int) -> None:
-    """Ordinary sales. Besides full, split and open invoices, a few clean cases where money
-    legitimately lands on UNAPPLIED although the payment names an invoice: an overpayment
-    (the remainder is unapplied) and an invoice paid twice (the second payment finds no open
-    balance)."""
-    for _ in range(n):
-        inv = new_invoice(world, s, tag="regular")
+    created = 0
+    while created < n:
         pattern = s.weighted_choice(list(REGULAR_PATTERNS), list(REGULAR_WEIGHTS))
+        if pattern == "multi_ref":
+            if n - created < 2:
+                continue
+            _multi_ref(world, s)
+            created += 2
+            continue
+        inv = new_invoice(world, s, tag="regular")
+        created += 1
         if pattern == "full":
             pay_full(world, s, inv, tag="regular")
         elif pattern == "installments":
             pay_installments(world, s, inv, 2, tag="regular")
+        elif pattern == "installment_over":
+            # The second instalment pays more than is still open: it is applied up to the open
+            # balance and the rest is unapplied.
+            first = split_part(s, inv.total, 30, 70)
+            t1 = pay_time(world, s, inv.issued, max_days=12) if first is not None else None
+            t2 = pay_time(world, s, t1, max_days=12) if t1 is not None else None
+            if first is not None and t1 is not None and t2 is not None:
+                rest = inv.total - first
+                _pay(world, s, inv, t1, first, [(inv.number, first)])
+                extra = draw_minor(s, inv.currency, 5, 300)
+                _pay(world, s, inv, t2, rest + extra, [(inv.number, rest)])
         elif pattern == "overpaid":
             ts = pay_time(world, s, inv.issued)
             if ts is not None:
                 extra = draw_minor(s, inv.currency, 5, 200)
-                add_payment(
-                    world,
-                    s,
-                    payer=inv.customer,
-                    ts=ts,
-                    currency=inv.currency,
-                    amount=inv.total + extra,
-                    refs=[inv.number],
-                    plan=[(inv.number, inv.total)],
-                    tag="regular",
-                )
+                _pay(world, s, inv, ts, inv.total + extra, [(inv.number, inv.total)])
         elif pattern == "paid_twice":
-            first = pay_full(world, s, inv, tag="regular", max_days=12)
-            ts = pay_time(world, s, first.ts, max_days=12) if first is not None else None
+            first_pay = pay_full(world, s, inv, tag="regular", max_days=12)
+            ts = pay_time(world, s, first_pay.ts, max_days=12) if first_pay is not None else None
             if ts is not None:
-                add_payment(
-                    world,
-                    s,
-                    payer=inv.customer,
-                    ts=ts,
-                    currency=inv.currency,
-                    amount=inv.total,
-                    refs=[inv.number],
-                    plan=[],
-                    tag="regular",
-                )
+                _pay(world, s, inv, ts, inv.total, [])
 
 
 def _expenses(world: World, s: Stream, n: int) -> None:
@@ -148,113 +225,13 @@ def _expenses(world: World, s: Stream, n: int) -> None:
         world.expenses.append(WExpense(world.mint("exp"), ts, amount))
 
 
-# ---------------------------------------------------------------------------------- top-up
-def _foreign_customer(world: World, s: Stream) -> Customer:
-    pool = [c for c in world.customers if c.currency != world.base]
-    if not pool:
-        raise WorldError("no_foreign_customer")
-    return s.choice(pool)
-
-
-def _paid_invoice(world: World, s: Stream, cust: Customer) -> None:
-    tl = world.tl
-    issued = world.claim(lambda: tl.business_between(s, tl.range_start, tl.range_end - 10 * DAY))
-    inv = new_invoice(world, s, tag="regular", customer=cust, issued=issued, lag=False)
-    if pay_full(world, s, inv, tag="regular", max_days=8, lag=False) is None:
-        raise WorldError("topup_payment")
-
-
-def _topup_cutoff(world: World, s: Stream) -> None:
-    tl = world.tl
-    b = s.choice(tl.boundaries())
-    if s.chance(1, 2):
-        issued = world.claim(lambda: tl.business_between(s, b - BOUNDARY_WINDOW, b))
-        inv = new_invoice(world, s, tag="regular", issued=issued, lag=False)
-        if s.chance(1, 2):
-            pay_full(world, s, inv, tag="regular")
-        return
-    lo = max(tl.range_start, b - 20 * DAY)
-    issued = world.claim(lambda: tl.business_between(s, lo, b - BOUNDARY_WINDOW - DAY))
-    inv = new_invoice(world, s, tag="regular", issued=issued, lag=False)
-    ts = world.claim(lambda: tl.payment_between(s, b - BOUNDARY_WINDOW, b))
-    _full_payment_at(world, s, inv, ts)
-
-
-def _full_payment_at(world: World, s: Stream, inv: Any, ts: Any) -> None:
-    add_payment(
-        world,
-        s,
-        payer=inv.customer,
-        ts=ts,
-        currency=inv.currency,
-        amount=inv.total,
-        refs=[inv.number],
-        plan=[(inv.number, inv.total)],
-        tag="regular",
-        lag=False,
-    )
-
-
-def _topup_fx(world: World, s: Stream) -> None:
-    _paid_invoice(world, s, _foreign_customer(world, s))
-
-
-def _topup_alloc(world: World, s: Stream) -> None:
-    _paid_invoice(world, s, s.choice(world.customers))
-
-
-def _topup_dup(world: World, s: Stream) -> None:
-    tl = world.tl
-    issued = world.claim(lambda: tl.business_between(s, tl.period_start, tl.period_end - 5 * DAY))
-    inv = new_invoice(world, s, tag="regular", issued=issued)
-    if s.chance(1, 2):
-        pay_full(world, s, inv, tag="regular")
-
-
-def _topup_dm(world: World, s: Stream) -> None:
-    tl = world.tl
-    issued = world.claim(lambda: tl.business_between(s, tl.period_start, tl.period_end - 8 * DAY))
-    inv = new_invoice(world, s, tag="regular", issued=issued, lag=False)
-    ts = world.claim(lambda: tl.payment_between(s, issued + DAY, issued + 6 * DAY))
-    _full_payment_at(world, s, inv, ts)
-
-
-def _topup_fxb(world: World, s: Stream) -> None:
-    tl = world.tl
-    cust = _foreign_customer(world, s)
-    b = s.choice(tl.boundaries())
-    lo = max(tl.range_start, b - 25 * DAY)
-    issued = world.claim(lambda: tl.business_between(s, lo, b - BOUNDARY_WINDOW - DAY))
-    inv = new_invoice(world, s, tag="regular", customer=cust, issued=issued, lag=False)
-    ts = world.claim(lambda: tl.payment_between(s, b - BOUNDARY_WINDOW, b - HOUR))
-    _full_payment_at(world, s, inv, ts)
-
-
-TOPUP = {
-    "fxb": _topup_fxb,
-    "dm": _topup_dm,
-    "cutoff": _topup_cutoff,
-    "fx": _topup_fx,
-    "dup": _topup_dup,
-    "alloc": _topup_alloc,
-}
-
-
-def _topup(world: World, s: Stream, needs: dict[str, int]) -> None:
-    for pool in candidates.POOLS:
-        need = needs.get(pool, 0)
-        added = 0
-        while need > 0 and candidates.count(world, pool) < need:
-            TOPUP[pool](world, s)
-            added += 1
-            if added > MAX_TOPUP:
-                raise WorldError(f"topup_{pool}")
-        if added:
-            world.topups[pool] = added
-
-
 # ---------------------------------------------------------------------------------- entry point
-def build_world(root: Stream, cfg: dict[str, Any], needs: dict[str, int]) -> World:
+def build_world(root: Stream, cfg: dict[str, Any], demand: dict[str, Any]) -> World:
+    """`demand`: {"carriers": {pool: n}, "dup_copies": [copies per duplicate], "dm_copies": n}.
+
+    `demand["dup_copies"]` may be reduced to fit size.invoices; the final values are in
+    `world.sizing["dup_copies"]`.
+    """
     ws = root.child("world")
     cs = ws.child("company")
     base = cs.choice(cfg["currencies"]["base_pool"])
@@ -263,8 +240,8 @@ def build_world(root: Stream, cfg: dict[str, Any], needs: dict[str, int]) -> Wor
     foreign = sorted(cs.sample(pool, n_foreign))
     tz_text = cs.choice(cfg["timezone_pool"])
     year = cs.choice(cfg["period"]["year_pool"])
-    month = cs.randint(1, 12)
-    tl = Timeline.build(tz_text, year, month, cfg["period"]["margin_days"])
+    kind, first, end = draw_period(cs.child("period"), year)
+    tl = Timeline.build(tz_text, first, end, cfg["period"]["margin_days"], kind)
     world = World(
         company=company_name(cs.child("name")),
         base=base,
@@ -277,27 +254,50 @@ def build_world(root: Stream, cfg: dict[str, Any], needs: dict[str, int]) -> Wor
 
     size = ws.child("size")
     n_customers = size.in_range(cfg["size"]["customers"])
-    target_invoices = size.in_range(cfg["size"]["invoices"])
     n_expenses = size.in_range(cfg["size"]["background_entries"])
     _customers(world, ws.child("customers"), n_customers)
 
-    dstreams = {kind: root.child(f"distractor/{kind}") for kind in DISTRACTOR_KINDS}
-    dcounts = {kind: dstreams[kind].in_range(cfg["distractors"][kind]) for kind in DISTRACTOR_KINDS}
-    spikes = plan_spikes(world, dstreams["fx_spike"], dcounts["fx_spike"])
+    dstreams = {k: root.child(f"distractor/{k}") for k in DISTRACTOR_KINDS}
+    dplan = _distractor_plan(cfg, dstreams)
+    demand = {
+        "carriers": dict(demand["carriers"]),
+        "dup_copies": list(demand["dup_copies"]),
+        "dm_copies": demand["dm_copies"],
+    }
+    target = fit(size, cfg, dplan, demand)
 
+    spikes = plan_spikes(world, dstreams["fx_spike"], len(dplan["fx_spike"]))
     world.fx_first = tl.local_date(tl.range_start) - timedelta(days=FX_MARGIN_DAYS)
     world.fx_last = tl.local_date(tl.range_end) + timedelta(days=FX_MARGIN_DAYS)
+    # An fx_partial_at_boundary carrier needs a material rate move between the payment date and
+    # a posting date just after a boundary. If the walk is calm around both boundaries for every
+    # currency, redraw it from a numbered sub-stream (rare; recorded in sizing).
+    redraws = 0
     world.fx = build_fx(ws, base, foreign, world.fx_first, world.fx_last, spikes)
+    while demand["carriers"].get("fxb") and not fxb_options(world):
+        redraws += 1
+        if redraws > MAX_FX_REDRAWS:
+            raise WorldError("fx_partial_infeasible")
+        world.fx = build_fx(
+            ws.child(f"fx-redraw-{redraws}"), base, foreign, world.fx_first, world.fx_last, spikes
+        )
 
-    distractor_invoices = sum(INVOICES_PER_INSTANCE[k] * dcounts[k] for k in DISTRACTOR_KINDS)
-    regular = max(target_invoices - distractor_invoices, (target_invoices + 1) // 2, 4)
-    _regular_history(world, ws.child("regular"), regular)
-
-    for kind in DISTRACTOR_KINDS:
-        BUILDERS[kind](world, dstreams[kind], dcounts[kind])
-
-    _topup(world, ws.child("topup"), needs)
+    for k in DISTRACTOR_KINDS:
+        BUILDERS[k](world, dstreams[k], dplan[k])
+    build_carriers(world, ws.child("carriers"), demand["carriers"])
+    copies = sum(demand["dup_copies"]) + demand["dm_copies"]
+    _regular_history(world, ws.child("regular"), target - copies - len(world.invoices))
     _expenses(world, ws.child("background"), n_expenses)
+    world.sizing = {
+        "target_invoices": target,
+        "copies": copies,
+        "dup_copies": demand["dup_copies"],
+        "carriers": dict(sorted(demand["carriers"].items())),
+        "carrier_invoices": sum(demand["carriers"].values()),
+        "demand_invoices": demand_invoices(demand),
+        "distractor_instances": {k: len(v) for k, v in dplan.items()},
+        "fx_redraws": redraws,
+    }
     return world
 
 
@@ -308,6 +308,7 @@ def world_summary(world: World) -> dict[str, Any]:
         "base_currency": world.base,
         "foreign_currencies": list(world.foreign),
         "timezone": tl.tz_text,
+        "period_kind": tl.period_kind,
         "period_start": tl.period_start.isoformat(),
         "period_end": tl.period_end.isoformat(),
         "range_start": tl.range_start.isoformat(),
@@ -319,7 +320,8 @@ def world_summary(world: World) -> dict[str, Any]:
             {"key": c.key, "name": c.name, "currency": c.currency} for c in world.customers
         ],
         "fx_spikes": list(world.spikes),
-        "topups": dict(sorted(world.topups.items())),
+        "sizing": dict(world.sizing),
+        "reserved_carriers": dict(sorted(world.reserved.items())),
         "counts": {
             "invoices": len(world.invoices),
             "payments": len(world.payments),

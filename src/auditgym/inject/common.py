@@ -32,18 +32,54 @@ def role_row(state: InjectState, entry: str, role: str, currency: str) -> WRow:
     return rows[0]
 
 
+def unapplied_row(state: InjectState, pay: WPayment) -> WRow | None:
+    rows = [r for r in state.entry(pay.key) if r.role == "UNAPPLIED"]
+    if len(rows) > 1:
+        raise RuntimeError("payment has several UNAPPLIED rows")
+    return rows[0] if rows else None
+
+
+def _book_unapplied(state: InjectState, pay: WPayment, amount: int, ts: datetime) -> None:
+    """Credit `amount` more to UNAPPLIED: on the payment's UNAPPLIED row, or on a new one."""
+    existing = unapplied_row(state, pay)
+    if existing is not None:
+        state.touch_row(existing).set_signed(existing.signed - amount)
+        return
+    state.add_row(
+        make_row(
+            f"{pay.key}#UNAP",
+            pay.key,
+            ts,
+            "UNAPPLIED",
+            -amount,
+            pay.currency,
+            pay.payer,
+            None,
+            pay.number,
+        )
+    )
+
+
 def apply_partial(state: InjectState, pay: WPayment, number: str, short: int) -> None:
     """Apply `short` less to the invoice and book it to UNAPPLIED instead."""
     row = state.touch_row(ar_row(state, pay, number))
     row.set_signed(row.signed + short)  # AR is a credit: a smaller credit
-    key = f"{pay.key}#UNAP"
-    if any(r.key == key for r in state.rows):
-        raise RuntimeError("payment already has an UNAPPLIED row")
-    state.add_row(
-        make_row(
-            key, pay.key, row.ts, "UNAPPLIED", -short, pay.currency, pay.payer, None, pay.number
-        )
-    )
+    _book_unapplied(state, pay, short, row.ts)
+
+
+def apply_none(state: InjectState, pay: WPayment, number: str) -> None:
+    """Book the whole part meant for the invoice to UNAPPLIED. Without an UNAPPLIED row the AR
+    row itself is re-booked (same row id); otherwise the AR row goes and the UNAPPLIED row grows,
+    so a payment never shows two UNAPPLIED rows."""
+    row = ar_row(state, pay, number)
+    if unapplied_row(state, pay) is None:
+        state.touch_row(row)
+        row.role = "UNAPPLIED"
+        row.invoice = None
+        return
+    part = -row.signed
+    state.remove_row(row)
+    _book_unapplied(state, pay, part, row.ts)
 
 
 def move_posting(state: InjectState, doc: WInvoice | WPayment, new_ts: datetime) -> datetime:

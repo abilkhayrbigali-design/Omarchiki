@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
+from typing import Any
 
 from auditgym.world.timeline import Timeline
 
@@ -110,9 +111,25 @@ class World:
     expenses: list[WExpense] = field(default_factory=list)
     distractors: list[DistractorRec] = field(default_factory=list)
     spikes: list[dict] = field(default_factory=list)
-    topups: dict[str, int] = field(default_factory=dict)
+    # Carrier records reserved for one injector pool: doc key -> pool. Internal only. An injector
+    # may use unreserved records or records reserved for its own pool, so every planned error is
+    # guaranteed a carrier without making carriers distinguishable from other records.
+    reserved: dict[str, str] = field(default_factory=dict)
+    sizing: dict[str, Any] = field(default_factory=dict)
     counters: dict[str, int] = field(default_factory=dict)
     taken: set[datetime] = field(default_factory=set)  # membership only, never iterated
+
+    # ------------------------------------------------------------------ carriers
+    def allowed(self, key: str, pool: str) -> bool:
+        return self.reserved.get(key, pool) == pool
+
+    def mark(self) -> tuple[int, int]:
+        return len(self.invoices), len(self.payments)
+
+    def rollback(self, mark: tuple[int, int]) -> None:
+        """Drop documents created after `mark` (a rejected carrier attempt)."""
+        del self.invoices[mark[0] :]
+        del self.payments[mark[1] :]
 
     # ------------------------------------------------------------------ keys and instants
     def mint(self, kind: str) -> str:

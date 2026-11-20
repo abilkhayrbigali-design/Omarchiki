@@ -1,7 +1,11 @@
 """Synthetic daily FX rates: foreign currency -> base currency, one row per calendar day.
 
 Each currency follows its own random walk (own child stream), so adding a currency does not shift
-the others. A spike (distractor X9) multiplies the level on one day; the new level persists.
+the others. Most days move by at most 0.4%; about one day in five moves by 0.6-1.5% (a jump). A
+spike (distractor X9) multiplies the level by 3-8% on one day; the new level persists.
+
+An injected FX error is material: the wrong conversion differs from the right one by at least
+max(100 minor units, 0.5% of the right converted amount).
 """
 
 from __future__ import annotations
@@ -17,7 +21,10 @@ from auditgym.world.model import World, WPayment
 
 _CTX = Context(prec=24, rounding=ROUND_HALF_EVEN)
 DAILY_MOVE = ("-0.004", "0.004")
+JUMP_MOVE = ("0.006", "0.015")  # magnitude of a jump day, either direction
+JUMP_ODDS = (1, 5)
 MIN_DISCREPANCY = 100
+MIN_RELATIVE_PER_MILLE = 5  # 0.5% of the right converted amount
 FX_TOLERANCE_MINOR = 1  # policy.tolerances.fx_conversion_minor
 
 
@@ -55,11 +62,17 @@ def conversion(world: World, pay: WPayment) -> int:
     return value
 
 
+def is_material(right: int, wrong: int | None) -> bool:
+    """|wrong - right| >= max(100, 0.5% of |right|), in exact integer arithmetic."""
+    if wrong is None or wrong <= 0:
+        return False
+    diff = abs(wrong - right)
+    return diff >= MIN_DISCREPANCY and diff * 1000 >= MIN_RELATIVE_PER_MILLE * abs(right)
+
+
 def material(world: World, pay: WPayment, wrong: int | None) -> bool:
-    """A wrong conversion that an exact auditor detects without doubt (>= 100 minor units)."""
-    return (
-        wrong is not None and wrong > 0 and abs(wrong - conversion(world, pay)) >= MIN_DISCREPANCY
-    )
+    """A wrong conversion of `pay` that an auditor cannot dismiss as rounding or noise."""
+    return is_material(conversion(world, pay), wrong)
 
 
 def wrong_rate_dates(world: World, pay: WPayment) -> list[date]:
@@ -97,7 +110,12 @@ def build_fx(
         )
         for day in daterange(first, last):
             if day != first:
-                move = cs.decimal(DAILY_MOVE[0], DAILY_MOVE[1], 5)
+                if cs.chance(*JUMP_ODDS):
+                    move = cs.decimal(JUMP_MOVE[0], JUMP_MOVE[1], 5)
+                    if cs.chance(1, 2):
+                        move = -move
+                else:
+                    move = cs.decimal(DAILY_MOVE[0], DAILY_MOVE[1], 5)
                 level = _CTX.multiply(level, _CTX.add(Decimal(1), move))
             factor = spikes.get((cur, day))
             if factor is not None:
